@@ -1,6 +1,6 @@
 import authApiRequest from "@/app/apiRequests/auth";
 import { HttpError } from "@/lib/http";
-import { LoginBodyType } from "@/schemas/auth.schema";
+import { LoginBodyType } from "@/schemaValidations/auth.schema";
 import { decode, JwtPayload } from "jsonwebtoken";
 import { cookies } from "next/headers";
 
