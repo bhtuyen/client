@@ -40,3 +40,15 @@ export const normalizePath = (path: string) =>
 export const decodeJWT = <Payload = any>(token: string): Payload => {
   return decode(token) as Payload;
 };
+
+export const getAccessTokenFromLocalStorage = () =>
+  localStorage.getItem("accessToken");
+
+export const removeAccessTokenFromLocalStorage = () =>
+  localStorage.removeItem("accessToken");
+
+export const getRefreshTokenFromLocalStorage = () =>
+  localStorage.getItem("refreshToken");
+
+export const removeRefreshTokenFromLocalStorage = () =>
+  localStorage.removeItem("refreshToken");
