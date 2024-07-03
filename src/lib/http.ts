@@ -78,7 +78,6 @@ let clientLogoutRequest: null | Promise<any> = null;
 const isClient = typeof window !== "undefined";
 
 /**
- *
  * @param url
  * @param options
  * @param method
@@ -149,6 +148,7 @@ const request = async <Response>(
         payload: data.payload as EntityErrorPayload,
       });
     } else if (res.status === UNAUTHORIZED_STATUS) {
+      // Nếu là client thì xử lý logout ngay
       if (isClient) {
         if (!clientLogoutRequest) {
           clientLogoutRequest = fetch("/api/auth/logout", {
@@ -171,17 +171,21 @@ const request = async <Response>(
           }
         }
       } else {
+        // Nếu là server thì redirect sang trang logout
         const accessToken = (options?.headers as any)?.Authorization.split(
           "Bearer "
         )[1];
 
-        redirect(`/logout?sessionToken=${accessToken}`);
+        // This Func is default throw an error, so we don't need to catch it
+        redirect(`/logout?accessToken=${accessToken}`);
       }
     } else {
       throw new HttpError(data);
     }
   }
 
+  // Lưu accessToken và refreshToken vào localStorage khi login
+  // Xóa accessToken và refreshToken khỏi localStorage khi logout
   if (isClient) {
     const normalizedUrl = normalizePath(url);
     if ("api/auth/login" === normalizedUrl) {
