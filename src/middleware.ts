@@ -31,11 +31,13 @@ export function middleware(request: NextRequest) {
     !isAccessToken &&
     isRefreshToken
   ) {
-    const url = new URL("/logout", request.nextUrl);
+    const url = new URL("/refresh-token", request.url);
     url.searchParams.set(
       "refreshToken",
       request.cookies.get("refreshToken")?.value ?? ""
     );
+
+    url.searchParams.set("redirect", pathname);
     return NextResponse.redirect(url);
   }
 

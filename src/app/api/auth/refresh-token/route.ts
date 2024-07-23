@@ -1,5 +1,4 @@
 import authApiRequest from "@/app/apiRequests/auth";
-import { HttpError } from "@/lib/http";
 import { decodeJWT } from "@/lib/utils";
 import { JwtPayload } from "jsonwebtoken";
 import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
@@ -11,6 +10,7 @@ export async function POST(request: Request) {
   const refreshToken = cookieStore.get("refreshToken")?.value;
 
   if (!refreshToken) {
+    console.log("Not found RefreshToken");
     return Response.json(
       { message: "Not found RefreshToken" },
       { status: 401 }
@@ -48,6 +48,7 @@ export async function POST(request: Request) {
 
     return Response.json(payload);
   } catch (error: any) {
+    console.log("Have an error");
     return Response.json(
       { message: error?.message ?? "Have an error" },
       { status: 401 }

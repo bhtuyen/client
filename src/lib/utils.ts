@@ -1,9 +1,13 @@
+import authApiRequest from "@/app/apiRequests/auth";
+import { jwtPayload } from "@/components/refresh-token";
 import { toast } from "@/components/ui/use-toast";
 import { EntityError } from "@/lib/http";
 import { type ClassValue, clsx } from "clsx";
 import { decode } from "jsonwebtoken";
 import { UseFormSetError } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
+
+const isBrowser = typeof window !== "undefined";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -42,13 +46,67 @@ export const decodeJWT = <Payload = any>(token: string): Payload => {
 };
 
 export const getAccessTokenFromLocalStorage = () =>
-  localStorage.getItem("accessToken");
+  isBrowser ? localStorage.getItem("accessToken") : null;
 
-export const removeAccessTokenFromLocalStorage = () =>
-  localStorage.removeItem("accessToken");
+export const removeAccessTokenFromLocalStorage = () => {
+  if (isBrowser) {
+    localStorage.removeItem("accessToken");
+  }
+};
 
 export const getRefreshTokenFromLocalStorage = () =>
-  localStorage.getItem("refreshToken");
+  isBrowser ? localStorage.getItem("refreshToken") : null;
 
-export const removeRefreshTokenFromLocalStorage = () =>
-  localStorage.removeItem("refreshToken");
+export const removeRefreshTokenFromLocalStorage = () => {
+  if (isBrowser) {
+    localStorage.removeItem("refreshToken");
+  }
+};
+
+export const setAccessTokenToLocalStorage = (token: string) => {
+  if (isBrowser) {
+    localStorage.setItem("accessToken", token);
+  }
+};
+
+export const setRefreshTokenToLocalStorage = (token: string) => {
+  if (isBrowser) {
+    localStorage.setItem("refreshToken", token);
+  }
+};
+
+export const removeAuthTokens = () => {
+  removeAccessTokenFromLocalStorage();
+  removeRefreshTokenFromLocalStorage();
+};
+
+export const checkAndRefreshToken = async (param?: {
+  onError?: () => void;
+  onSuccess?: () => void;
+}) => {
+  const accessToken = getAccessTokenFromLocalStorage();
+  const refreshToken = getRefreshTokenFromLocalStorage();
+  if (!accessToken || !refreshToken) return;
+
+  const accessTokenPayload = decodeJWT<jwtPayload>(accessToken);
+  const refreshTokenPayload = decodeJWT<jwtPayload>(refreshToken);
+
+  const now = Math.round(new Date().getTime() / 1000);
+  if (refreshTokenPayload.exp <= now) return;
+
+  if (
+    accessTokenPayload.exp - now <
+    (accessTokenPayload.exp - accessTokenPayload.iat) / 3
+  ) {
+    // refresh token
+    try {
+      const res = await authApiRequest.refreshToken();
+      const { accessToken, refreshToken } = res.payload.data;
+      setAccessTokenToLocalStorage(accessToken);
+      setRefreshTokenToLocalStorage(refreshToken);
+      param?.onSuccess && param.onSuccess();
+    } catch (error) {
+      param?.onError && param.onError();
+    }
+  }
+};

@@ -1,5 +1,5 @@
 import envConfig from "@/config";
-import { normalizePath } from "@/lib/utils";
+import { normalizePath, removeAuthTokens } from "@/lib/utils";
 import { LoginResType } from "@/schemaValidations/auth.schema";
 import { redirect } from "next/navigation";
 
@@ -164,8 +164,7 @@ const request = async <Response>(
           } catch (error) {
             console.error(error);
           } finally {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
+            removeAuthTokens();
             clientLogoutRequest = null;
             location.href = "/login";
           }
@@ -193,8 +192,7 @@ const request = async <Response>(
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
     } else if (normalizePath(url) === "api/auth/logout") {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      removeAuthTokens();
     }
   }
 
