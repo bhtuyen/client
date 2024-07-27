@@ -18,9 +18,9 @@ import { toast } from "@/components/ui/use-toast";
 import { handleErrorApi } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppContext } from "@/components/app-provider";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
-export default function LoginForm() {
+function _LoginForm() {
   const { setIsAuth } = useAppContext();
   const loginMutation = useLoginMutation();
 
@@ -126,5 +126,13 @@ export default function LoginForm() {
         </Form>
       </CardContent>
     </Card>
+  );
+}
+
+export default function LoginForm() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <_LoginForm />
+    </Suspense>
   );
 }

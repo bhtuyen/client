@@ -44,6 +44,6 @@ export default function RefreshToken() {
     return () => {
       clearInterval(interval);
     };
-  }, [pathname, router]);
+  }, [pathname, router, setIsAuth]);
   return null;
 }

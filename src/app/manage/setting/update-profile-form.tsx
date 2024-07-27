@@ -28,7 +28,7 @@ export default function UpdateProfileForm() {
     resolver: zodResolver(UpdateMeBody),
     defaultValues: {
       name: "",
-      avatar: "",
+      avatar: undefined,
     },
   });
   const { data: profile, refetch } = useAccountMeQuery();
@@ -37,7 +37,7 @@ export default function UpdateProfileForm() {
   useEffect(() => {
     if (profile) {
       const { name, avatar } = profile.payload.data;
-      form.reset({ name, avatar: avatar ?? "" });
+      form.reset({ name, avatar: avatar ?? undefined });
     }
   }, [profile, form]);
 

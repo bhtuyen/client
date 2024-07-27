@@ -6,9 +6,9 @@ import {
   getRefreshTokenFromLocalStorage,
 } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 
-export default function Logout() {
+function _Logout() {
   const { mutateAsync } = useLogoutMutation();
   const { setIsAuth } = useAppContext();
   const router = useRouter();
@@ -42,7 +42,15 @@ export default function Logout() {
     return () => {
       clearTimeout(timer);
     };
-  }, [mutateAsync, router, refreshToken]);
+  }, [mutateAsync, router, refreshToken, accessToken, setIsAuth]);
 
   return <div>Logout...</div>;
+}
+
+export default function Logout() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <_Logout />
+    </Suspense>
+  );
 }
