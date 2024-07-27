@@ -91,8 +91,14 @@ export const checkAndRefreshToken = async (param?: {
   const accessTokenPayload = decodeJWT<jwtPayload>(accessToken);
   const refreshTokenPayload = decodeJWT<jwtPayload>(refreshToken);
 
-  const now = Math.round(new Date().getTime() / 1000);
-  if (refreshTokenPayload.exp <= now) return;
+  const now = new Date().getTime() / 1000 - 1;
+
+  // check if refresh token is expired -> logout
+  if (refreshTokenPayload.exp <= now) {
+    removeAuthTokens();
+    param?.onError && param.onError();
+    return;
+  }
 
   if (
     accessTokenPayload.exp - now <

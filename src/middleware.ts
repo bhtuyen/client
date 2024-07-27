@@ -17,7 +17,9 @@ export function middleware(request: NextRequest) {
     privatePaths.some((path) => pathname.startsWith(path)) &&
     !isRefreshToken
   ) {
-    return NextResponse.redirect(new URL("/login", request.nextUrl));
+    const url = new URL("/login", request.url);
+    url.searchParams.set("clearTokens", "true");
+    return NextResponse.redirect(url);
   }
 
   // login

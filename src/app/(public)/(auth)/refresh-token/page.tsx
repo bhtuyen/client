@@ -13,12 +13,6 @@ export default function RefreshToken() {
   const refreshToken = searchParam.get("refreshToken");
   const redirectPathname = searchParam.get("redirect");
 
-  console.log("refreshToken", refreshToken);
-  console.log(
-    "getRefreshTokenFromLocalStorage",
-    getRefreshTokenFromLocalStorage()
-  );
-
   useEffect(() => {
     if (refreshToken && refreshToken === getRefreshTokenFromLocalStorage()) {
       checkAndRefreshToken({
@@ -26,6 +20,8 @@ export default function RefreshToken() {
           router.push(redirectPathname || "/");
         },
       });
+    } else {
+      router.push("/");
     }
   }, [router, refreshToken, redirectPathname]);
 
