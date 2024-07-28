@@ -37,6 +37,8 @@ import {
 } from "@/schemaValidations/dish.schema";
 import { DishStatus, DishStatusValues } from "@/constants/type";
 import { Textarea } from "@/components/ui/textarea";
+import { useDishQuery, useUpdateDishMutation } from "@/app/queries/useDishes";
+import { useUploadMediaMutation } from "@/app/queries/useMedia";
 
 export default function EditDish({
   id,
@@ -59,6 +61,22 @@ export default function EditDish({
       status: DishStatus.Unavailable,
     },
   });
+
+  const { data } = useDishQuery({ id: id as number, enabled: Boolean(id) });
+
+  useEffect(() => {
+    if (data) {
+      const { name, image, price, description, status } = data.payload.data;
+      form.reset({
+        name,
+        image: image ?? undefined,
+        price: price,
+        description: description,
+        status: status,
+      });
+    }
+  }, [data, form]);
+
   const image = form.watch("image");
   const name = form.watch("name");
   const previewAvatarFromFile = useMemo(() => {
@@ -67,12 +85,49 @@ export default function EditDish({
     }
     return image;
   }, [file, image]);
+
+  const updateDishMutation = useUpdateDishMutation();
+  const uploadMediaMutation = useUploadMediaMutation();
+
+  const reset = () => {
+    setId(undefined);
+    setFile(null);
+  };
+
+  const onSubmit = async (body: UpdateDishBodyType) => {
+    if (updateDishMutation.isPending) return;
+    try {
+      let _body: UpdateDishBodyType & { id: number } = {
+        id: id as number,
+        ...body,
+      };
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        const uploadImageRes = await uploadMediaMutation.mutateAsync(formData);
+        const imageUrl = uploadImageRes.payload.data;
+        console.log(imageUrl);
+        _body = { ..._body, image: imageUrl };
+      }
+
+      const result = await updateDishMutation.mutateAsync(_body);
+
+      toast({
+        description: result.payload.message,
+      });
+
+      reset();
+      onSubmitSuccess?.();
+    } catch (error: any) {
+      handleErrorApi({ error, setError: form.setError });
+    }
+  };
   return (
     <Dialog
       open={Boolean(id)}
       onOpenChange={(value) => {
         if (!value) {
-          setId(undefined);
+          reset();
         }
       }}
     >
@@ -88,6 +143,7 @@ export default function EditDish({
             noValidate
             className="grid auto-rows-max items-start gap-4 md:gap-8"
             id="edit-dish-form"
+            onSubmit={form.handleSubmit(onSubmit, console.log)}
           >
             <div className="grid gap-4 py-4">
               <FormField

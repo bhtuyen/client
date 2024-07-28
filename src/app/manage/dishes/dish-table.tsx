@@ -44,12 +44,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { formatCurrency, getVietnameseDishStatus } from "@/lib/utils";
+import {
+  formatCurrency,
+  getVietnameseDishStatus,
+  handleErrorApi,
+} from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import AutoPagination from "@/components/auto-pagination";
 import { DishListResType } from "@/schemaValidations/dish.schema";
 import EditDish from "@/app/manage/dishes/edit-dish";
 import AddDish from "@/app/manage/dishes/add-dish";
+import {
+  useDeleteDishMutation,
+  useDishesListQuery,
+} from "@/app/queries/useDishes";
+import { toast } from "@/components/ui/use-toast";
 
 type DishItem = DishListResType["data"][0];
 
@@ -125,8 +134,9 @@ export const columns: ColumnDef<DishItem>[] = [
       const openDeleteDish = () => {
         setDishDelete(row.original);
       };
+
       return (
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
               <span className="sr-only">Open menu</span>
@@ -152,11 +162,29 @@ function AlertDialogDeleteDish({
   dishDelete: DishItem | null;
   setDishDelete: (value: DishItem | null) => void;
 }) {
+  const deleteDishMutation = useDeleteDishMutation();
+
+  const handleDeleteAccount = async () => {
+    if (dishDelete) {
+      try {
+        const result = await deleteDishMutation.mutateAsync(dishDelete.id);
+        setDishDelete(null);
+        toast({
+          description: result.payload.message,
+        });
+      } catch (error: any) {
+        handleErrorApi({ error });
+      }
+    }
+  };
+
   return (
     <AlertDialog
       open={Boolean(dishDelete)}
       onOpenChange={(value) => {
-        
+        if (!value) {
+          setDishDelete(null);
+        }
       }}
     >
       <AlertDialogContent>
@@ -172,7 +200,9 @@ function AlertDialogDeleteDish({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={handleDeleteAccount}>
+            Continue
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
@@ -186,7 +216,8 @@ export default function DishTable() {
   const pageIndex = page - 1;
   const [dishIdEdit, setDishIdEdit] = useState<number | undefined>();
   const [dishDelete, setDishDelete] = useState<DishItem | null>(null);
-  const data: any[] = [];
+  const dishesListQuery = useDishesListQuery();
+  const data = dishesListQuery.data?.payload.data ?? [];
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

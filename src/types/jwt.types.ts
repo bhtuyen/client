@@ -1,4 +1,4 @@
-import { Role, TokenType } from "@/constants/type";
+  import { Role, TokenType } from "@/constants/type";
 import { JwtPayload } from "jsonwebtoken";
 
 export type TokenTypeValue = (typeof TokenType)[keyof typeof TokenType];
