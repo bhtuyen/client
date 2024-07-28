@@ -18,13 +18,13 @@ export const useChangePasswordMutation = () =>
     mutationFn: accountApiRequest.changePassword,
   });
 
-export const useGetAccountListQuery = () =>
+export const useAccountListQuery = () =>
   useQuery({
     queryKey: ["accounts"],
     queryFn: accountApiRequest.list,
   });
 
-export const useGetAccountQuery = (id: number) => {
+export const useAccountQuery = (id: number) => {
   return useQuery({
     queryKey: ["account", id],
     queryFn: () => accountApiRequest.getEmployee(id),

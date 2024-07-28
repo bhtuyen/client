@@ -59,6 +59,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useSearchParams } from "next/navigation";
 import AutoPagination from "@/components/auto-pagination";
+import { useAccountListQuery } from "@/app/queries/useAccount";
 
 type AccountItem = AccountListResType["data"][0];
 
@@ -194,7 +195,9 @@ export function _AccountTable() {
   const [employeeDelete, setEmployeeDelete] = useState<AccountItem | null>(
     null
   );
-  const data: any[] = [];
+
+  const accountListQuery = useAccountListQuery();
+  const data = accountListQuery.data?.payload.data ?? [];
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
