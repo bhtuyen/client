@@ -7,10 +7,6 @@ import { useEffect } from "react";
 
 const UNAUTHENTICATED_PATHS = ["/login", "/logout", "/refresh-token"];
 
-export type jwtPayload = {
-  exp: number;
-  iat: number;
-};
 export default function RefreshToken() {
   const pathname = usePathname();
   const { setIsAuth } = useAppContext();
