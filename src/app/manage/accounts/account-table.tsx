@@ -59,7 +59,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useSearchParams } from "next/navigation";
 import AutoPagination from "@/components/auto-pagination";
-import { useAccountListQuery } from "@/app/queries/useAccount";
+import {
+  useAccountListQuery,
+  useDeleteEmployeeMutation,
+} from "@/app/queries/useAccount";
+import { toast } from "@/components/ui/use-toast";
+import { handleErrorApi } from "@/lib/utils";
 
 type AccountItem = AccountListResType["data"][0];
 
@@ -156,6 +161,21 @@ function AlertDialogDeleteAccount({
   employeeDelete: AccountItem | null;
   setEmployeeDelete: (value: AccountItem | null) => void;
 }) {
+  const deleteAccount = useDeleteEmployeeMutation();
+
+  const handleDeleteAccount = async () => {
+    if (employeeDelete) {
+      try {
+        const result = await deleteAccount.mutateAsync(employeeDelete.id);
+        setEmployeeDelete(null);
+        toast({
+          description: result.payload.message,
+        });
+      } catch (error: any) {
+        handleErrorApi({ error });
+      }
+    }
+  };
   return (
     <AlertDialog
       open={Boolean(employeeDelete)}
@@ -178,7 +198,9 @@ function AlertDialogDeleteAccount({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={handleDeleteAccount}>
+            Continue
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

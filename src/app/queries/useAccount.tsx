@@ -24,10 +24,17 @@ export const useAccountListQuery = () =>
     queryFn: accountApiRequest.list,
   });
 
-export const useAccountQuery = (id: number) => {
+export const useAccountQuery = ({
+  id,
+  enabled,
+}: {
+  id: number;
+  enabled: boolean;
+}) => {
   return useQuery({
     queryKey: ["account", id],
     queryFn: () => accountApiRequest.getEmployee(id),
+    enabled,
   });
 };
 
@@ -43,6 +50,19 @@ export const useAddEmployeeMutation = () => {
     },
   });
 };
+
+export const useDeleteEmployeeMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => accountApiRequest.deleteEmployee(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["accounts"],
+      });
+    },
+  });
+};
+
 export const useUpdateEmployeeMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
