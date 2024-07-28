@@ -217,12 +217,8 @@ const http = {
   ) {
     return request<Res>(url, { ...options, body }, "PUT");
   },
-  delete<Res>(
-    url: string,
-    body: any,
-    options?: Omit<customOptions, "body"> | undefined
-  ) {
-    return request<Res>(url, { ...options, body }, "DELETE");
+  delete<Res>(url: string, options?: Omit<customOptions, "body"> | undefined) {
+    return request<Res>(url, { ...options }, "DELETE");
   },
 };
 

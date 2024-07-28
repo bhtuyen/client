@@ -1,5 +1,5 @@
-'use client';
-import { Button } from '@/components/ui/button';
+"use client";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,19 +8,23 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   CreateEmployeeAccountBody,
   CreateEmployeeAccountBodyType,
-} from '@/schemaValidations/account.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { PlusCircle, Upload } from 'lucide-react';
-import { useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+} from "@/schemaValidations/account.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PlusCircle, Upload } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAddEmployeeMutation } from "@/app/queries/useAccount";
+import { useUploadMediaMutation } from "@/app/queries/useMedia";
+import { toast } from "@/components/ui/use-toast";
+import { handleErrorApi } from "@/lib/utils";
 
 export default function AddEmployee() {
   const [file, setFile] = useState<File | null>(null);
@@ -29,15 +33,19 @@ export default function AddEmployee() {
   const form = useForm<CreateEmployeeAccountBodyType>({
     resolver: zodResolver(CreateEmployeeAccountBody),
     defaultValues: {
-      name: '',
-      email: '',
+      name: "",
+      email: "",
       avatar: undefined,
-      password: '',
-      confirmPassword: '',
+      password: "",
+      confirmPassword: "",
     },
   });
-  const avatar = form.watch('avatar');
-  const name = form.watch('name');
+
+  const adddEmployeeMutation = useAddEmployeeMutation();
+  const uploadMediaMutation = useUploadMediaMutation();
+
+  const avatar = form.watch("avatar");
+  const name = form.watch("name");
   const previewAvatarFromFile = useMemo(() => {
     if (file) {
       return URL.createObjectURL(file);
@@ -45,24 +53,62 @@ export default function AddEmployee() {
     return avatar;
   }, [file, avatar]);
 
+  const onReset = () => {
+    form.reset();
+    setFile(null);
+  };
+
+  const onSubmit = async (me: CreateEmployeeAccountBodyType) => {
+    if (adddEmployeeMutation.isPending) return;
+    try {
+      let body = me;
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        const uploadImageRes = await uploadMediaMutation.mutateAsync(formData);
+        const imageUrl = uploadImageRes.payload.data;
+        body = { ...body, avatar: imageUrl };
+      }
+
+      const result = await adddEmployeeMutation.mutateAsync(body);
+
+      toast({
+        description: result.payload.message,
+      });
+
+      onReset();
+      setOpen(false);
+    } catch (error: any) {
+      handleErrorApi({ error, setError: form.setError });
+    }
+  };
+
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         <Button size="sm" className="h-7 gap-1">
           <PlusCircle className="h-3.5 w-3.5" />
-          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Tạo tài khoản</span>
+          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+            Tạo tài khoản
+          </span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-screen overflow-auto">
         <DialogHeader>
           <DialogTitle>Tạo tài khoản</DialogTitle>
-          <DialogDescription>Các trường tên, email, mật khẩu là bắt buộc</DialogDescription>
+          <DialogDescription>
+            Các trường tên, email, mật khẩu là bắt buộc
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form
             noValidate
             className="grid auto-rows-max items-start gap-4 md:gap-8"
             id="add-employee-form"
+            onSubmit={form.handleSubmit(onSubmit, (error) => {
+              console.log(error);
+            })}
+            onReset={onReset}
           >
             <div className="grid gap-4 py-4">
               <FormField
@@ -73,7 +119,9 @@ export default function AddEmployee() {
                     <div className="flex gap-2 items-start justify-start">
                       <Avatar className="aspect-square w-[100px] h-[100px] rounded-md object-cover">
                         <AvatarImage src={previewAvatarFromFile} />
-                        <AvatarFallback className="rounded-none">{name || 'Avatar'}</AvatarFallback>
+                        <AvatarFallback className="rounded-none">
+                          {name || "Avatar"}
+                        </AvatarFallback>
                       </Avatar>
                       <input
                         type="file"
@@ -83,7 +131,9 @@ export default function AddEmployee() {
                           const file = e.target.files?.[0];
                           if (file) {
                             setFile(file);
-                            field.onChange('http://localhost:3000/' + file.name);
+                            field.onChange(
+                              "http://localhost:3000/" + file.name
+                            );
                           }
                         }}
                         className="hidden"
@@ -139,7 +189,12 @@ export default function AddEmployee() {
                     <div className="grid grid-cols-4 items-center justify-items-start gap-4">
                       <Label htmlFor="password">Mật khẩu</Label>
                       <div className="col-span-3 w-full space-y-2">
-                        <Input id="password" className="w-full" type="password" {...field} />
+                        <Input
+                          id="password"
+                          className="w-full"
+                          type="password"
+                          {...field}
+                        />
                         <FormMessage />
                       </div>
                     </div>
@@ -154,7 +209,12 @@ export default function AddEmployee() {
                     <div className="grid grid-cols-4 items-center justify-items-start gap-4">
                       <Label htmlFor="confirmPassword">Xác nhận mật khẩu</Label>
                       <div className="col-span-3 w-full space-y-2">
-                        <Input id="confirmPassword" className="w-full" type="password" {...field} />
+                        <Input
+                          id="confirmPassword"
+                          className="w-full"
+                          type="password"
+                          {...field}
+                        />
                         <FormMessage />
                       </div>
                     </div>
