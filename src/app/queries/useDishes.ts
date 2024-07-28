@@ -1,4 +1,4 @@
-import { dishesApiRequets } from "@/app/apiRequests/dishes";
+import { dishesApiRequets } from "@/app/apiRequests/dish";
 import { UpdateDishBodyType } from "@/schemaValidations/dish.schema";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
