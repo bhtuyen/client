@@ -29,7 +29,7 @@ export default function EditEmployee({
   onSubmitSuccess
 }: {
   id?: number | undefined;
-  setId: (value: number | undefined) => void;
+  setId: (_value: number | undefined) => void;
   onSubmitSuccess?: () => void;
 }) {
   const [file, setFile] = useState<File | null>(null);

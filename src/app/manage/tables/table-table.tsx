@@ -80,7 +80,7 @@ export const columns: ColumnDef<TableItem>[] = [
     header: 'QR Code',
     cell: ({ row }) => (
       <div>
-        <QRCodeTable row={row} />
+        <QRCodeTable tableNumber={row.getValue('number')} token={row.getValue('token')} />
       </div>
     )
   },

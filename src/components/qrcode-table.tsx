@@ -3,18 +3,18 @@
 import { useEffect, useRef } from 'react';
 import QRCode from 'qrcode';
 import { getTableLink } from '@/lib/utils';
-import { Row } from '@tanstack/react-table';
 
-interface QRCodeTableProps<T> {
-  row: Row<T>;
+interface QRCodeTableProps {
+  token: string;
+  tableNumber: number;
   size?: number;
 }
 
-export default function QRCodeTable<T>({ row, size = 200 }: QRCodeTableProps<T>) {
+export default function QRCodeTable({ token, tableNumber, size = 200 }: QRCodeTableProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const url = getTableLink({
-    token: row.getValue('token'),
-    tableNumber: row.getValue('number')
+    token,
+    tableNumber
   });
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function QRCodeTable<T>({ row, size = 200 }: QRCodeTableProps<T>)
       context.fillStyle = '#000';
       context.textAlign = 'center';
       context.font = '12px Arial';
-      context.fillText(`Bàn số ${row.getValue('number')}`, canvas.width / 2, canvas.width + 15);
+      context.fillText(`Bàn số ${tableNumber}`, canvas.width / 2, canvas.width + 15);
       context.fillText(`Quét QR để gọi món`, canvas.width / 2, canvas.width + 35);
 
       const virtualCanvas = document.createElement('canvas');
@@ -48,6 +48,6 @@ export default function QRCodeTable<T>({ row, size = 200 }: QRCodeTableProps<T>)
         }
       );
     }
-  }, [row, url, size]);
+  }, [url, size, tableNumber]);
   return <canvas ref={canvasRef} />;
 }
