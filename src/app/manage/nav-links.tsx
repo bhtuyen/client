@@ -1,13 +1,13 @@
-'use client'
-import menuItems from '@/app/manage/menuItems'
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
-import { Package2, Settings } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+'use client';
+import menuItems from '@/app/manage/menuItems';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
+import { Package2, Settings } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function NavLinks() {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <TooltipProvider>
@@ -22,7 +22,7 @@ export default function NavLinks() {
           </Link>
 
           {menuItems.map((Item, index) => {
-            const isActive = pathname === Item.href
+            const isActive = pathname === Item.href;
             return (
               <Tooltip key={index}>
                 <TooltipTrigger asChild>
@@ -42,7 +42,7 @@ export default function NavLinks() {
                 </TooltipTrigger>
                 <TooltipContent side='right'>{Item.title}</TooltipContent>
               </Tooltip>
-            )
+            );
           })}
         </nav>
         <nav className='mt-auto flex flex-col items-center gap-4 px-2 py-4'>
@@ -67,5 +67,5 @@ export default function NavLinks() {
         </nav>
       </aside>
     </TooltipProvider>
-  )
+  );
 }

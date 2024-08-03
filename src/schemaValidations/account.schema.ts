@@ -1,18 +1,18 @@
-import z from "zod";
+import z from 'zod';
 
 export const AccountSchema = z.object({
   id: z.number(),
   name: z.string(),
   email: z.string(),
   role: z.string(),
-  avatar: z.string().nullable(),
+  avatar: z.string().nullable()
 });
 
 export type AccountType = z.TypeOf<typeof AccountSchema>;
 
 export const AccountListRes = z.object({
   data: z.array(AccountSchema),
-  message: z.string(),
+  message: z.string()
 });
 
 export type AccountListResType = z.TypeOf<typeof AccountListRes>;
@@ -20,7 +20,7 @@ export type AccountListResType = z.TypeOf<typeof AccountListRes>;
 export const AccountRes = z
   .object({
     data: AccountSchema,
-    message: z.string(),
+    message: z.string()
   })
   .strict();
 
@@ -32,22 +32,20 @@ export const CreateEmployeeAccountBody = z
     email: z.string().email(),
     avatar: z.string().url().optional(),
     password: z.string().min(6).max(100),
-    confirmPassword: z.string().min(6).max(100),
+    confirmPassword: z.string().min(6).max(100)
   })
   .strict()
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {
       ctx.addIssue({
-        code: "custom",
-        message: "Mật khẩu không khớp",
-        path: ["confirmPassword"],
+        code: 'custom',
+        message: 'Mật khẩu không khớp',
+        path: ['confirmPassword']
       });
     }
   });
 
-export type CreateEmployeeAccountBodyType = z.TypeOf<
-  typeof CreateEmployeeAccountBody
->;
+export type CreateEmployeeAccountBodyType = z.TypeOf<typeof CreateEmployeeAccountBody>;
 
 export const UpdateEmployeeAccountBody = z
   .object({
@@ -56,35 +54,33 @@ export const UpdateEmployeeAccountBody = z
     avatar: z.string().url().optional(),
     changePassword: z.boolean().optional(),
     password: z.string().min(6).max(100).optional(),
-    confirmPassword: z.string().min(6).max(100).optional(),
+    confirmPassword: z.string().min(6).max(100).optional()
   })
   .strict()
   .superRefine(({ confirmPassword, password, changePassword }, ctx) => {
     if (changePassword) {
       if (!password || !confirmPassword) {
         ctx.addIssue({
-          code: "custom",
-          message: "Hãy nhập mật khẩu mới và xác nhận mật khẩu mới",
-          path: ["changePassword"],
+          code: 'custom',
+          message: 'Hãy nhập mật khẩu mới và xác nhận mật khẩu mới',
+          path: ['changePassword']
         });
       } else if (confirmPassword !== password) {
         ctx.addIssue({
-          code: "custom",
-          message: "Mật khẩu không khớp",
-          path: ["confirmPassword"],
+          code: 'custom',
+          message: 'Mật khẩu không khớp',
+          path: ['confirmPassword']
         });
       }
     }
   });
 
-export type UpdateEmployeeAccountBodyType = z.TypeOf<
-  typeof UpdateEmployeeAccountBody
->;
+export type UpdateEmployeeAccountBodyType = z.TypeOf<typeof UpdateEmployeeAccountBody>;
 
 export const UpdateMeBody = z
   .object({
     name: z.string().trim().min(2).max(256),
-    avatar: z.string().optional(),
+    avatar: z.string().optional()
   })
   .strict();
 
@@ -94,15 +90,15 @@ export const ChangePasswordBody = z
   .object({
     oldPassword: z.string().min(6).max(100),
     password: z.string().min(6).max(100),
-    confirmPassword: z.string().min(6).max(100),
+    confirmPassword: z.string().min(6).max(100)
   })
   .strict()
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {
       ctx.addIssue({
-        code: "custom",
-        message: "Mật khẩu mới không khớp",
-        path: ["confirmPassword"],
+        code: 'custom',
+        message: 'Mật khẩu mới không khớp',
+        path: ['confirmPassword']
       });
     }
   });
@@ -110,7 +106,7 @@ export const ChangePasswordBody = z
 export type ChangePasswordBodyType = z.TypeOf<typeof ChangePasswordBody>;
 
 export const AccountIdParam = z.object({
-  id: z.coerce.number(),
+  id: z.coerce.number()
 });
 
 export type AccountIdParamType = z.TypeOf<typeof AccountIdParam>;

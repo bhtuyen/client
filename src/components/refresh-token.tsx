@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useAppContext } from "@/components/app-provider";
-import { checkAndRefreshToken } from "@/lib/utils";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useAppContext } from '@/components/app-provider';
+import { checkAndRefreshToken } from '@/lib/utils';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-const UNAUTHENTICATED_PATHS = ["/login", "/logout", "/refresh-token"];
+const UNAUTHENTICATED_PATHS = ['/login', '/logout', '/refresh-token'];
 
 export default function RefreshToken() {
   const pathname = usePathname();
@@ -21,8 +21,8 @@ export default function RefreshToken() {
       onError: () => {
         clearInterval(interval);
         setIsAuth(false);
-        router.push("/login");
-      },
+        router.push('/login');
+      }
     });
 
     interval = setInterval(
@@ -31,8 +31,8 @@ export default function RefreshToken() {
           onError: () => {
             clearInterval(interval);
             setIsAuth(false);
-            router.push("/login");
-          },
+            router.push('/login');
+          }
         }),
       TIMEOUT
     );

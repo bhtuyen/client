@@ -1,37 +1,34 @@
-"use client";
+'use client';
 
-import { useAppContext } from "@/components/app-provider";
-import Link from "next/link";
+import { useAppContext } from '@/components/app-provider';
+import Link from 'next/link';
 
 const menuItems = [
   {
-    title: "Món ăn",
-    href: "/menu",
+    title: 'Món ăn',
+    href: '/menu'
   },
   {
-    title: "Đơn hàng",
-    href: "/orders",
-    authRequired: true,
+    title: 'Đơn hàng',
+    href: '/orders',
+    authRequired: true
   },
   {
-    title: "Đăng nhập",
-    href: "/login",
-    authRequired: false,
+    title: 'Đăng nhập',
+    href: '/login',
+    authRequired: false
   },
   {
-    title: "Quản lý",
-    href: "/manage/dashboard",
-    authRequired: true,
-  },
+    title: 'Quản lý',
+    href: '/manage/dashboard',
+    authRequired: true
+  }
 ];
 
 export default function NavItems({ className }: { className?: string }) {
   const { isAuth } = useAppContext();
   return menuItems.map((item) => {
-    if (
-      (item.authRequired === true && !isAuth) ||
-      (item.authRequired === false && isAuth)
-    ) {
+    if ((item.authRequired === true && !isAuth) || (item.authRequired === false && isAuth)) {
       return null;
     }
     return (

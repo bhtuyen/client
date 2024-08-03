@@ -1,5 +1,5 @@
-  import { Role, TokenType } from "@/constants/type";
-import { JwtPayload } from "jsonwebtoken";
+import { Role, TokenType } from '@/constants/type';
+import { JwtPayload } from 'jsonwebtoken';
 
 export type TokenTypeValue = (typeof TokenType)[keyof typeof TokenType];
 export type RoleType = (typeof Role)[keyof typeof Role];
@@ -14,5 +14,5 @@ export interface TokenPayload extends JwtPayload {
 export interface TableTokenPayload {
   iat: number;
   number: number;
-  tokenType: (typeof TokenType)["TableToken"];
+  tokenType: (typeof TokenType)['TableToken'];
 }

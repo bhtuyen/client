@@ -1,6 +1,6 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import DishTable from '@/app/manage/dishes/dish-table'
-import { Suspense } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import DishTable from '@/app/manage/dishes/dish-table';
+import { Suspense } from 'react';
 
 export default function DishesPage() {
   return (
@@ -19,5 +19,5 @@ export default function DishesPage() {
         </Card>
       </div>
     </main>
-  )
+  );
 }

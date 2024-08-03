@@ -1,12 +1,12 @@
-import envConfig from "@/config";
-import { normalizePath, removeAuthTokens } from "@/lib/utils";
-import { LoginResType } from "@/schemaValidations/auth.schema";
-import { redirect } from "next/navigation";
+import envConfig from '@/config';
+import { normalizePath, removeAuthTokens } from '@/lib/utils';
+import { LoginResType } from '@/schemaValidations/auth.schema';
+import { redirect } from 'next/navigation';
 
 /**
  * customOptions: Tùy chỉnh options cho fetch
  */
-type customOptions = Omit<RequestInit, "method"> & {
+type customOptions = Omit<RequestInit, 'method'> & {
   baseUrl?: string | undefined;
 };
 
@@ -33,15 +33,7 @@ export class HttpError extends Error {
     message: string;
     [key: string]: any;
   };
-  constructor({
-    status,
-    payload,
-    message = "Http Error",
-  }: {
-    status: number;
-    payload: any;
-    message?: string;
-  }) {
+  constructor({ status, payload, message = 'Http Error' }: { status: number; payload: any; message?: string }) {
     super(message);
     this.status = status;
     this.payload = payload;
@@ -54,14 +46,8 @@ export class HttpError extends Error {
 export class EntityError extends HttpError {
   status: typeof ENTITY_ERROR_STATUS;
   payload: EntityErrorPayload;
-  constructor({
-    status,
-    payload,
-  }: {
-    status: typeof ENTITY_ERROR_STATUS;
-    payload: EntityErrorPayload;
-  }) {
-    super({ status, payload, message: "Entity Error" });
+  constructor({ status, payload }: { status: typeof ENTITY_ERROR_STATUS; payload: EntityErrorPayload }) {
+    super({ status, payload, message: 'Entity Error' });
     this.status = ENTITY_ERROR_STATUS;
     this.payload = payload;
   }
@@ -75,7 +61,7 @@ let clientLogoutRequest: null | Promise<any> = null;
 /**
  * @description Môi trường client
  */
-const isClient = typeof window !== "undefined";
+const isClient = typeof window !== 'undefined';
 
 /**
  * @param url
@@ -86,7 +72,7 @@ const isClient = typeof window !== "undefined";
 const request = async <Response>(
   url: string,
   options?: customOptions | undefined,
-  method: "GET" | "POST" | "PUT" | "DELETE" = "GET"
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET'
 ) => {
   let body: FormData | string | undefined = undefined;
 
@@ -100,13 +86,13 @@ const request = async <Response>(
     body instanceof FormData
       ? {}
       : {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json'
         };
 
   if (isClient) {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
-      baseHeaders["Authorization"] = `Bearer ${accessToken}`;
+      baseHeaders['Authorization'] = `Bearer ${accessToken}`;
     }
   }
 
@@ -114,10 +100,7 @@ const request = async <Response>(
    *  Nếu có baseUrl thì sử dụng baseUrl, không thì sử dụng envConfig.NEXT_PUBLIC_API_ENDPOINT
    *  => call next api
    */
-  const baseUrl =
-    options?.baseUrl === undefined
-      ? envConfig.NEXT_PUBLIC_API_ENDPOINT
-      : options?.baseUrl;
+  const baseUrl = options?.baseUrl === undefined ? envConfig.NEXT_PUBLIC_API_ENDPOINT : options?.baseUrl;
 
   const fullUrl = `${baseUrl}/${normalizePath(url)}`;
 
@@ -125,17 +108,17 @@ const request = async <Response>(
     ...options,
     headers: {
       ...baseHeaders,
-      ...options?.headers,
+      ...options?.headers
     },
     method,
-    body,
+    body
   });
 
   const payload: Response = await res.json();
 
   const data = {
     status: res.status,
-    payload,
+    payload
   };
 
   /**
@@ -145,18 +128,18 @@ const request = async <Response>(
     if (res.status === ENTITY_ERROR_STATUS) {
       throw new EntityError({
         status: res.status,
-        payload: data.payload as EntityErrorPayload,
+        payload: data.payload as EntityErrorPayload
       });
     } else if (res.status === UNAUTHORIZED_STATUS) {
       // Nếu là client thì xử lý logout ngay
       if (isClient) {
         if (!clientLogoutRequest) {
-          clientLogoutRequest = fetch("/api/auth/logout", {
-            method: "POST",
+          clientLogoutRequest = fetch('/api/auth/logout', {
+            method: 'POST',
             body: JSON.stringify({ force: true }),
             headers: {
-              ...baseHeaders,
-            },
+              ...baseHeaders
+            }
           });
 
           try {
@@ -166,14 +149,12 @@ const request = async <Response>(
           } finally {
             removeAuthTokens();
             clientLogoutRequest = null;
-            location.href = "/login";
+            location.href = '/login';
           }
         }
       } else {
         // Nếu là server thì redirect sang trang logout
-        const accessToken = (options?.headers as any)?.Authorization.split(
-          "Bearer "
-        )[1];
+        const accessToken = (options?.headers as any)?.Authorization.split('Bearer ')[1];
 
         // This Func is default throw an error, so we don't need to catch it
         redirect(`/logout?accessToken=${accessToken}`);
@@ -187,11 +168,11 @@ const request = async <Response>(
   // Xóa accessToken và refreshToken khỏi localStorage khi logout
   if (isClient) {
     const normalizedUrl = normalizePath(url);
-    if ("api/auth/login" === normalizedUrl) {
+    if ('api/auth/login' === normalizedUrl) {
       const { accessToken, refreshToken } = (payload as LoginResType).data;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-    } else if (normalizePath(url) === "api/auth/logout") {
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+    } else if (normalizePath(url) === 'api/auth/logout') {
       removeAuthTokens();
     }
   }
@@ -200,26 +181,18 @@ const request = async <Response>(
 };
 
 const http = {
-  get<Res>(url: string, options?: Omit<customOptions, "body"> | undefined) {
+  get<Res>(url: string, options?: Omit<customOptions, 'body'> | undefined) {
     return request<Res>(url, options);
   },
-  post<Res>(
-    url: string,
-    body: any,
-    options?: Omit<customOptions, "body"> | undefined
-  ) {
-    return request<Res>(url, { ...options, body }, "POST");
+  post<Res>(url: string, body: any, options?: Omit<customOptions, 'body'> | undefined) {
+    return request<Res>(url, { ...options, body }, 'POST');
   },
-  put<Res>(
-    url: string,
-    body: any,
-    options?: Omit<customOptions, "body"> | undefined
-  ) {
-    return request<Res>(url, { ...options, body }, "PUT");
+  put<Res>(url: string, body: any, options?: Omit<customOptions, 'body'> | undefined) {
+    return request<Res>(url, { ...options, body }, 'PUT');
   },
-  delete<Res>(url: string, options?: Omit<customOptions, "body"> | undefined) {
-    return request<Res>(url, { ...options }, "DELETE");
-  },
+  delete<Res>(url: string, options?: Omit<customOptions, 'body'> | undefined) {
+    return request<Res>(url, { ...options }, 'DELETE');
+  }
 };
 
 export default http;

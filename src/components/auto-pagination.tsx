@@ -5,7 +5,7 @@ import {
   PaginationItem,
   PaginationLink,
   PaginationNext,
-  PaginationPrevious,
+  PaginationPrevious
 } from '@/components/ui/pagination';
 import { cn } from '@/lib/utils';
 interface Props {
@@ -68,11 +68,7 @@ export default function AutoPagination({ page, pageSize, pathname }: Props) {
         const pageNumber = index + 1;
 
         // Điều kiện để return về ...
-        if (
-          page <= RANGE * 2 + 1 &&
-          pageNumber > page + RANGE &&
-          pageNumber < pageSize - RANGE + 1
-        ) {
+        if (page <= RANGE * 2 + 1 && pageNumber > page + RANGE && pageNumber < pageSize - RANGE + 1) {
           return renderDotAfter(index);
         } else if (page > RANGE * 2 + 1 && page < pageSize - RANGE * 2) {
           if (pageNumber < page - RANGE && pageNumber > RANGE) {
@@ -80,11 +76,7 @@ export default function AutoPagination({ page, pageSize, pathname }: Props) {
           } else if (pageNumber > page + RANGE && pageNumber < pageSize - RANGE + 1) {
             return renderDotAfter(index);
           }
-        } else if (
-          page >= pageSize - RANGE * 2 &&
-          pageNumber > RANGE &&
-          pageNumber < page - RANGE
-        ) {
+        } else if (page >= pageSize - RANGE * 2 && pageNumber > RANGE && pageNumber < page - RANGE) {
           return renderDotBefore(index);
         }
         return (
@@ -93,8 +85,8 @@ export default function AutoPagination({ page, pageSize, pathname }: Props) {
               href={{
                 pathname,
                 query: {
-                  page: pageNumber,
-                },
+                  page: pageNumber
+                }
               }}
               isActive={pageNumber === page}
             >
@@ -112,11 +104,11 @@ export default function AutoPagination({ page, pageSize, pathname }: Props) {
             href={{
               pathname,
               query: {
-                page: page - 1,
-              },
+                page: page - 1
+              }
             }}
             className={cn({
-              'cursor-not-allowed': page === 1,
+              'cursor-not-allowed': page === 1
             })}
             onClick={(e) => {
               if (page === 1) {
@@ -132,11 +124,11 @@ export default function AutoPagination({ page, pageSize, pathname }: Props) {
             href={{
               pathname,
               query: {
-                page: page + 1,
-              },
+                page: page + 1
+              }
             }}
             className={cn({
-              'cursor-not-allowed': page === pageSize,
+              'cursor-not-allowed': page === pageSize
             })}
             onClick={(e) => {
               if (page === pageSize) {

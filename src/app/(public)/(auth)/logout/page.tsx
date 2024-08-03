@@ -1,12 +1,9 @@
-"use client";
-import { useLogoutMutation } from "@/app/queries/useAuth";
-import { useAppContext } from "@/components/app-provider";
-import {
-  getAccessTokenFromLocalStorage,
-  getRefreshTokenFromLocalStorage,
-} from "@/lib/utils";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useRef } from "react";
+'use client';
+import { useLogoutMutation } from '@/app/queries/useAuth';
+import { useAppContext } from '@/components/app-provider';
+import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from '@/lib/utils';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useRef } from 'react';
 
 function _Logout() {
   const { mutateAsync } = useLogoutMutation();
@@ -16,8 +13,8 @@ function _Logout() {
   const ref = useRef<any>(null);
 
   const searchParam = useSearchParams();
-  const refreshToken = searchParam.get("refreshToken");
-  const accessToken = searchParam.get("accessToken");
+  const refreshToken = searchParam.get('refreshToken');
+  const accessToken = searchParam.get('accessToken');
 
   useEffect(() => {
     if (
@@ -25,7 +22,7 @@ function _Logout() {
       (refreshToken && refreshToken !== getRefreshTokenFromLocalStorage()) ||
       (accessToken && accessToken !== getAccessTokenFromLocalStorage())
     ) {
-      router.push("/");
+      router.push('/');
       return;
     }
 
@@ -36,7 +33,7 @@ function _Logout() {
         ref.current = null;
       }, 1000);
       setIsAuth(false);
-      router.push("/login");
+      router.push('/login');
     });
 
     return () => {

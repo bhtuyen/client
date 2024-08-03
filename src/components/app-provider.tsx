@@ -1,28 +1,22 @@
-"use client";
-import RefreshToken from "@/components/refresh-token";
-import { getAccessTokenFromLocalStorage, removeAuthTokens } from "@/lib/utils";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+'use client';
+import RefreshToken from '@/components/refresh-token';
+import { getAccessTokenFromLocalStorage, removeAuthTokens } from '@/lib/utils';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      retryOnMount: false,
-    },
-  },
+      retryOnMount: false
+    }
+  }
 });
 
 export const AppContext = createContext({
   isAuth: false,
-  setIsAuth: (isAuth: boolean) => {},
+  setIsAuth: (isAuth: boolean) => {}
 });
 
 export const useAppContext = () => {
@@ -30,7 +24,7 @@ export const useAppContext = () => {
 };
 
 const AppProvider = ({
-  children,
+  children
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
