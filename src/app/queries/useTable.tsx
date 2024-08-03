@@ -1,18 +1,18 @@
-import { tablesApiRequets } from '@/app/apiRequests/table';
+import { tableApiRequets } from '@/app/apiRequests/table';
 import { UpdateTableBodyType } from '@/schemaValidations/table.schema';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useTableListQuery = () => {
   return useQuery({
     queryKey: ['tables'],
-    queryFn: tablesApiRequets.getAll
+    queryFn: tableApiRequets.getAll
   });
 };
 
 export const useTableQuery = ({ id, enabled }: { id: number; enabled: boolean }) => {
   return useQuery({
     queryKey: ['table', id],
-    queryFn: () => tablesApiRequets.getById(id),
+    queryFn: () => tableApiRequets.getById(id),
     enabled
   });
 };
@@ -20,7 +20,7 @@ export const useTableQuery = ({ id, enabled }: { id: number; enabled: boolean })
 export const useCreateTableMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: tablesApiRequets.create,
+    mutationFn: tableApiRequets.create,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['tables']
@@ -32,7 +32,7 @@ export const useCreateTableMutation = () => {
 export const useUpdateTableMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...body }: UpdateTableBodyType & { id: number }) => tablesApiRequets.update(id, body),
+    mutationFn: ({ id, ...body }: UpdateTableBodyType & { id: number }) => tableApiRequets.update(id, body),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['tables']
@@ -44,7 +44,7 @@ export const useUpdateTableMutation = () => {
 export const useDeleteTableMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: tablesApiRequets.delete,
+    mutationFn: tableApiRequets.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['tables']

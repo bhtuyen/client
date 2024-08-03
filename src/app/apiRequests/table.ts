@@ -8,7 +8,7 @@ import {
 
 const prefix = '/tables';
 
-export const tablesApiRequets = {
+export const tableApiRequets = {
   getAll: () => http.get<TableListResType>(`${prefix}`),
   getById: (id: number) => http.get<TableResType>(`${prefix}/${id}`),
   create: (body: CreateTableBodyType) => http.post<TableResType>(`${prefix}`, body),

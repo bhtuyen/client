@@ -43,7 +43,7 @@ import AutoPagination from '@/components/auto-pagination';
 import { DishListResType } from '@/schemaValidations/dish.schema';
 import EditDish from '@/app/manage/dishes/edit-dish';
 import AddDish from '@/app/manage/dishes/add-dish';
-import { useDeleteDishMutation, useDishesListQuery } from '@/app/queries/useDishes';
+import { useDeleteDishMutation, useDishListQuery } from '@/app/queries/useDish';
 import { toast } from '@/components/ui/use-toast';
 
 type DishItem = DishListResType['data'][0];
@@ -188,7 +188,7 @@ export default function DishTable() {
   const pageIndex = page - 1;
   const [dishIdEdit, setDishIdEdit] = useState<number | undefined>();
   const [dishDelete, setDishDelete] = useState<DishItem | null>(null);
-  const dishesListQuery = useDishesListQuery();
+  const dishesListQuery = useDishListQuery();
   const data = dishesListQuery.data?.payload.data ?? [];
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

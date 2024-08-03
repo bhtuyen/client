@@ -3,7 +3,7 @@ import { CreateDishBodyType, DishListResType, DishResType, UpdateDishBodyType } 
 
 const prefix = '/dishes';
 
-export const dishesApiRequets = {
+export const dishApiRequets = {
   getAll: () => http.get<DishListResType>(`${prefix}`),
   getById: (id: number) => http.get<DishResType>(`${prefix}/${id}`),
   create: (body: CreateDishBodyType) => http.post<DishResType>(`${prefix}`, body),

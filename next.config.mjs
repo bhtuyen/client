@@ -4,6 +4,16 @@ const nextConfig = {
     fetches: {
       fullUrl: true
     }
+  },
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'localhost',
+        pathname: '/**',
+        port: '4000',
+        protocol: 'http'
+      }
+    ]
   }
 };
 

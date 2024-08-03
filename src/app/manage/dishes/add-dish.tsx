@@ -14,7 +14,7 @@ import { CreateDishBody, CreateDishBodyType } from '@/schemaValidations/dish.sch
 import { DishStatus, DishStatusValues } from '@/constants/type';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { useCreateDishMutation } from '@/app/queries/useDishes';
+import { useCreateDishMutation } from '@/app/queries/useDish';
 import { toast } from '@/components/ui/use-toast';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
 

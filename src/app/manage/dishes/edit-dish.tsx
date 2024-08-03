@@ -22,7 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { UpdateDishBody, UpdateDishBodyType } from '@/schemaValidations/dish.schema';
 import { DishStatus, DishStatusValues } from '@/constants/type';
 import { Textarea } from '@/components/ui/textarea';
-import { useDishQuery, useUpdateDishMutation } from '@/app/queries/useDishes';
+import { useDishQuery, useUpdateDishMutation } from '@/app/queries/useDish';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
 
 export default function EditDish({
