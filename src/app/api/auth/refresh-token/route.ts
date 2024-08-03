@@ -4,7 +4,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { cookies } from 'next/headers';
 
-export async function POST(request: Request) {
+export async function POST(_request: Request) {
   const cookieStore = cookies();
 
   const refreshToken = cookieStore.get('refreshToken')?.value;

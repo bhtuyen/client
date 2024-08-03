@@ -3,7 +3,7 @@ import { formatCurrency } from '@/lib/utils';
 import { DishListResType } from '@/schemaValidations/dish.schema';
 import Image from 'next/image';
 
-export default async function Home() {
+export default async function HomePage() {
   let dishList: DishListResType['data'] = [];
   try {
     const dishListQuery = await dishApiRequets.getAll();

@@ -50,15 +50,15 @@ import { handleErrorApi } from '@/lib/utils';
 type AccountItem = AccountListResType['data'][0];
 
 const AccountTableContext = createContext<{
-  setEmployeeIdEdit: (value: number) => void;
+  setEmployeeIdEdit: (_value: number) => void;
   employeeIdEdit: number | undefined;
   employeeDelete: AccountItem | null;
-  setEmployeeDelete: (value: AccountItem | null) => void;
+  setEmployeeDelete: (_value: AccountItem | null) => void;
 }>({
-  setEmployeeIdEdit: (value: number | undefined) => {},
+  setEmployeeIdEdit: (_value: number | undefined) => {},
   employeeIdEdit: undefined,
   employeeDelete: null,
-  setEmployeeDelete: (value: AccountItem | null) => {}
+  setEmployeeDelete: (_value: AccountItem | null) => {}
 });
 
 export const columns: ColumnDef<AccountType>[] = [
@@ -132,7 +132,7 @@ function AlertDialogDeleteAccount({
   setEmployeeDelete
 }: {
   employeeDelete: AccountItem | null;
-  setEmployeeDelete: (value: AccountItem | null) => void;
+  setEmployeeDelete: (_value: AccountItem | null) => void;
 }) {
   const deleteAccount = useDeleteEmployeeMutation();
 

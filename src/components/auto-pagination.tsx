@@ -40,7 +40,7 @@ export default function AutoPagination({ page, pageSize, pathname }: Props) {
   const renderPagination = () => {
     let dotAfter = false;
     let dotBefore = false;
-    const renderDotBefore = (index: number) => {
+    const renderDotBefore = (_index: number) => {
       if (!dotBefore) {
         dotBefore = true;
         return (
@@ -51,7 +51,7 @@ export default function AutoPagination({ page, pageSize, pathname }: Props) {
       }
       return null;
     };
-    const renderDotAfter = (index: number) => {
+    const renderDotAfter = (_index: number) => {
       if (!dotAfter) {
         dotAfter = true;
         return (

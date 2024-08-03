@@ -44,7 +44,7 @@ function _Logout() {
   return <div>Logout...</div>;
 }
 
-export default function Logout() {
+export default function LogoutPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <_Logout />

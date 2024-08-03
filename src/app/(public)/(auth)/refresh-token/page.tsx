@@ -25,7 +25,7 @@ function _RefreshToken() {
   return <div>Refresh token...</div>;
 }
 
-export default function RefreshToken() {
+export default function RefreshTokenPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <_RefreshToken />

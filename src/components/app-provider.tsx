@@ -16,7 +16,7 @@ const queryClient = new QueryClient({
 
 export const AppContext = createContext({
   isAuth: false,
-  setIsAuth: (isAuth: boolean) => {}
+  setIsAuth: (_isAuth: boolean) => {}
 });
 
 export const useAppContext = () => {
