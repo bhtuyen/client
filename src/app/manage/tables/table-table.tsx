@@ -36,7 +36,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
-import { getTableLink, getVietnameseTableStatus } from '@/lib/utils';
+import { getVietnameseTableStatus } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
 import AutoPagination from '@/components/auto-pagination';
 import { TableListResType } from '@/schemaValidations/table.schema';
@@ -48,15 +48,15 @@ import QRCodeTable from '@/components/qrcode-table';
 type TableItem = TableListResType['data'][0];
 
 const TableTableContext = createContext<{
-  setTableIdEdit: (value: number) => void;
+  setTableIdEdit: (_value: number) => void;
   tableIdEdit: number | undefined;
   tableDelete: TableItem | null;
-  setTableDelete: (value: TableItem | null) => void;
+  setTableDelete: (_value: TableItem | null) => void;
 }>({
-  setTableIdEdit: (value: number | undefined) => {},
+  setTableIdEdit: (_value: number | undefined) => {},
   tableIdEdit: undefined,
   tableDelete: null,
-  setTableDelete: (value: TableItem | null) => {}
+  setTableDelete: (_value: TableItem | null) => {}
 });
 
 export const columns: ColumnDef<TableItem>[] = [
@@ -121,7 +121,7 @@ function AlertDialogDeleteTable({
   setTableDelete
 }: {
   tableDelete: TableItem | null;
-  setTableDelete: (value: TableItem | null) => void;
+  setTableDelete: (_value: TableItem | null) => void;
 }) {
   return (
     <AlertDialog
