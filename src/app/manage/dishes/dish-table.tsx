@@ -49,15 +49,15 @@ import { toast } from '@/components/ui/use-toast';
 type DishItem = DishListResType['data'][0];
 
 const DishTableContext = createContext<{
-  setDishIdEdit: (value: number) => void;
+  setDishIdEdit: (_value: number) => void;
   dishIdEdit: number | undefined;
   dishDelete: DishItem | null;
-  setDishDelete: (value: DishItem | null) => void;
+  setDishDelete: (_value: DishItem | null) => void;
 }>({
-  setDishIdEdit: (value: number | undefined) => {},
+  setDishIdEdit: (_value: number | undefined) => {},
   dishIdEdit: undefined,
   dishDelete: null,
-  setDishDelete: (value: DishItem | null) => {}
+  setDishDelete: (_value: DishItem | null) => {}
 });
 
 export const columns: ColumnDef<DishItem>[] = [
@@ -137,7 +137,7 @@ function AlertDialogDeleteDish({
   setDishDelete
 }: {
   dishDelete: DishItem | null;
-  setDishDelete: (value: DishItem | null) => void;
+  setDishDelete: (_value: DishItem | null) => void;
 }) {
   const deleteDishMutation = useDeleteDishMutation();
 
