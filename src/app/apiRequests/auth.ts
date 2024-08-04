@@ -6,6 +6,7 @@ import {
   RefreshTokenBodyType,
   RefreshTokenResType
 } from '@/schemaValidations/auth.schema';
+import { MessageResType } from '@/schemaValidations/common.schema';
 
 const authApiRequest = {
   refreshTokenRequest: null as Promise<{
@@ -18,7 +19,7 @@ const authApiRequest = {
       baseUrl: ''
     }),
   sLogout: (body: LogoutBodyType & { accessToken: string }) =>
-    http.post(
+    http.post<MessageResType>(
       '/auth/logout',
       {
         refreshToken: body.refreshToken
