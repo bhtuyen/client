@@ -24,6 +24,7 @@ import { DishStatus, DishStatusValues } from '@/constants/type';
 import { Textarea } from '@/components/ui/textarea';
 import { useDishQuery, useUpdateDishMutation } from '@/app/queries/useDish';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
+import revalidateApiRequest from '@/app/apiRequests/revalidate';
 
 export default function EditDish({
   id,
@@ -96,6 +97,7 @@ export default function EditDish({
       }
 
       const result = await updateDishMutation.mutateAsync(_body);
+      await revalidateApiRequest.revalidateTag('dishes');
 
       toast({
         description: result.payload.message
