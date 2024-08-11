@@ -12,6 +12,10 @@ import {
 const prefix = 'guest';
 
 const guestApiRequest = {
+  refreshTokenRequest: null as Promise<{
+    status: number;
+    payload: RefreshTokenResType;
+  }> | null,
   login: (body: GuestLoginBodyType) => http.post<GuestLoginResType>(`/api/${prefix}/auth/login`, body, { baseUrl: '' }),
   sLogin: (body: GuestLoginBodyType) => http.post<GuestLoginResType>(`/${prefix}/auth/login`, body),
   logout: (body: LogoutBodyType) => http.post<MessageResType>(`/api/${prefix}/auth/logout`, body, { baseUrl: '' }),
@@ -21,9 +25,20 @@ const guestApiRequest = {
       { refreshToken: body.refreshToken },
       { headers: { Authorization: `Bearer ${body.accessToken}` } }
     ),
-  refreshToken: (body: RefreshTokenBodyType) =>
-    http.post<RefreshTokenResType>(`/api/${prefix}/auth/refresh-token`, body, { baseUrl: '' }),
   sRefreshToken: (body: RefreshTokenBodyType) => http.post<RefreshTokenResType>(`/${prefix}/auth/refresh-token`, body),
+  async refreshToken() {
+    if (this.refreshTokenRequest) {
+      return this.refreshTokenRequest;
+    }
+
+    this.refreshTokenRequest = http.post<RefreshTokenResType>(`/api/${prefix}/auth/refresh-token`, null, {
+      baseUrl: ''
+    });
+
+    const result = await this.refreshTokenRequest;
+    this.refreshTokenRequest = null;
+    return result;
+  },
   orders: (body: GuestCreateOrdersBodyType) => http.post<GuestCreateOrdersResType>(`/${prefix}/orders`, body),
   getOrders: () => http.get<GuestGetOrdersResType>(`/${prefix}/orders`)
 };

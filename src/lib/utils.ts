@@ -1,7 +1,7 @@
 import authApiRequest from '@/app/apiRequests/auth';
 import { toast } from '@/components/ui/use-toast';
 import envConfig from '@/config';
-import { DishStatus, OrderStatus, TableStatus } from '@/constants/type';
+import { DishStatus, OrderStatus, Role, TableStatus } from '@/constants/type';
 import { EntityError } from '@/lib/http';
 import { type ClassValue, clsx } from 'clsx';
 import { decode } from 'jsonwebtoken';
@@ -10,6 +10,7 @@ import { UseFormSetError } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { format } from 'date-fns';
 import { TokenPayload } from '@/types/jwt.types';
+import guestApiRequest from '@/app/apiRequests/guest';
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -101,7 +102,8 @@ export const checkAndRefreshToken = async (param?: { onError?: () => void; onSuc
   if (accessTokenPayload.exp - now < (accessTokenPayload.exp - accessTokenPayload.iat) / 3) {
     // refresh token
     try {
-      const res = await authApiRequest.refreshToken();
+      const role = accessTokenPayload.role;
+      const res = role === Role.Guest ? await guestApiRequest.refreshToken() : await authApiRequest.refreshToken();
       const { accessToken, refreshToken } = res.payload.data;
       setAccessTokenToLocalStorage(accessToken);
       setRefreshTokenToLocalStorage(refreshToken);
