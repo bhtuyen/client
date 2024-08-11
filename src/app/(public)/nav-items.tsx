@@ -26,9 +26,9 @@ const menuItems = [
 ];
 
 export default function NavItems({ className }: { className?: string }) {
-  const { isAuth } = useAppContext();
+  const { role } = useAppContext();
   return menuItems.map((item) => {
-    if ((item.authRequired === true && !isAuth) || (item.authRequired === false && isAuth)) {
+    if ((item.authRequired === true && !role) || (item.authRequired === false && role)) {
       return null;
     }
     return (

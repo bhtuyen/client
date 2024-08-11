@@ -1,5 +1,11 @@
 import envConfig from '@/config';
-import { normalizePath, removeAuthTokens } from '@/lib/utils';
+import {
+  getAccessTokenFromLocalStorage,
+  normalizePath,
+  removeAuthTokens,
+  setAccessTokenToLocalStorage,
+  setRefreshTokenToLocalStorage
+} from '@/lib/utils';
 import { LoginResType } from '@/schemaValidations/auth.schema';
 import { redirect } from 'next/navigation';
 
@@ -90,7 +96,7 @@ const request = async <Response>(
         };
 
   if (isClient) {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = getAccessTokenFromLocalStorage();
     if (accessToken) {
       baseHeaders['Authorization'] = `Bearer ${accessToken}`;
     }
@@ -168,11 +174,11 @@ const request = async <Response>(
   // Xóa accessToken và refreshToken khỏi localStorage khi logout
   if (isClient) {
     const normalizedUrl = normalizePath(url);
-    if ('api/auth/login' === normalizedUrl) {
+    if (['api/auth/login', 'api/guest/auth/login'].includes(normalizedUrl)) {
       const { accessToken, refreshToken } = (payload as LoginResType).data;
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-    } else if (normalizePath(url) === 'api/auth/logout') {
+      setAccessTokenToLocalStorage(accessToken);
+      setRefreshTokenToLocalStorage(refreshToken);
+    } else if (['api/auth/logout', 'api/guest/auth/logout'].includes(normalizedUrl)) {
       removeAuthTokens();
     }
   }

@@ -15,7 +15,7 @@ import { useAppContext } from '@/components/app-provider';
 import { Suspense, useEffect } from 'react';
 
 function _LoginForm() {
-  const { setIsAuth } = useAppContext();
+  const { setRole } = useAppContext();
   const loginMutation = useLoginMutation();
 
   const form = useForm<LoginBodyType>({
@@ -33,9 +33,9 @@ function _LoginForm() {
 
   useEffect(() => {
     if (Boolean(clearTokens)) {
-      setIsAuth(false);
+      setRole(undefined);
     }
-  }, [clearTokens, setIsAuth]);
+  }, [clearTokens, setRole]);
 
   const onSubmit = async (data: LoginBodyType) => {
     if (loginMutation.isPending) return;
@@ -45,7 +45,7 @@ function _LoginForm() {
       toast({
         description: result.payload.message
       });
-      setIsAuth(true);
+      setRole(result.payload.data.account.role);
       router.push('/manage/dashboard');
     } catch (error: any) {
       handleErrorApi({ error, setError: form.setError });
