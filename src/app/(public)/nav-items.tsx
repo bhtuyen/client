@@ -41,9 +41,7 @@ export default function NavItems({ className }: { className?: string }) {
   const { role } = useAppContext();
   return menuItems.map((item) => {
     const isAuthenticator = role && item.roles?.includes(role);
-
-    const isShow = item.roles === undefined && !item.hiddenWhenLogin;
-
+    const isShow = item.roles === undefined && (item.hiddenWhenLogin == undefined || item.hiddenWhenLogin === !role);
     if (isAuthenticator || isShow) {
       return (
         <Link href={item.href} key={item.href} className={className}>
