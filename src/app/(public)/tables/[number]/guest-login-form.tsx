@@ -8,10 +8,10 @@ import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { GuestLoginBody, GuestLoginBodyType } from '@/schemaValidations/guest.schema';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useGuestLoginMutation } from '@/app/queries/useGuest';
 import { handleErrorApi } from '@/lib/utils';
-import { AppContext } from '@/components/app-provider';
+import { useAppContext } from '@/components/app-provider';
 
 export default function GuestLoginForm() {
   const searchParam = useSearchParams();
@@ -28,7 +28,7 @@ export default function GuestLoginForm() {
     }
   });
   const guestLoginMutation = useGuestLoginMutation();
-  const { setRole } = useContext(AppContext);
+  const { setRole } = useAppContext();
 
   const onSubmit = async (data: GuestLoginBodyType) => {
     if (guestLoginMutation.isPending) return;
