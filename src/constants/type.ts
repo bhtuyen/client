@@ -11,6 +11,8 @@ export const Role = {
   Guest: 'Guest'
 } as const;
 
+export const RoleValues = [Role.Owner, Role.Employee, Role.Guest] as const;
+
 export const DishStatus = {
   Available: 'Available',
   Unavailable: 'Unavailable',
@@ -42,3 +44,5 @@ export const OrderStatusValues = [
   OrderStatus.Delivered,
   OrderStatus.Paid
 ] as const;
+
+export const ManagerRoom = 'manager' as const;
