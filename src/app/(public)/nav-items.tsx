@@ -13,6 +13,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction
 } from '@/components/ui/alert-dialog';
+import { SheetClose } from '@/components/ui/sheet';
 import { Role } from '@/constants/type';
 import { cn, handleErrorApi } from '@/lib/utils';
 import { RoleType } from '@/types/jwt.types';
@@ -52,7 +53,13 @@ const menuItems: {
   }
 ];
 
-export default function NavItems({ className }: { className?: string }) {
+export default function NavItems({
+  className,
+  handleNavItemClick
+}: {
+  className?: string;
+  handleNavItemClick?: () => void;
+}) {
   const lgoutMutation = useLogoutMutation();
   const { role, setRole } = useAppContext();
   const router = useRouter();
@@ -63,6 +70,7 @@ export default function NavItems({ className }: { className?: string }) {
       await lgoutMutation.mutateAsync();
       setRole(undefined);
       router.push('/');
+      handleNavItemClick?.();
     } catch (error) {
       handleErrorApi({ error });
     }
@@ -76,7 +84,7 @@ export default function NavItems({ className }: { className?: string }) {
           item.roles === undefined && (item.hiddenWhenLogin == undefined || item.hiddenWhenLogin === !role);
         if (isAuthenticator || isShow) {
           return (
-            <Link href={item.href} key={item.href} className={className}>
+            <Link href={item.href} key={item.href} className={className} onClick={handleNavItemClick}>
               {item.title}
             </Link>
           );

@@ -1,6 +1,13 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -93,6 +100,7 @@ export default function EditTable({
       >
         <DialogHeader>
           <DialogTitle>Cập nhật bàn ăn</DialogTitle>
+          <DialogDescription />
         </DialogHeader>
         <Form {...form}>
           <form
