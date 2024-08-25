@@ -17,13 +17,13 @@ const menuItems: {
   },
   {
     title: 'Món ăn',
-    href: '/menu',
+    href: '/guest/menu',
     roles: [Role.Guest]
   },
   {
     title: 'Đơn hàng',
-    href: '/orders',
-    roles: [Role.Employee]
+    href: '/guest/orders',
+    roles: [Role.Guest]
   },
   {
     title: 'Đăng nhập',
