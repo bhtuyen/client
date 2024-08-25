@@ -1,5 +1,4 @@
 import orderApiRequest from '@/app/apiRequests/order';
-import { CreateOrdersBodyType } from '@/schemaValidations/order.schema';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useOrderListQuery = () =>
