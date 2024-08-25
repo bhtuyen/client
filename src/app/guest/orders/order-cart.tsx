@@ -2,12 +2,15 @@
 
 import { useGuestOrderListQuery } from '@/app/queries/useGuest';
 import { Badge } from '@/components/ui/badge';
+import { toast } from '@/components/ui/use-toast';
+import socket from '@/lib/socket';
 import { formatCurrency, getVietnameseOrderStatus } from '@/lib/utils';
+import { UpdateOrderResType } from '@/schemaValidations/order.schema';
 import Image from 'next/image';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 export default function OrderCart() {
-  const { data } = useGuestOrderListQuery();
+  const { data, refetch } = useGuestOrderListQuery();
 
   const orders = useMemo(() => data?.payload.data || [], [data]);
 
@@ -15,6 +18,44 @@ export default function OrderCart() {
     () => orders.reduce((total, order) => total + order.dishSnapshot.price * order.quantity, 0),
     [orders]
   );
+
+  useEffect(() => {
+    if (socket.connected) {
+      onConnect();
+    }
+
+    function onConnect() {
+      console.log(socket.id);
+    }
+
+    function onDisconnect() {
+      console.log('disconnected');
+    }
+
+    function onUpadteOrderStatus(data: UpdateOrderResType['data']) {
+      refetch();
+      const {
+        dishSnapshot: { name },
+        quantity,
+        status
+      } = data;
+
+      toast({
+        description: `Món ${name} (SL: ${quantity}) đã được cập nhật sang trạng thái ${getVietnameseOrderStatus(status)}`
+      });
+    }
+
+    socket.on('connect', onConnect);
+
+    socket.on('update-order', onUpadteOrderStatus);
+
+    socket.on('disconnect', onDisconnect);
+
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+    };
+  }, [refetch]);
 
   return (
     <>
