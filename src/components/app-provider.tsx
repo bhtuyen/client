@@ -6,11 +6,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
+// Default
+// staleTime: 0
+// gcTime: 5 minutes
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
-      retryOnMount: false
+      refetchOnWindowFocus: false
     }
   }
 });

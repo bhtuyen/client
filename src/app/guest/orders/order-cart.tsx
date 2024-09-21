@@ -3,6 +3,7 @@
 import { useGuestOrderListQuery } from '@/app/queries/useGuest';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/components/ui/use-toast';
+import { OrderStatus } from '@/constants/type';
 import socket from '@/lib/socket';
 import { formatCurrency, getVietnameseOrderStatus } from '@/lib/utils';
 import { UpdateOrderResType } from '@/schemaValidations/order.schema';
@@ -14,8 +15,47 @@ export default function OrderCart() {
 
   const orders = useMemo(() => data?.payload.data || [], [data]);
 
-  const totalPrice = useMemo(
-    () => orders.reduce((total, order) => total + order.dishSnapshot.price * order.quantity, 0),
+  const { waitingForPaying, paid } = useMemo(
+    () =>
+      orders.reduce(
+        (result, order) => {
+          if (
+            order.status === OrderStatus.Delivered ||
+            order.status === OrderStatus.Processing ||
+            order.status === OrderStatus.Pending
+          ) {
+            return {
+              ...result,
+              waitingForPaying: {
+                price: result.waitingForPaying.price + order.dishSnapshot.price * order.quantity,
+                quantity: result.waitingForPaying.quantity + order.quantity
+              }
+            };
+          }
+
+          if (order.status === OrderStatus.Paid) {
+            return {
+              ...result,
+              pay: {
+                price: result.paid.price + order.dishSnapshot.price * order.quantity,
+                quantity: result.paid.quantity + order.quantity
+              }
+            };
+          }
+
+          return result;
+        },
+        {
+          waitingForPaying: {
+            price: 0,
+            quantity: 0
+          },
+          paid: {
+            price: 0,
+            quantity: 0
+          }
+        }
+      ),
     [orders]
   );
 
@@ -83,12 +123,22 @@ export default function OrderCart() {
           </div>
         </div>
       ))}
-      <div className='sticky bottom-0'>
-        <div className='w-full flex space-x-4 text-xl font-semibold'>
-          <span>Giá tiền · {orders.length} món</span>
-          <span>{formatCurrency(totalPrice)}</span>
+      {paid.quantity > 0 && (
+        <div className='sticky bottom-0'>
+          <div className='w-full flex space-x-4 text-xl font-semibold'>
+            <span>Đơn chưa đã thanh toán · {paid.quantity} món</span>
+            <span>{formatCurrency(paid.price)}</span>
+          </div>
         </div>
-      </div>
+      )}
+      {waitingForPaying.quantity > 0 && (
+        <div className='sticky bottom-0'>
+          <div className='w-full flex space-x-4 text-xl font-semibold'>
+            <span>Đơn chưa thanh toán · {waitingForPaying.quantity} món</span>
+            <span>{formatCurrency(waitingForPaying.price)}</span>
+          </div>
+        </div>
+      )}
     </>
   );
 }
