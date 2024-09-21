@@ -32,7 +32,7 @@ export default function OrderCart() {
       console.log('disconnected');
     }
 
-    function onUpadteOrderStatus(data: UpdateOrderResType['data']) {
+    function onUpadteOrder(data: UpdateOrderResType['data']) {
       refetch();
       const {
         dishSnapshot: { name },
@@ -47,13 +47,14 @@ export default function OrderCart() {
 
     socket.on('connect', onConnect);
 
-    socket.on('update-order', onUpadteOrderStatus);
+    socket.on('update-order', onUpadteOrder);
 
     socket.on('disconnect', onDisconnect);
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
+      socket.off('update-order', onUpadteOrder);
     };
   }, [refetch]);
 
