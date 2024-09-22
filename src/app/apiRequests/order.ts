@@ -15,9 +15,9 @@ import { stringify } from 'querystring';
 const prefix = 'orders';
 
 const orderApiRequest = {
-  getOrders: (queryParams: GetOrdersQueryParamsType) =>
+  getOrders: ({ fromDate, toDate }: GetOrdersQueryParamsType) =>
     http.get<GetOrdersResType>(
-      `/${prefix}?${stringify({ fromDate: queryParams.fromDate?.toISOString(), toDate: queryParams.toDate?.toISOString() })}`
+      `/${prefix}?${stringify({ fromDate: fromDate?.toISOString(), toDate: toDate?.toISOString() })}`
     ),
   getOrderDetail: (orderId: number) => http.get<GetOrderDetailResType>(`/${prefix}/${orderId}`),
   createOrder: (body: CreateOrdersBodyType) => http.post<CreateOrdersResType>(`/${prefix}`, body),

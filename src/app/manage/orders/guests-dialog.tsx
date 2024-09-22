@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import AutoPagination from '@/components/auto-pagination'
-import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AutoPagination from '@/components/auto-pagination';
+import { useEffect, useState } from 'react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,13 +14,13 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable
-} from '@tanstack/react-table'
-import { formatDateTimeToLocaleString, simpleMatchText } from '@/lib/utils'
-import { Input } from '@/components/ui/input'
-import { GetListGuestsResType } from '@/schemaValidations/account.schema'
-import { endOfDay, format, startOfDay } from 'date-fns'
+} from '@tanstack/react-table';
+import { formatDateTimeToLocaleString, simpleMatchText } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import { GetListGuestsResType } from '@/schemaValidations/account.schema';
+import { endOfDay, format, startOfDay } from 'date-fns';
 
-type GuestItem = GetListGuestsResType['data'][0]
+type GuestItem = GetListGuestsResType['data'][0];
 
 export const columns: ColumnDef<GuestItem>[] = [
   {
@@ -32,8 +32,8 @@ export const columns: ColumnDef<GuestItem>[] = [
       </div>
     ),
     filterFn: (row, columnId, filterValue: string) => {
-      if (filterValue === undefined) return true
-      return simpleMatchText(row.original.name + String(row.original.id), String(filterValue))
+      if (filterValue === undefined) return true;
+      return simpleMatchText(row.original.name + String(row.original.id), String(filterValue));
     }
   },
   {
@@ -41,8 +41,8 @@ export const columns: ColumnDef<GuestItem>[] = [
     header: 'Số bàn',
     cell: ({ row }) => <div className='capitalize'>{row.getValue('tableNumber')}</div>,
     filterFn: (row, columnId, filterValue: string) => {
-      if (filterValue === undefined) return true
-      return simpleMatchText(String(row.original.tableNumber), String(filterValue))
+      if (filterValue === undefined) return true;
+      return simpleMatchText(String(row.original.tableNumber), String(filterValue));
     }
   },
   {
@@ -54,25 +54,25 @@ export const columns: ColumnDef<GuestItem>[] = [
       </div>
     )
   }
-]
+];
 
-const PAGE_SIZE = 10
-const initFromDate = startOfDay(new Date())
-const initToDate = endOfDay(new Date())
+const PAGE_SIZE = 10;
+const initFromDate = startOfDay(new Date());
+const initToDate = endOfDay(new Date());
 
 export default function GuestsDialog({ onChoose }: { onChoose: (guest: GuestItem) => void }) {
-  const [open, setOpen] = useState(false)
-  const [fromDate, setFromDate] = useState(initFromDate)
-  const [toDate, setToDate] = useState(initToDate)
-  const data: GetListGuestsResType['data'] = []
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = useState({})
+  const [open, setOpen] = useState(false);
+  const [fromDate, setFromDate] = useState(initFromDate);
+  const [toDate, setToDate] = useState(initToDate);
+  const data: GetListGuestsResType['data'] = [];
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
   const [pagination, setPagination] = useState({
     pageIndex: 0, // Gía trị mặc định ban đầu, không có ý nghĩa khi data được fetch bất đồng bộ
     pageSize: PAGE_SIZE //default page size
-  })
+  });
 
   const table = useReactTable({
     data,
@@ -94,24 +94,24 @@ export default function GuestsDialog({ onChoose }: { onChoose: (guest: GuestItem
       rowSelection,
       pagination
     }
-  })
+  });
 
   useEffect(() => {
     table.setPagination({
       pageIndex: 0,
       pageSize: PAGE_SIZE
-    })
-  }, [table])
+    });
+  }, [table]);
 
   const choose = (guest: GuestItem) => {
-    onChoose(guest)
-    setOpen(false)
-  }
+    onChoose(guest);
+    setOpen(false);
+  };
 
   const resetDateFilter = () => {
-    setFromDate(initFromDate)
-    setToDate(initToDate)
-  }
+    setFromDate(initFromDate);
+    setToDate(initToDate);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -174,7 +174,7 @@ export default function GuestsDialog({ onChoose }: { onChoose: (guest: GuestItem
                               ? null
                               : flexRender(header.column.columnDef.header, header.getContext())}
                           </TableHead>
-                        )
+                        );
                       })}
                     </TableRow>
                   ))}
@@ -186,7 +186,7 @@ export default function GuestsDialog({ onChoose }: { onChoose: (guest: GuestItem
                         key={row.id}
                         data-state={row.getIsSelected() && 'selected'}
                         onClick={() => {
-                          choose(row.original)
+                          choose(row.original);
                         }}
                         className='cursor-pointer'
                       >
@@ -224,5 +224,5 @@ export default function GuestsDialog({ onChoose }: { onChoose: (guest: GuestItem
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
