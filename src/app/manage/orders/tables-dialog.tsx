@@ -19,6 +19,7 @@ import { cn, getVietnameseTableStatus, simpleMatchText } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { TableListResType } from '@/schemaValidations/table.schema';
 import { TableStatus } from '@/constants/type';
+import { useTableListQuery } from '@/app/queries/useTable';
 
 type TableItem = TableListResType['data'][0];
 
@@ -46,9 +47,10 @@ export const columns: ColumnDef<TableItem>[] = [
 
 const PAGE_SIZE = 10;
 
-export function TablesDialog({ onChoose }: { onChoose: (table: TableItem) => void }) {
+export function TablesDialog({ onChoose }: { onChoose: (_table: TableItem) => void }) {
   const [open, setOpen] = useState(false);
-  const data: TableListResType['data'] = [];
+  const tableListQuery = useTableListQuery();
+  const data = tableListQuery.data?.payload.data ?? [];
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
