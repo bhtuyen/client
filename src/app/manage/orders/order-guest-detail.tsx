@@ -1,3 +1,4 @@
+import { usePayOrderMutation } from '@/app/queries/useOrder';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { OrderStatus } from '@/constants/type';
@@ -6,19 +7,42 @@ import {
   formatCurrency,
   formatDateTimeToLocaleString,
   formatDateTimeToTimeString,
-  getVietnameseOrderStatus
+  getVietnameseOrderStatus,
+  handleErrorApi
 } from '@/lib/utils';
-import { GetOrdersResType } from '@/schemaValidations/order.schema';
+import { GetOrdersResType, PayGuestOrdersResType } from '@/schemaValidations/order.schema';
+import { PopoverClose } from '@radix-ui/react-popover';
 import Image from 'next/image';
 import { Fragment } from 'react';
 
 type Guest = GetOrdersResType['data'][0]['guest'];
 type Orders = GetOrdersResType['data'];
-export default function OrderGuestDetail({ guest, orders }: { guest: Guest; orders: Orders }) {
+export default function OrderGuestDetail({
+  guest,
+  orders,
+  onPaySuccess
+}: {
+  guest: Guest;
+  orders: Orders;
+  onPaySuccess?: (_data: PayGuestOrdersResType) => void;
+}) {
   const ordersFilterToPurchase = guest
     ? orders.filter((order) => order.status !== OrderStatus.Paid && order.status !== OrderStatus.Rejected)
     : [];
   const purchasedOrderFilter = guest ? orders.filter((order) => order.status === OrderStatus.Paid) : [];
+
+  const payMutation = usePayOrderMutation();
+
+  const pay = async () => {
+    if (payMutation.isPending || guest === null) return;
+    try {
+      const result = await payMutation.mutateAsync({ guestId: guest.id });
+      onPaySuccess && onPaySuccess(result.payload);
+    } catch (error) {
+      handleErrorApi({ error });
+    }
+  };
+
   return (
     <div className='space-y-2 text-sm'>
       {guest && (
@@ -115,9 +139,17 @@ export default function OrderGuestDetail({ guest, orders }: { guest: Guest; orde
       </div>
 
       <div>
-        <Button className='w-full' size={'sm'} variant={'secondary'} disabled={ordersFilterToPurchase.length === 0}>
-          Thanh toán tất cả ({ordersFilterToPurchase.length} đơn)
-        </Button>
+        <PopoverClose className='w-full' disabled={ordersFilterToPurchase.length === 0}>
+          <Button
+            className='w-full'
+            size={'sm'}
+            variant={'secondary'}
+            disabled={ordersFilterToPurchase.length === 0}
+            onClick={pay}
+          >
+            Thanh toán tất cả ({ordersFilterToPurchase.length} đơn)
+          </Button>
+        </PopoverClose>
       </div>
     </div>
   );

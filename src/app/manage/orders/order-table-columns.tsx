@@ -21,6 +21,7 @@ import { OrderStatus, OrderStatusValues } from '@/constants/type';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { OrderTableContext } from '@/app/manage/orders/order-table';
 import OrderGuestDetail from '@/app/manage/orders/order-guest-detail';
+import { PopoverClose } from '@radix-ui/react-popover';
 
 type OrderItem = GetOrdersResType['data'][0];
 const orderTableColumns: ColumnDef<OrderItem>[] = [
@@ -56,6 +57,7 @@ const orderTableColumns: ColumnDef<OrderItem>[] = [
               </PopoverTrigger>
               <PopoverContent className='w-[320px] sm:w-[440px]'>
                 <OrderGuestDetail guest={guest} orders={orderObjectByGuestId[guest.id]} />
+                <PopoverClose />
               </PopoverContent>
             </Popover>
           )}

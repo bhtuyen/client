@@ -6,7 +6,7 @@ import { toast } from '@/components/ui/use-toast';
 import { OrderStatus } from '@/constants/type';
 import socket from '@/lib/socket';
 import { formatCurrency, getVietnameseOrderStatus } from '@/lib/utils';
-import { UpdateOrderResType } from '@/schemaValidations/order.schema';
+import { PayGuestOrdersResType, UpdateOrderResType } from '@/schemaValidations/order.schema';
 import Image from 'next/image';
 import { useEffect, useMemo } from 'react';
 
@@ -36,7 +36,7 @@ export default function OrderCart() {
           if (order.status === OrderStatus.Paid) {
             return {
               ...result,
-              pay: {
+              paid: {
                 price: result.paid.price + order.dishSnapshot.price * order.quantity,
                 quantity: result.paid.quantity + order.quantity
               }
@@ -59,6 +59,8 @@ export default function OrderCart() {
     [orders]
   );
 
+  console.log(paid);
+
   useEffect(() => {
     if (socket.connected) {
       onConnect();
@@ -73,7 +75,6 @@ export default function OrderCart() {
     }
 
     function onUpadteOrder(data: UpdateOrderResType['data']) {
-      refetch();
       const {
         dishSnapshot: { name },
         quantity,
@@ -83,18 +84,25 @@ export default function OrderCart() {
       toast({
         description: `Món ${name} (SL: ${quantity}) đã được cập nhật sang trạng thái ${getVietnameseOrderStatus(status)}`
       });
+      refetch();
+    }
+    function onPayment(data: PayGuestOrdersResType['data']) {
+      toast({
+        description: `Bạn đã thanh toán thành công ${data.length} đơn`
+      });
+      refetch();
     }
 
     socket.on('connect', onConnect);
-
     socket.on('update-order', onUpadteOrder);
-
     socket.on('disconnect', onDisconnect);
+    socket.on('payment', onPayment);
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
       socket.off('update-order', onUpadteOrder);
+      socket.off('payment', onPayment);
     };
   }, [refetch]);
 
@@ -123,22 +131,18 @@ export default function OrderCart() {
           </div>
         </div>
       ))}
-      {paid.quantity > 0 && (
-        <div className='sticky bottom-0'>
-          <div className='w-full flex space-x-4 text-xl font-semibold'>
-            <span>Đơn chưa đã thanh toán · {paid.quantity} món</span>
-            <span>{formatCurrency(paid.price)}</span>
-          </div>
+      <div className='sticky bottom-0'>
+        <div className='w-full flex space-x-4 text-xl font-semibold'>
+          <span>Đơn chưa thanh toán · {waitingForPaying.quantity} món</span>
+          <span>{formatCurrency(waitingForPaying.price)}</span>
         </div>
-      )}
-      {waitingForPaying.quantity > 0 && (
-        <div className='sticky bottom-0'>
-          <div className='w-full flex space-x-4 text-xl font-semibold'>
-            <span>Đơn chưa thanh toán · {waitingForPaying.quantity} món</span>
-            <span>{formatCurrency(waitingForPaying.price)}</span>
-          </div>
+      </div>
+      <div className='sticky bottom-0'>
+        <div className='w-full flex space-x-4 text-xl font-semibold'>
+          <span>Đơn đã thanh toán · {paid.quantity} món</span>
+          <span>{formatCurrency(paid.price)}</span>
         </div>
-      )}
+      </div>
     </>
   );
 }

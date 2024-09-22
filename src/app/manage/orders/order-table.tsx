@@ -133,7 +133,7 @@ export default function OrderTable() {
       console.log('disconnected');
     }
 
-    function refresh() {
+    function refetch() {
       const now = new Date();
       if (now >= fromDate && now <= toDate) {
         refreshOrderListQuery();
@@ -159,15 +159,21 @@ export default function OrderTable() {
       toast({
         description: `Khách hàng ${guest?.name} tại bàn ${guest?.tableNumber} vừa đặt ${data.length} đơn`
       });
-      refresh();
+      refetch();
+    }
+
+    function onPayment(data: PayGuestOrdersResType['data']) {
+      const { guest } = data[0];
+      toast({
+        description: `Khách hàng ${guest?.name} tại bàn ${guest?.tableNumber} đã thanh toán thành công ${data.length} đơn`
+      });
+      refetch();
     }
 
     socket.on('connect', onConnect);
-
     socket.on('update-order', onUpadteOrder);
-
     socket.on('new-order', onNewOrder);
-
+    socket.on('payment', onPayment);
     socket.on('disconnect', onDisconnect);
 
     return () => {
@@ -175,6 +181,7 @@ export default function OrderTable() {
       socket.off('disconnect', onDisconnect);
       socket.off('update-order', onUpadteOrder);
       socket.off('new-order', onNewOrder);
+      socket.off('payment', onPayment);
     };
   }, [fromDate, refreshOrderListQuery, toDate]);
 
