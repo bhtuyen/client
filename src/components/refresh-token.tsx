@@ -1,7 +1,8 @@
 'use client';
 
 import { useAppContext } from '@/components/app-provider';
-import { checkAndRefreshToken } from '@/lib/utils';
+import socket from '@/lib/socket';
+import { checkAndRefreshToken, ParamType } from '@/lib/utils';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -17,27 +18,37 @@ export default function RefreshToken() {
 
     const TIMEOUT = 1000;
 
-    checkAndRefreshToken({
+    const param: ParamType = {
       onError: () => {
         clearInterval(interval);
         setRole(undefined);
         router.push('/login');
       }
-    });
+    };
 
-    interval = setInterval(
-      () =>
-        checkAndRefreshToken({
-          onError: () => {
-            clearInterval(interval);
-            setRole(undefined);
-            router.push('/login');
-          }
-        }),
-      TIMEOUT
-    );
+    checkAndRefreshToken(param);
+
+    interval = setInterval(() => checkAndRefreshToken(param), TIMEOUT);
+
+    function onConnect() {
+      console.log(socket.id);
+    }
+    function onRefreshToken() {
+      const newParam: ParamType = { ...param, force: true };
+      checkAndRefreshToken(newParam);
+    }
+    function onDisconnect() {
+      console.log('disconnected');
+    }
+
+    socket.on('connect', onConnect);
+    socket.on('refresh-token', onRefreshToken);
+    socket.on('disconnect', onDisconnect);
 
     return () => {
+      socket.off('connect', onConnect);
+      socket.off('refresh-token', onRefreshToken);
+      socket.off('disconnect', onDisconnect);
       clearInterval(interval);
     };
   }, [pathname, router, setRole]);

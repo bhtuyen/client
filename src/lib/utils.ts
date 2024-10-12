@@ -81,8 +81,8 @@ export const removeAuthTokens = () => {
   removeAccessTokenFromLocalStorage();
   removeRefreshTokenFromLocalStorage();
 };
-
-export const checkAndRefreshToken = async (param?: { onError?: () => void; onSuccess?: () => void }) => {
+export type ParamType = { onError?: () => void; onSuccess?: () => void; force?: boolean };
+export const checkAndRefreshToken = async (param?: ParamType) => {
   const accessToken = getAccessTokenFromLocalStorage();
   const refreshToken = getRefreshTokenFromLocalStorage();
   if (!accessToken || !refreshToken) return;
@@ -99,7 +99,7 @@ export const checkAndRefreshToken = async (param?: { onError?: () => void; onSuc
     return;
   }
 
-  if (accessTokenPayload.exp - now < (accessTokenPayload.exp - accessTokenPayload.iat) / 3) {
+  if (param?.force || accessTokenPayload.exp - now < (accessTokenPayload.exp - accessTokenPayload.iat) / 3) {
     // refresh token
     try {
       const role = accessTokenPayload.role;
