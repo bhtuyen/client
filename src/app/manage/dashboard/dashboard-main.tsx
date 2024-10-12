@@ -9,7 +9,6 @@ import { useState } from 'react';
 import { endOfDay, format, startOfDay } from 'date-fns';
 import { useIndicatorQuery } from '@/app/queries/useIndicator';
 
-const PAGE_SIZE = 10;
 const initFromDate = startOfDay(new Date());
 const initToDate = endOfDay(new Date());
 export default function DashboardMain() {

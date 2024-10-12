@@ -7,7 +7,7 @@ import { Suspense, useEffect, useRef } from 'react';
 
 function _Logout() {
   const { mutateAsync } = useLogoutMutation();
-  const { setRole } = useAppContext();
+  const { setRole, disconnectSocket } = useAppContext();
   const router = useRouter();
 
   const ref = useRef<any>(null);
@@ -33,13 +33,14 @@ function _Logout() {
         ref.current = null;
       }, 1000);
       setRole(undefined);
+      disconnectSocket();
       router.push('/login');
     });
 
     return () => {
       clearTimeout(timer);
     };
-  }, [mutateAsync, router, refreshToken, accessToken, setRole]);
+  }, [mutateAsync, router, refreshToken, accessToken, setRole, disconnectSocket]);
 
   return <div>Logout...</div>;
 }

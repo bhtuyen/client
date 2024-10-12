@@ -15,7 +15,7 @@ import { useAppContext } from '@/components/app-provider';
 import { Suspense, useEffect } from 'react';
 
 function _LoginForm() {
-  const { setRole } = useAppContext();
+  const { setRole, socket, createConnectSocket } = useAppContext();
   const loginMutation = useLoginMutation();
 
   const form = useForm<LoginBodyType>({
@@ -46,6 +46,9 @@ function _LoginForm() {
         description: result.payload.message
       });
       setRole(result.payload.data.account.role);
+      if (!socket) {
+        createConnectSocket(result.payload.data.accessToken);
+      }
       router.push('/manage/dashboard');
     } catch (error: any) {
       handleErrorApi({ error, setError: form.setError });

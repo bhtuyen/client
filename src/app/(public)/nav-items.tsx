@@ -60,7 +60,7 @@ export default function NavItems({
   handleNavItemClick?: () => void;
 }) {
   const lgoutMutation = useLogoutMutation();
-  const { role, setRole } = useAppContext();
+  const { role, setRole, disconnectSocket } = useAppContext();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -68,6 +68,7 @@ export default function NavItems({
     try {
       await lgoutMutation.mutateAsync();
       setRole(undefined);
+      disconnectSocket();
       router.push('/');
       handleNavItemClick?.();
     } catch (error) {

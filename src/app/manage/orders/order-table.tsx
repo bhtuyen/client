@@ -35,7 +35,7 @@ import { toast } from '@/components/ui/use-toast';
 import { GuestCreateOrdersResType } from '@/schemaValidations/guest.schema';
 import { useOrderListQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
 import { useTableListQuery } from '@/app/queries/useTable';
-import socket from '@/lib/socket';
+import { useAppContext } from '@/components/app-provider';
 
 export const OrderTableContext = createContext({
   setOrderIdEdit: (_value: number | undefined) => {},
@@ -113,6 +113,8 @@ export default function OrderTable() {
 
   const updateOrderMutation = useUpdateOrderMutation();
 
+  const { socket } = useAppContext();
+
   useEffect(() => {
     table.setPagination({
       pageIndex,
@@ -121,18 +123,6 @@ export default function OrderTable() {
   }, [table, pageIndex]);
 
   useEffect(() => {
-    if (socket.connected) {
-      onConnect();
-    }
-
-    function onConnect() {
-      console.log(socket.id);
-    }
-
-    function onDisconnect() {
-      console.log('disconnected');
-    }
-
     function refetch() {
       const now = new Date();
       if (now >= fromDate && now <= toDate) {
@@ -170,20 +160,16 @@ export default function OrderTable() {
       refetch();
     }
 
-    socket.on('connect', onConnect);
-    socket.on('update-order', onUpadteOrder);
-    socket.on('new-order', onNewOrder);
-    socket.on('payment', onPayment);
-    socket.on('disconnect', onDisconnect);
+    socket?.on('update-order', onUpadteOrder);
+    socket?.on('new-order', onNewOrder);
+    socket?.on('payment', onPayment);
 
     return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      socket.off('update-order', onUpadteOrder);
-      socket.off('new-order', onNewOrder);
-      socket.off('payment', onPayment);
+      socket?.off('update-order', onUpadteOrder);
+      socket?.off('new-order', onNewOrder);
+      socket?.off('payment', onPayment);
     };
-  }, [fromDate, refreshOrderListQuery, toDate]);
+  }, [fromDate, refreshOrderListQuery, toDate, socket]);
 
   // Function
   function resetDateFilter() {

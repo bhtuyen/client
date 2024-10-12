@@ -184,5 +184,5 @@ export function DishesDialog({ onChoose }: { onChoose: (_dish: DishItem) => void
         </div>
       </DialogContent>
     </Dialog>
-  ); 
+  );
 }
