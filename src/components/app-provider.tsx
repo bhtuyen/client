@@ -1,4 +1,5 @@
 'use client';
+import ListenLogoutSocket from '@/components/listen-logout-socket';
 import RefreshToken from '@/components/refresh-token';
 import envConfig from '@/config';
 import { decodeJWT, getAccessTokenFromLocalStorage, removeAuthTokens } from '@/lib/utils';
@@ -83,6 +84,7 @@ const AppProvider = ({
     <AppContext.Provider value={{ role, setRole, socket, createConnectSocket, disconnectSocket }}>
       <QueryClientProvider client={queryClient}>
         <RefreshToken />
+        <ListenLogoutSocket />
         {children}
         <ReactQueryDevtools />
       </QueryClientProvider>
