@@ -15,13 +15,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Upload } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import { useAccountQuery, useUpdateEmployeeMutation } from '@/app/queries/useAccount';
 import { toast } from '@/components/ui/use-toast';
 import { handleErrorApi } from '@/lib/utils';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
+import { Role, RoleValues } from '@/constants/type';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function EditEmployee({
   id,
@@ -42,7 +44,8 @@ export default function EditEmployee({
       avatar: undefined,
       password: undefined,
       confirmPassword: undefined,
-      changePassword: false
+      changePassword: false,
+      role: Role.Employee
     }
   });
 
@@ -50,14 +53,15 @@ export default function EditEmployee({
 
   useEffect(() => {
     if (data) {
-      const { name, email, avatar } = data.payload.data;
+      const { name, email, avatar, role } = data.payload.data;
       form.reset({
         name,
         email,
         avatar: avatar ?? undefined,
         changePassword: form.getValues('changePassword'),
         password: form.getValues('password'),
-        confirmPassword: form.getValues('confirmPassword')
+        confirmPassword: form.getValues('confirmPassword'),
+        role
       });
     }
   }, [data, form]);
@@ -193,6 +197,33 @@ export default function EditEmployee({
                       <div className='col-span-3 w-full space-y-2'>
                         <Input id='email' className='w-full' {...field} />
                         <FormMessage />
+                      </div>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='role'
+                render={({ field }) => (
+                  <FormItem>
+                    <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
+                      <Label htmlFor='email'>Quyền hạn</Label>
+                      <div className='col-span-3 w-full space-y-2'>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder='Chọn quyền hạn' />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {RoleValues.filter((role) => role !== Role.Guest).map((role) => (
+                              <SelectItem key={role} value={role}>
+                                {role}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                   </FormItem>
