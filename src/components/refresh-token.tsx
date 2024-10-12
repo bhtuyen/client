@@ -3,6 +3,7 @@
 import { useAppContext } from '@/components/app-provider';
 import socket from '@/lib/socket';
 import { checkAndRefreshToken, ParamType } from '@/lib/utils';
+import { AccountType } from '@/schemaValidations/account.schema';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -33,8 +34,14 @@ export default function RefreshToken() {
     function onConnect() {
       console.log(socket.id);
     }
-    function onRefreshToken() {
-      const newParam: ParamType = { ...param, force: true };
+    function onRefreshToken(data: AccountType) {
+      const newParam: ParamType = {
+        ...param,
+        onSuccess: () => {
+          setRole(data.role);
+        },
+        force: true
+      };
       checkAndRefreshToken(newParam);
     }
     function onDisconnect() {
