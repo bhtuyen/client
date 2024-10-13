@@ -9,14 +9,16 @@ import { LoginBody, LoginBodyType } from '@/schemaValidations/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLoginMutation } from '@/app/queries/useAuth';
 import { toast } from '@/components/ui/use-toast';
-import { handleErrorApi } from '@/lib/utils';
+import { getOauthGoogleUrl, handleErrorApi } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppContext } from '@/components/app-provider';
 import { Suspense, useEffect } from 'react';
+import Link from 'next/link';
 
 function _LoginForm() {
-  const { setRole, socket, createConnectSocket } = useAppContext();
+  const { setRole, socket, createConnectSocket, disconnectSocket } = useAppContext();
   const loginMutation = useLoginMutation();
+  const googleOauthUrl = getOauthGoogleUrl();
 
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
@@ -34,8 +36,9 @@ function _LoginForm() {
   useEffect(() => {
     if (Boolean(clearTokens)) {
       setRole(undefined);
+      disconnectSocket();
     }
-  }, [clearTokens, setRole]);
+  }, [clearTokens, setRole, disconnectSocket]);
 
   const onSubmit = async (data: LoginBodyType) => {
     if (loginMutation.isPending) return;
@@ -100,9 +103,11 @@ function _LoginForm() {
               <Button type='submit' className='w-full'>
                 Đăng nhập
               </Button>
-              <Button variant='outline' className='w-full' type='button'>
-                Đăng nhập bằng Google
-              </Button>
+              <Link href={googleOauthUrl}>
+                <Button variant='outline' className='w-full' type='button'>
+                  Đăng nhập bằng Google
+                </Button>
+              </Link>
             </div>
           </form>
         </Form>

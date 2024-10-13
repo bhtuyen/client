@@ -3,6 +3,7 @@ import {
   LoginBodyType,
   LoginResType,
   LogoutBodyType,
+  OauthLoginType,
   RefreshTokenBodyType,
   RefreshTokenResType
 } from '@/schemaValidations/auth.schema';
@@ -47,7 +48,8 @@ const authApiRequest = {
     const result = await this.refreshTokenRequest;
     this.refreshTokenRequest = null;
     return result;
-  }
+  },
+  setCookieOauth: (body: OauthLoginType) => http.post('/api/auth/set-cookie-oauth', body, { baseUrl: '' })
 };
 
 export default authApiRequest;

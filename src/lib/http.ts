@@ -6,7 +6,7 @@ import {
   setAccessTokenToLocalStorage,
   setRefreshTokenToLocalStorage
 } from '@/lib/utils';
-import { LoginResType } from '@/schemaValidations/auth.schema';
+import { LoginResType, OauthLoginType } from '@/schemaValidations/auth.schema';
 import { redirect } from 'next/navigation';
 
 /**
@@ -176,6 +176,10 @@ const request = async <Response>(
     const normalizedUrl = normalizePath(url);
     if (['api/auth/login', 'api/guest/auth/login'].includes(normalizedUrl)) {
       const { accessToken, refreshToken } = (payload as LoginResType).data;
+      setAccessTokenToLocalStorage(accessToken);
+      setRefreshTokenToLocalStorage(refreshToken);
+    } else if ('api/auth/set-cookie-oauth' === normalizedUrl) {
+      const { accessToken, refreshToken } = payload as OauthLoginType;
       setAccessTokenToLocalStorage(accessToken);
       setRefreshTokenToLocalStorage(refreshToken);
     } else if (['api/auth/logout', 'api/guest/auth/logout'].includes(normalizedUrl)) {

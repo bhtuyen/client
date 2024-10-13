@@ -10,3 +10,8 @@ export const useLogoutMutation = () =>
   useMutation({
     mutationFn: authApiRequest.logout
   });
+
+export const useSetCookieOauthMutation = () =>
+  useMutation({
+    mutationFn: authApiRequest.setCookieOauth
+  });

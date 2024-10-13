@@ -56,4 +56,9 @@ export const LoginGoogleQuery = z.object({
   code: z.string()
 });
 
+export type OauthLoginType = {
+  accessToken: string;
+  refreshToken: string;
+};
+
 export type LoginGoogleQueryType = z.TypeOf<typeof LoginGoogleQuery>;
