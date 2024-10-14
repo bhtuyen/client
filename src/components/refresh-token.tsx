@@ -1,6 +1,6 @@
 'use client';
 
-import { useAppContext } from '@/components/app-provider';
+import { useAppStore } from '@/components/app-provider';
 import { checkAndRefreshToken, ParamType } from '@/lib/utils';
 import { AccountType } from '@/schemaValidations/account.schema';
 import { usePathname, useRouter } from 'next/navigation';
@@ -10,7 +10,7 @@ const UNAUTHENTICATED_PATHS = ['/login', '/logout', '/refresh-token'];
 
 export default function RefreshToken() {
   const pathname = usePathname();
-  const { setRole, socket, disconnectSocket } = useAppContext();
+  const { setRole, socket, disconnectSocket } = useAppStore();
   const router = useRouter();
   useEffect(() => {
     if (UNAUTHENTICATED_PATHS.includes(pathname)) return;
@@ -22,7 +22,7 @@ export default function RefreshToken() {
       onError: () => {
         clearInterval(interval);
         disconnectSocket();
-        setRole(undefined);
+        setRole(null);
 
         router.push('/login');
       }

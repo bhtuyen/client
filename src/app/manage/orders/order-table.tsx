@@ -35,7 +35,7 @@ import { toast } from '@/components/ui/use-toast';
 import { GuestCreateOrdersResType } from '@/schemaValidations/guest.schema';
 import { useOrderListQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
 import { useTableListQuery } from '@/app/queries/useTable';
-import { useAppContext } from '@/components/app-provider';
+import { useAppStore } from '@/components/app-provider';
 
 export const OrderTableContext = createContext({
   setOrderIdEdit: (_value: number | undefined) => {},
@@ -113,7 +113,7 @@ export default function OrderTable() {
 
   const updateOrderMutation = useUpdateOrderMutation();
 
-  const { socket } = useAppContext();
+  const { socket } = useAppStore();
 
   useEffect(() => {
     table.setPagination({

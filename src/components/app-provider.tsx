@@ -6,8 +6,9 @@ import { decodeJWT, getAccessTokenFromLocalStorage, removeAuthTokens } from '@/l
 import { RoleType } from '@/types/jwt.types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { create } from 'zustand';
 
 // Default
 // staleTime: 0
@@ -21,16 +22,52 @@ const queryClient = new QueryClient({
   }
 });
 
-export const AppContext = createContext({
-  role: undefined as RoleType | undefined,
-  setRole: (_role: RoleType | undefined) => {},
-  socket: null as Socket | null,
-  createConnectSocket: (_accessToken: string) => {},
-  disconnectSocket: () => {}
-});
+type StoreType = {
+  role: RoleType | null;
+  setRole: (_role: RoleType | null) => void;
+  socket: Socket | null;
+  createConnectSocket: (_accessToken: string) => void;
+  disconnectSocket: () => void;
+};
 
-export const useAppContext = () => {
-  return useContext(AppContext);
+export const useStore = create<StoreType>((set) => ({
+  role: null,
+  socket: null,
+  setRole: (role: RoleType | null) => {
+    set({ role });
+    if (!role) {
+      removeAuthTokens();
+    }
+  },
+  createConnectSocket: (accessToken: string) => {
+    if (accessToken) {
+      set({
+        socket: io(envConfig.NEXT_PUBLIC_API_ENDPOINT, {
+          auth: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        })
+      });
+    }
+  },
+  disconnectSocket: () => {
+    set((state) => {
+      if (state.socket) {
+        state.socket.disconnect();
+        return { socket: null };
+      }
+      return state;
+    });
+  }
+}));
+
+export const useAppStore = () => {
+  const role = useStore((state) => state.role);
+  const setRole = useStore((state) => state.setRole);
+  const socket = useStore((state) => state.socket);
+  const createConnectSocket = useStore((state) => state.createConnectSocket);
+  const disconnectSocket = useStore((state) => state.disconnectSocket);
+  return { role, setRole, socket, createConnectSocket, disconnectSocket };
 };
 
 const AppProvider = ({
@@ -38,34 +75,7 @@ const AppProvider = ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const [role, setRoleState] = useState<RoleType | undefined>(undefined);
-  const [socket, setSocket] = useState<Socket | null>(null);
-
-  const createConnectSocket = useCallback((accessToken: string) => {
-    if (accessToken) {
-      setSocket(
-        io(envConfig.NEXT_PUBLIC_API_ENDPOINT, {
-          auth: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        })
-      );
-    }
-  }, []);
-
-  const disconnectSocket = useCallback(() => {
-    if (socket) {
-      socket.disconnect();
-      setSocket(null);
-    }
-  }, [socket]);
-
-  const setRole = useCallback((role: RoleType | undefined) => {
-    setRoleState(role);
-    if (!role) {
-      removeAuthTokens();
-    }
-  }, []);
+  const { setRole, createConnectSocket } = useAppStore();
 
   const count = useRef(0);
 
@@ -74,21 +84,19 @@ const AppProvider = ({
     const accessToken = getAccessTokenFromLocalStorage();
     if (accessToken) {
       const { role } = decodeJWT(accessToken);
-      setRoleState(role);
+      setRole(role);
       createConnectSocket(accessToken);
       count.current++;
     }
-  }, [createConnectSocket]);
+  }, [createConnectSocket, setRole]);
 
   return (
-    <AppContext.Provider value={{ role, setRole, socket, createConnectSocket, disconnectSocket }}>
-      <QueryClientProvider client={queryClient}>
-        <RefreshToken />
-        <ListenLogoutSocket />
-        {children}
-        <ReactQueryDevtools />
-      </QueryClientProvider>
-    </AppContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <RefreshToken />
+      <ListenLogoutSocket />
+      {children}
+      <ReactQueryDevtools />
+    </QueryClientProvider>
   );
 };
 

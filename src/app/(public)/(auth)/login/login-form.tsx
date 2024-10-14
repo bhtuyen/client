@@ -11,12 +11,12 @@ import { useLoginMutation } from '@/app/queries/useAuth';
 import { toast } from '@/components/ui/use-toast';
 import { getOauthGoogleUrl, handleErrorApi } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAppContext } from '@/components/app-provider';
+import { useAppStore } from '@/components/app-provider';
 import { Suspense, useEffect } from 'react';
 import Link from 'next/link';
 
 function _LoginForm() {
-  const { setRole, socket, createConnectSocket, disconnectSocket } = useAppContext();
+  const { setRole, socket, createConnectSocket, disconnectSocket } = useAppStore();
   const loginMutation = useLoginMutation();
   const googleOauthUrl = getOauthGoogleUrl();
 
@@ -35,7 +35,7 @@ function _LoginForm() {
 
   useEffect(() => {
     if (Boolean(clearTokens)) {
-      setRole(undefined);
+      setRole(null);
       disconnectSocket();
     }
   }, [clearTokens, setRole, disconnectSocket]);

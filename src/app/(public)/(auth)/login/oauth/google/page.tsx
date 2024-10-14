@@ -1,14 +1,14 @@
 'use client';
 
 import { useSetCookieOauthMutation } from '@/app/queries/useAuth';
-import { useAppContext } from '@/components/app-provider';
+import { useAppStore } from '@/components/app-provider';
 import { toast } from '@/components/ui/use-toast';
 import { decodeJWT } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
 export default function OauthGooglePage() {
-  const { createConnectSocket, setRole } = useAppContext();
+  const { createConnectSocket, setRole } = useAppStore();
 
   const { mutateAsync } = useSetCookieOauthMutation();
 

@@ -1,6 +1,6 @@
 'use client';
 import menuItems from '@/app/manage/menuItems';
-import { useAppContext } from '@/components/app-provider';
+import { useAppStore } from '@/components/app-provider';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { Role } from '@/constants/type';
 import { cn } from '@/lib/utils';
@@ -10,7 +10,7 @@ import { usePathname } from 'next/navigation';
 
 export default function NavLinks() {
   const pathname = usePathname();
-  const { role } = useAppContext();
+  const { role } = useAppStore();
 
   return (
     <TooltipProvider>

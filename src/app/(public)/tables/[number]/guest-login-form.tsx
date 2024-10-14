@@ -11,7 +11,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useGuestLoginMutation } from '@/app/queries/useGuest';
 import { handleErrorApi } from '@/lib/utils';
-import { useAppContext } from '@/components/app-provider';
+import { useAppStore } from '@/components/app-provider';
 
 export default function GuestLoginForm() {
   const searchParam = useSearchParams();
@@ -28,7 +28,7 @@ export default function GuestLoginForm() {
     }
   });
   const guestLoginMutation = useGuestLoginMutation();
-  const { setRole } = useAppContext();
+  const { setRole } = useAppStore();
 
   const onSubmit = async (data: GuestLoginBodyType) => {
     if (guestLoginMutation.isPending) return;

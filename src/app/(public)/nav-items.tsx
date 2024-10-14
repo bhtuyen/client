@@ -1,7 +1,7 @@
 'use client';
 
 import { useLogoutMutation } from '@/app/queries/useAuth';
-import { useAppContext } from '@/components/app-provider';
+import { useAppStore } from '@/components/app-provider';
 import {
   AlertDialogHeader,
   AlertDialogFooter,
@@ -60,14 +60,14 @@ export default function NavItems({
   handleNavItemClick?: () => void;
 }) {
   const lgoutMutation = useLogoutMutation();
-  const { role, setRole, disconnectSocket } = useAppContext();
+  const { role, setRole, disconnectSocket } = useAppStore();
   const router = useRouter();
 
   const handleLogout = async () => {
     if (lgoutMutation.isPending) return;
     try {
       await lgoutMutation.mutateAsync();
-      setRole(undefined);
+      setRole(null);
       disconnectSocket();
       router.push('/');
       handleNavItemClick?.();

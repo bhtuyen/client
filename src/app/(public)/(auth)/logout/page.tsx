@@ -1,13 +1,13 @@
 'use client';
 import { useLogoutMutation } from '@/app/queries/useAuth';
-import { useAppContext } from '@/components/app-provider';
+import { useAppStore } from '@/components/app-provider';
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef } from 'react';
 
 function _Logout() {
   const { mutateAsync } = useLogoutMutation();
-  const { setRole, disconnectSocket } = useAppContext();
+  const { setRole, disconnectSocket } = useAppStore();
   const router = useRouter();
 
   const ref = useRef<any>(null);
@@ -32,7 +32,7 @@ function _Logout() {
       timer = setTimeout(() => {
         ref.current = null;
       }, 1000);
-      setRole(undefined);
+      setRole(null);
       disconnectSocket();
       router.push('/login');
     });
