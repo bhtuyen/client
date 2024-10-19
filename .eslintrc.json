@@ -3,7 +3,8 @@
     "plugin:@tanstack/eslint-plugin-query/recommended",
     "next/core-web-vitals",
     "eslint-config-prettier",
-    "prettier"
+    "prettier",
+    "next/babel"
   ],
   "plugins": ["@tanstack/query", "prettier"],
   "rules": {
