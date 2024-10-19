@@ -205,3 +205,15 @@ export const getOauthGoogleUrl = () => {
   const qs = new URLSearchParams(options);
   return `${rootUrl}?${qs.toString()}`;
 };
+
+export const wrapperServerApi = async <T>(fn: () => Promise<T>) => {
+  let result: T | null = null;
+  try {
+    result = await fn();
+  } catch (error: any) {
+    if (error.digest?.includes('NEXT_REDIRECT')) {
+      throw error;
+    }
+  }
+  return result;
+};

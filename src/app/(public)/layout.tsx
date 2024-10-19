@@ -5,9 +5,11 @@ import NavItems from '@/app/(public)/nav-items';
 import NavigationMenu from '@/app/(public)/navigation-menu';
 
 export default function Layout({
-  children
+  children,
+  modal
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <div className='flex min-h-screen w-full flex-col relative'>
@@ -24,7 +26,10 @@ export default function Layout({
           <DarkModeToggle />
         </div>
       </header>
-      <main className='flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8'>{children}</main>
+      <main className='flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8'>
+        {children}
+        {modal}
+      </main>
     </div>
   );
 }

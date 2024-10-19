@@ -5,9 +5,8 @@ import { useAppStore } from '@/components/app-provider';
 import { toast } from '@/components/ui/use-toast';
 import { decodeJWT } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef } from 'react';
-
-export default function OauthGooglePage() {
+import { Suspense, useEffect, useRef } from 'react';
+function OauthGooglePage() {
   const { createConnectSocket, setRole } = useAppStore();
 
   const { mutateAsync } = useSetCookieOauthMutation();
@@ -53,4 +52,12 @@ export default function OauthGooglePage() {
   }, [accessToken, createConnectSocket, message, refreshToken, setRole, route, mutateAsync]);
 
   return null;
+}
+
+export default function WrapperOauthGooglePage() {
+  return (
+    <Suspense>
+      <OauthGooglePage />
+    </Suspense>
+  );
 }
