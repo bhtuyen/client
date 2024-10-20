@@ -1,0 +1,10 @@
+{
+  "HomePage": {
+    "title": "Chào bạn"
+  },
+  "SwitchLanguage": {
+    "title": "Chuyển ngôn ngữ",
+    "vi": "Tiếng Việt",
+    "en": "Tiếng Anh"
+  }
+}

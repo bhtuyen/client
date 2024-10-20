@@ -3,6 +3,7 @@ import { Package2 } from 'lucide-react';
 import DarkModeToggle from '@/components/dark-mode-toggle';
 import NavItems from '@/app/(public)/nav-items';
 import NavigationMenu from '@/app/(public)/navigation-menu';
+import { SwitchLanguage } from '@/components/switch-language';
 
 export default function Layout({
   children,
@@ -22,7 +23,8 @@ export default function Layout({
           <NavItems className='text-muted-foreground transition-colors hover:text-foreground flex-shrink-0' />
         </nav>
         <NavigationMenu />
-        <div className='ml-auto'>
+        <div className='ml-auto flex items-center gap-x-2'>
+          <SwitchLanguage />
           <DarkModeToggle />
         </div>
       </header>

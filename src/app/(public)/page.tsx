@@ -1,6 +1,7 @@
 import { dishApiRequets } from '@/app/apiRequests/dish';
 import { formatCurrency } from '@/lib/utils';
 import { DishListResType } from '@/schemaValidations/dish.schema';
+import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -12,6 +13,7 @@ export default async function HomePage() {
   } catch (error) {
     return <div>Something went wrong</div>;
   }
+  const t = await getTranslations('HomePage');
 
   return (
     <div className='w-full space-y-4'>
@@ -26,7 +28,9 @@ export default async function HomePage() {
           className='absolute top-0 left-0 w-full h-full object-cover'
         />
         <div className='z-20 relative py-10 md:py-20 px-4 sm:px-10 md:px-20'>
-          <h1 className='text-center text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold'>Nhà hàng Big Boy</h1>
+          <h1 className='text-center text-xl sm:text-2xl md:text-4xl lg:text-5xl font-bold'>
+            Nhà hàng Big Boy {t('title')}
+          </h1>
           <p className='text-center text-sm sm:text-base mt-4'>Vị ngon, trọn khoảnh khắc</p>
         </div>
       </section>
