@@ -1,4 +1,5 @@
 import envConfig from '@/config';
+import { redirect } from '@/i18n/routing';
 import {
   getAccessTokenFromLocalStorage,
   normalizePath,
@@ -7,7 +8,6 @@ import {
   setRefreshTokenToLocalStorage
 } from '@/lib/utils';
 import { LoginResType, OauthLoginType } from '@/schemaValidations/auth.schema';
-import { redirect } from 'next/navigation';
 
 /**
  * customOptions: Tùy chỉnh options cho fetch
@@ -155,7 +155,7 @@ const request = async <Response>(
           } finally {
             removeAuthTokens();
             clientLogoutRequest = null;
-            location.href = '/login';
+            redirect('/login');
           }
         }
       } else {

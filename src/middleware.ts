@@ -2,12 +2,15 @@ import { decodeJWT } from '@/lib/utils';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { Role } from '@/constants/type';
+import createMiddleware from 'next-intl/middleware';
+import { routing } from '@/i18n/routing';
+import { defaultLocale } from '@/config';
 
-const managePaths = ['/manage'];
-const guestPaths = ['/guest'];
-const ownerPaths = ['/manage/accounts'];
+const managePaths = ['/vi/manage', '/en/manage'];
+const guestPaths = ['/vi/guest', '/en/guest'];
+const ownerPaths = ['/vi/manage/accounts', '/en/manage/accounts'];
 const privatePaths = [...managePaths, ...guestPaths];
-const unAuthPaths = ['/login'];
+const unAuthPaths = ['/vi/login', '/en/login'];
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
@@ -15,10 +18,11 @@ export function middleware(request: NextRequest) {
 
   const isRefreshToken = request.cookies.has('refreshToken');
   const isAccessToken = request.cookies.has('accessToken');
+  const locale = request.cookies.get('NEXT_LOCALE')?.value ?? defaultLocale;
 
   // 1. Chua login thi khong cho vao path private
   if (privatePaths.some((path) => pathname.startsWith(path)) && !isRefreshToken) {
-    const url = new URL('/login', request.url);
+    const url = new URL(`/${locale}/login`, request.url);
     url.searchParams.set('clearTokens', 'true');
     return NextResponse.redirect(url);
   }
@@ -27,12 +31,12 @@ export function middleware(request: NextRequest) {
   if (isRefreshToken) {
     // 2.1. Neu da login thi khong cho vao path login
     if (unAuthPaths.some((path) => pathname.startsWith(path))) {
-      return NextResponse.redirect(new URL('/', request.nextUrl));
+      return NextResponse.redirect(new URL(`/${locale}`, request.nextUrl));
     }
 
     // 2.2. Neu da login ma access token het han thi refresh token
     if (privatePaths.some((path) => pathname.startsWith(path)) && !isAccessToken) {
-      const url = new URL('/refresh-token', request.url);
+      const url = new URL(`/${locale}/refresh-token`, request.url);
       url.searchParams.set('refreshToken', request.cookies.get('refreshToken')?.value ?? '');
       url.searchParams.set('redirect', pathname);
       return NextResponse.redirect(url);
@@ -46,14 +50,14 @@ export function middleware(request: NextRequest) {
     const isNotOwnerGoToOwner = role !== Role.Owner && ownerPaths.some((path) => pathname.startsWith(path));
 
     if (isGuestGoToManage || isNotGuestGoToGuest || isNotOwnerGoToOwner) {
-      return NextResponse.redirect(new URL('/', request.nextUrl));
+      return NextResponse.redirect(new URL(`/${locale}`, request.nextUrl));
     }
   }
 
-  return NextResponse.next();
+  return createMiddleware(routing)(request);
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/manage/:path*', '/guest/:path*', '/login']
+  matcher: ['/', '/(vi|en)/:path*']
 };

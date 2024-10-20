@@ -9,28 +9,30 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Locale, locales } from '@/config';
-import { setUserLocale } from '@/services/locale';
+import { useRouter, usePathname } from '@/i18n/routing';
 import { useLocale, useTranslations } from 'next-intl';
 
 export function SwitchLanguage() {
-  const t = useTranslations('SwitchLanguage');
+  const tSwitchLanguage = useTranslations('switch-language');
   const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
   return (
     <Select
       value={locale}
       onValueChange={(value) => {
-        setUserLocale(value as Locale);
+        router.replace(pathname, { locale: value as Locale });
       }}
     >
       <SelectTrigger className='w-[180px]' title='swith-language'>
-        <SelectValue placeholder={t('title')} />
+        <SelectValue placeholder={tSwitchLanguage('title')} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           {locales.map((locale) => {
             return (
               <SelectItem key={locale} value={locale}>
-                <SelectLabel>{t(locale)}</SelectLabel>
+                <SelectLabel>{tSwitchLanguage(locale)}</SelectLabel>
               </SelectItem>
             );
           })}

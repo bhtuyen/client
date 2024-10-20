@@ -1,9 +1,6 @@
 /* eslint-disable no-unused-vars */
-import en from './messages/en.json';
-
-type Messages = typeof en;
-
+import { MessageType } from '@/types/message.type';
 declare global {
   // Use type safe message keys with `next-intl`
-  interface IntlMessages extends Messages {}
+  interface IntlMessages extends MessageType {}
 }

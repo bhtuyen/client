@@ -1,9 +1,9 @@
 'use client';
 
 import { useAppStore } from '@/components/app-provider';
+import { usePathname, useRouter } from '@/i18n/routing';
 import { checkAndRefreshToken, ParamType } from '@/lib/utils';
 import { AccountType } from '@/schemaValidations/account.schema';
-import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 const UNAUTHENTICATED_PATHS = ['/login', '/logout', '/refresh-token'];
