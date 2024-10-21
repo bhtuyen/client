@@ -219,7 +219,7 @@ export const wrapperServerApi = async <T>(fn: () => Promise<T>) => {
   return result;
 };
 
-export const getSlugifyString = ({ name, id }: { name: string; id: number }) => {
+export const generateSlugify = ({ name, id }: { name: string; id: number }) => {
   return `${slugify(name)}-.${id}`;
 };
 

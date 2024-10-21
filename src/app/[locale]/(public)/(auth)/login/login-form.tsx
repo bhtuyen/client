@@ -15,6 +15,7 @@ import { useEffect } from 'react';
 import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
+import { KeysOfMessageType } from '@/types/message.type';
 
 export default function LoginForm() {
   const { setRole, socket, createConnectSocket, disconnectSocket } = useAppStore();
@@ -37,6 +38,8 @@ export default function LoginForm() {
   const router = useRouter();
 
   const clearTokens = searchParams?.get('clearTokens');
+
+  const tMessageValidation = useTranslations('message-validation');
 
   useEffect(() => {
     if (Boolean(clearTokens)) {
@@ -81,12 +84,14 @@ export default function LoginForm() {
               <FormField
                 control={form.control}
                 name='email'
-                render={({ field }) => (
+                render={({ field, formState: { errors } }) => (
                   <FormItem>
                     <div className='grid gap-2'>
                       <Label htmlFor='email'>{tLoginForm('email')}</Label>
                       <Input id='email' type='email' placeholder='m@example.com' required {...field} />
-                      <FormMessage />
+                      <FormMessage
+                        message={tMessageValidation(errors.email?.message as KeysOfMessageType<'message-validation'>)}
+                      />
                     </div>
                   </FormItem>
                 )}

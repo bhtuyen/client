@@ -30,5 +30,8 @@
   "alert-dialog": {
     "title-logout": "Bạn có muốn đăng xuất không?",
     "description-logout": "Việc đăng xuất có thể làm mất đi hóa đơn của bạn"
+  },
+  "message-validation": {
+    "invalid-email": "Email không hợp lệ"
   }
 }
