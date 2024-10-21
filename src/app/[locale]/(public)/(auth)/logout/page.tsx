@@ -1,21 +1,21 @@
 'use client';
 import { useLogoutMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
+import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
 import { useRouter } from '@/i18n/routing';
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from '@/lib/utils';
-import { useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
-function _Logout() {
+export default function Logout() {
   const { mutateAsync } = useLogoutMutation();
   const { setRole, disconnectSocket } = useAppStore();
   const router = useRouter();
 
   const ref = useRef<any>(null);
 
-  const searchParam = useSearchParams();
-  const refreshToken = searchParam.get('refreshToken');
-  const accessToken = searchParam.get('accessToken');
+  const { searchParams, setSearchParams } = useSearchParamsLoader();
+  const refreshToken = searchParams?.get('refreshToken');
+  const accessToken = searchParams?.get('accessToken');
 
   useEffect(() => {
     if (
@@ -43,13 +43,5 @@ function _Logout() {
     };
   }, [mutateAsync, router, refreshToken, accessToken, setRole, disconnectSocket]);
 
-  return <div>Logout...</div>;
-}
-
-export default function LogoutPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <_Logout />
-    </Suspense>
-  );
+  return <SearchParamsLoader onParamsReceived={setSearchParams} />;
 }

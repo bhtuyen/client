@@ -10,13 +10,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLoginMutation } from '@/app/queries/useAuth';
 import { toast } from '@/components/ui/use-toast';
 import { getOauthGoogleUrl, handleErrorApi } from '@/lib/utils';
-import { useSearchParams } from 'next/navigation';
 import { useAppStore } from '@/components/app-provider';
-import { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link, useRouter } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
+import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
 
-function _LoginForm() {
+export default function LoginForm() {
   const { setRole, socket, createConnectSocket, disconnectSocket } = useAppStore();
   const loginMutation = useLoginMutation();
   const googleOauthUrl = getOauthGoogleUrl();
@@ -29,13 +29,14 @@ function _LoginForm() {
     }
   });
 
+  const { searchParams, setSearchParams } = useSearchParamsLoader();
+
   const tLoginForm = useTranslations('login-form');
   const tButton = useTranslations('button');
 
   const router = useRouter();
-  const searchParams = useSearchParams();
 
-  const clearTokens = searchParams.get('clearTokens');
+  const clearTokens = searchParams?.get('clearTokens');
 
   useEffect(() => {
     if (Boolean(clearTokens)) {
@@ -64,6 +65,7 @@ function _LoginForm() {
 
   return (
     <Card className='mx-auto max-w-sm'>
+      <SearchParamsLoader onParamsReceived={setSearchParams} />
       <CardHeader>
         <CardTitle className='text-2xl'>{tLoginForm('title')}</CardTitle>
         <CardDescription>{tLoginForm('description')}</CardDescription>
@@ -117,13 +119,5 @@ function _LoginForm() {
         </Form>
       </CardContent>
     </Card>
-  );
-}
-
-export default function LoginForm() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <_LoginForm />
-    </Suspense>
   );
 }

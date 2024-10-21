@@ -2,12 +2,12 @@
 
 import { useSetCookieOauthMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
+import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
 import { toast } from '@/components/ui/use-toast';
 import { useRouter } from '@/i18n/routing';
 import { decodeJWT } from '@/lib/utils';
-import { useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useRef } from 'react';
-function OauthGooglePage() {
+import { useEffect, useRef } from 'react';
+export default function OauthGooglePage() {
   const { createConnectSocket, setRole } = useAppStore();
 
   const { mutateAsync } = useSetCookieOauthMutation();
@@ -16,11 +16,11 @@ function OauthGooglePage() {
 
   const counter = useRef(0);
 
-  const searchParam = useSearchParams();
+  const { searchParams, setSearchParams } = useSearchParamsLoader();
 
-  const accessToken = searchParam.get('accessToken');
-  const refreshToken = searchParam.get('refreshToken');
-  const message = searchParam.get('message');
+  const accessToken = searchParams?.get('accessToken');
+  const refreshToken = searchParams?.get('refreshToken');
+  const message = searchParams?.get('message');
 
   useEffect(() => {
     if (accessToken && refreshToken && counter.current === 0) {
@@ -52,13 +52,5 @@ function OauthGooglePage() {
     counter.current++;
   }, [accessToken, createConnectSocket, message, refreshToken, setRole, route, mutateAsync]);
 
-  return null;
-}
-
-export default function WrapperOauthGooglePage() {
-  return (
-    <Suspense>
-      <OauthGooglePage />
-    </Suspense>
-  );
+  return <SearchParamsLoader onParamsReceived={setSearchParams} />;
 }

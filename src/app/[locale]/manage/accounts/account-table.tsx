@@ -30,7 +30,7 @@ import { AccountListResType, AccountType } from '@/schemaValidations/account.sch
 import AddEmployee from '@/app/[locale]/manage/accounts/add-employee';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import EditEmployee from '@/app/[locale]/manage/accounts/edit-employee';
-import { createContext, Suspense, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,11 +41,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
-import { useSearchParams } from 'next/navigation';
 import AutoPagination from '@/components/auto-pagination';
 import { useAccountListQuery, useDeleteEmployeeMutation } from '@/app/queries/useAccount';
 import { toast } from '@/components/ui/use-toast';
 import { handleErrorApi } from '@/lib/utils';
+import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
 
 type AccountItem = AccountListResType['data'][0];
 
@@ -176,9 +176,9 @@ function AlertDialogDeleteAccount({
 }
 // Số lượng item trên 1 trang
 const PAGE_SIZE = 10;
-export function _AccountTable() {
-  const searchParam = useSearchParams();
-  const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1;
+export default function AccountTable() {
+  const { searchParams, setSearchParams } = useSearchParamsLoader();
+  const page = searchParams?.get('page') ? Number(searchParams?.get('page')) : 1;
   const pageIndex = page - 1;
   // const params = Object.fromEntries(searchParam.entries())
   const [employeeIdEdit, setEmployeeIdEdit] = useState<number | undefined>();
@@ -233,6 +233,7 @@ export function _AccountTable() {
         setEmployeeDelete
       }}
     >
+      <SearchParamsLoader onParamsReceived={setSearchParams} />
       <div className='w-full'>
         <EditEmployee id={employeeIdEdit} setId={setEmployeeIdEdit} onSubmitSuccess={() => {}} />
         <AlertDialogDeleteAccount employeeDelete={employeeDelete} setEmployeeDelete={setEmployeeDelete} />
@@ -296,13 +297,5 @@ export function _AccountTable() {
         </div>
       </div>
     </AccountTableContext.Provider>
-  );
-}
-
-export default function AccountTable() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <_AccountTable />
-    </Suspense>
   );
 }

@@ -6,12 +6,17 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import AppProvider from '@/components/app-provider';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, unstable_setRequestLocale } from 'next-intl/server';
+import { routing } from '@/i18n/routing';
 
 const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans'
 });
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -27,6 +32,7 @@ export default async function RootLayout({
     locale: string;
   };
 }>) {
+  unstable_setRequestLocale(locale);
   const message = await getMessages();
 
   return (

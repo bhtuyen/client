@@ -1,17 +1,18 @@
-import Modal from '@/app/[locale]/(public)/@modal/(.)dishes/[id]/modal';
+import Modal from '@/app/[locale]/(public)/@modal/(.)dishes/[slug]/modal';
 import { dishApiRequets } from '@/app/apiRequests/dish';
-import { formatCurrency, wrapperServerApi } from '@/lib/utils';
+import { formatCurrency, getIdFromSlugifyString, wrapperServerApi } from '@/lib/utils';
 import React from 'react';
 import Image from 'next/image';
 
 export default async function page({
-  params: { id }
+  params: { slug }
 }: {
   params: {
-    id: string;
+    slug: string;
   };
 }) {
-  const reslut = await wrapperServerApi(() => dishApiRequets.getById(Number(id)));
+  const id = getIdFromSlugifyString(slug);
+  const reslut = await wrapperServerApi(() => dishApiRequets.getById(id));
   const dish = reslut?.payload.data;
   return (
     <Modal>

@@ -1,15 +1,15 @@
 'use client';
+import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
 import { useRouter } from '@/i18n/routing';
 import { checkAndRefreshToken, getRefreshTokenFromLocalStorage } from '@/lib/utils';
-import { useSearchParams } from 'next/navigation';
-import { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 
-function _RefreshToken() {
+export default function RefreshToken() {
   const router = useRouter();
 
-  const searchParam = useSearchParams();
-  const refreshToken = searchParam.get('refreshToken');
-  const redirectPathname = searchParam.get('redirect');
+  const { searchParams, setSearchParams } = useSearchParamsLoader();
+  const refreshToken = searchParams?.get('refreshToken');
+  const redirectPathname = searchParams?.get('redirect');
 
   useEffect(() => {
     if (refreshToken && refreshToken === getRefreshTokenFromLocalStorage()) {
@@ -23,13 +23,5 @@ function _RefreshToken() {
     }
   }, [router, refreshToken, redirectPathname]);
 
-  return <div>Refresh token...</div>;
-}
-
-export default function RefreshTokenPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <_RefreshToken />
-    </Suspense>
-  );
+  return <SearchParamsLoader onParamsReceived={setSearchParams} />;
 }

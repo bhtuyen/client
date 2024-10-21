@@ -116,7 +116,7 @@ export default function NavItems({
       )}
       {role === Role.Owner && (
         <div className={cn(className, 'cursor-pointer')} onClick={handleLogout}>
-          Đăng xuất
+          {tButton('logout')}
         </div>
       )}
     </>

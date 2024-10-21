@@ -11,6 +11,7 @@ import { twMerge } from 'tailwind-merge';
 import { format } from 'date-fns';
 import { TokenPayload } from '@/types/jwt.types';
 import guestApiRequest from '@/app/apiRequests/guest';
+import slugify from 'slugify';
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -216,4 +217,12 @@ export const wrapperServerApi = async <T>(fn: () => Promise<T>) => {
     }
   }
   return result;
+};
+
+export const getSlugifyString = ({ name, id }: { name: string; id: number }) => {
+  return `${slugify(name)}-.${id}`;
+};
+
+export const getIdFromSlugifyString = (slugifyString: string) => {
+  return Number(slugifyString.split('-.')[1]);
 };
