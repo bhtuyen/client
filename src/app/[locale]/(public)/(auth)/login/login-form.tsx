@@ -90,7 +90,11 @@ export default function LoginForm() {
                       <Label htmlFor='email'>{tLoginForm('email')}</Label>
                       <Input id='email' type='email' placeholder='m@example.com' required {...field} />
                       <FormMessage
-                        message={tMessageValidation(errors.email?.message as KeysOfMessageType<'message-validation'>)}
+                        message={
+                          errors.email?.message
+                            ? tMessageValidation(errors.email?.message as KeysOfMessageType<'message-validation'>)
+                            : null
+                        }
                       />
                     </div>
                   </FormItem>
