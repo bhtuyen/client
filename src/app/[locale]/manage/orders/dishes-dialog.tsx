@@ -16,45 +16,14 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { formatCurrency, getVietnameseDishStatus, simpleMatchText } from '@/lib/utils';
+import { formatCurrency, simpleMatchText } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useDishListQuery } from '@/app/queries/useDish';
+import { useTranslations } from 'next-intl';
+import { DishStatus } from '@/constants/enum';
 
 type DishItem = DishListResType['data'][0];
-
-export const columns: ColumnDef<DishItem>[] = [
-  {
-    id: 'dishName',
-    header: 'Món ăn',
-    cell: ({ row }) => (
-      <div className='flex items-center space-x-4'>
-        <Image
-          src={row.original.image}
-          alt={row.original.name}
-          width={50}
-          height={50}
-          className='rounded-md object-cover w-[50px] h-[50px]'
-        />
-        <span>{row.original.name}</span>
-      </div>
-    ),
-    filterFn: (row, columnId, filterValue: string) => {
-      if (filterValue === undefined) return true;
-      return simpleMatchText(String(row.original.name), String(filterValue));
-    }
-  },
-  {
-    accessorKey: 'price',
-    header: 'Giá cả',
-    cell: ({ row }) => <div className='capitalize'>{formatCurrency(row.getValue('price'))}</div>
-  },
-  {
-    accessorKey: 'status',
-    header: 'Trạng thái',
-    cell: ({ row }) => <div>{getVietnameseDishStatus(row.getValue('status'))}</div>
-  }
-];
 
 const PAGE_SIZE = 10;
 export function DishesDialog({ onChoose }: { onChoose: (_dish: DishItem) => void }) {
@@ -69,6 +38,41 @@ export function DishesDialog({ onChoose }: { onChoose: (_dish: DishItem) => void
     pageIndex: 0, // Gía trị mặc định ban đầu, không có ý nghĩa khi data được fetch bất đồng bộ
     pageSize: PAGE_SIZE //default page size
   });
+
+  const tDishStatus = useTranslations('dish-status');
+
+  const columns: ColumnDef<DishItem>[] = [
+    {
+      id: 'dishName',
+      header: 'Món ăn',
+      cell: ({ row }) => (
+        <div className='flex items-center space-x-4'>
+          <Image
+            src={row.original.image}
+            alt={row.original.name}
+            width={50}
+            height={50}
+            className='rounded-md object-cover w-[50px] h-[50px]'
+          />
+          <span>{row.original.name}</span>
+        </div>
+      ),
+      filterFn: (row, columnId, filterValue: string) => {
+        if (filterValue === undefined) return true;
+        return simpleMatchText(String(row.original.name), String(filterValue));
+      }
+    },
+    {
+      accessorKey: 'price',
+      header: 'Giá cả',
+      cell: ({ row }) => <div className='capitalize'>{formatCurrency(row.getValue('price'))}</div>
+    },
+    {
+      accessorKey: 'status',
+      header: 'Trạng thái',
+      cell: ({ row }) => <div>{tDishStatus(row.getValue<DishStatus>('status'))}</div>
+    }
+  ];
 
   const table = useReactTable({
     data,

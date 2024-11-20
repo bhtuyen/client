@@ -4,14 +4,17 @@ import { useGuestOrderListQuery } from '@/app/queries/useGuest';
 import { useAppStore } from '@/components/app-provider';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/components/ui/use-toast';
-import { OrderStatus } from '@/constants/type';
-import { formatCurrency, getVietnameseOrderStatus } from '@/lib/utils';
+import { OrderStatus } from '@/constants/enum';
+import { formatCurrency } from '@/lib/utils';
 import { PayGuestOrdersResType, UpdateOrderResType } from '@/schemaValidations/order.schema';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useEffect, useMemo } from 'react';
 
 export default function OrderCart() {
   const { data, refetch } = useGuestOrderListQuery();
+
+  const tOrderStatus = useTranslations('order-status');
 
   const { socket } = useAppStore();
 
@@ -70,7 +73,7 @@ export default function OrderCart() {
       } = data;
 
       toast({
-        description: `Món ${name} (SL: ${quantity}) đã được cập nhật sang trạng thái ${getVietnameseOrderStatus(status)}`
+        description: `Món ${name} (SL: ${quantity}) đã được cập nhật sang trạng thái ${tOrderStatus(status)}`
       });
       refetch();
     }
@@ -88,7 +91,7 @@ export default function OrderCart() {
       socket?.off('update-order', onUpadteOrder);
       socket?.off('payment', onPayment);
     };
-  }, [refetch, socket]);
+  }, [refetch, socket, tOrderStatus]);
 
   return (
     <>
@@ -111,7 +114,7 @@ export default function OrderCart() {
             </p>
           </div>
           <div className='flex-shrink-0 ml-auto flex justify-center items-center'>
-            <Badge variant='outline'>{getVietnameseOrderStatus(order.status)}</Badge>
+            <Badge variant='outline'>{tOrderStatus(order.status)}</Badge>
           </div>
         </div>
       ))}

@@ -18,8 +18,8 @@ import EditOrder from '@/app/[locale]/manage/orders/edit-order';
 import { createContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import AutoPagination from '@/components/auto-pagination';
-import { getVietnameseOrderStatus, handleErrorApi } from '@/lib/utils';
-import { OrderStatusValues } from '@/constants/type';
+import { getEnumValues, handleErrorApi } from '@/lib/utils';
+import { OrderStatus } from '@/constants/enum';
 import OrderStatics from '@/app/[locale]/manage/orders/order-statics';
 import orderTableColumns from '@/app/[locale]/manage/orders/order-table-columns';
 import { useOrderService } from '@/app/[locale]/manage/orders/order.service';
@@ -36,26 +36,22 @@ import { GuestCreateOrdersResType } from '@/schemaValidations/guest.schema';
 import { useOrderListQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
 import { useTableListQuery } from '@/app/queries/useTable';
 import { useAppStore } from '@/components/app-provider';
+import { useTranslations } from 'next-intl';
 
 export const OrderTableContext = createContext({
-  setOrderIdEdit: (_value: number | undefined) => {},
-  orderIdEdit: undefined as number | undefined,
-  changeStatus: (_payload: {
-    orderId: number;
-    dishId: number;
-    status: (typeof OrderStatusValues)[number];
-    quantity: number;
-  }) => {},
+  setOrderIdEdit: (_value: string | undefined) => {},
+  orderIdEdit: undefined as string | undefined,
+  changeStatus: (_payload: { orderId: string; dishId: string; status: OrderStatus; quantity: number }) => {},
   orderObjectByGuestId: {} as OrderObjectByGuestID
 });
 
-export type StatusCountObject = Record<(typeof OrderStatusValues)[number], number>;
+export type StatusCountObject = Record<keyof typeof OrderStatus, number>;
 export type Statics = {
   status: StatusCountObject;
-  table: Record<number, Record<number, StatusCountObject>>;
+  table: Record<string, Record<string, StatusCountObject>>;
 };
-export type OrderObjectByGuestID = Record<number, GetOrdersResType['data']>;
-export type ServingGuestByTableNumber = Record<number, OrderObjectByGuestID>;
+export type OrderObjectByGuestID = Record<string, GetOrdersResType['data']>;
+export type ServingGuestByTableNumber = Record<string, OrderObjectByGuestID>;
 
 const PAGE_SIZE = 10;
 const initFromDate = startOfDay(new Date());
@@ -67,7 +63,7 @@ export default function OrderTable() {
   const [toDate, setToDate] = useState(initToDate);
   const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1;
   const pageIndex = page - 1;
-  const [orderIdEdit, setOrderIdEdit] = useState<number | undefined>();
+  const [orderIdEdit, setOrderIdEdit] = useState<string | undefined>();
   const orderListQuery = useOrderListQuery({
     fromDate,
     toDate
@@ -76,7 +72,7 @@ export default function OrderTable() {
   const orderList = orderListQuery.data?.payload.data ?? [];
   const dataListQuery = useTableListQuery();
   const tableList = dataListQuery.data?.payload.data ?? [];
-  const tableListSortedByNumber = tableList.sort((a, b) => a.number - b.number);
+  const tableListSortedByNumber = tableList.sort();
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -88,6 +84,8 @@ export default function OrderTable() {
   });
 
   const { statics, orderObjectByGuestId, servingGuestByTableNumber } = useOrderService(orderList);
+
+  const tOrderStatus = useTranslations('order-status');
 
   const table = useReactTable({
     data: orderList,
@@ -139,7 +137,7 @@ export default function OrderTable() {
       } = data;
 
       toast({
-        description: `Món ${name} (SL: ${quantity}) đã được cập nhật sang trạng thái ${getVietnameseOrderStatus(status)}`
+        description: `Món ${name} (SL: ${quantity}) đã được cập nhật sang trạng thái ${tOrderStatus(status)}`
       });
     }
 
@@ -169,7 +167,7 @@ export default function OrderTable() {
       socket?.off('new-order', onNewOrder);
       socket?.off('payment', onPayment);
     };
-  }, [fromDate, refreshOrderListQuery, toDate, socket]);
+  }, [fromDate, refreshOrderListQuery, toDate, socket, tOrderStatus]);
 
   // Function
   function resetDateFilter() {
@@ -177,12 +175,7 @@ export default function OrderTable() {
     setToDate(initToDate);
   }
 
-  async function changeStatus(body: {
-    orderId: number;
-    dishId: number;
-    status: (typeof OrderStatusValues)[number];
-    quantity: number;
-  }) {
+  async function changeStatus(body: { orderId: string; dishId: string; status: OrderStatus; quantity: number }) {
     try {
       await updateOrderMutation.mutateAsync(body);
     } catch (error) {
@@ -252,9 +245,7 @@ export default function OrderTable() {
                 className='w-[150px] text-sm justify-between'
               >
                 {table.getColumn('status')?.getFilterValue()
-                  ? getVietnameseOrderStatus(
-                      table.getColumn('status')?.getFilterValue() as (typeof OrderStatusValues)[number]
-                    )
+                  ? tOrderStatus(table.getColumn('status')?.getFilterValue() as OrderStatus)
                   : 'Trạng thái'}
                 <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
               </Button>
@@ -263,7 +254,7 @@ export default function OrderTable() {
               <Command>
                 <CommandGroup>
                   <CommandList>
-                    {OrderStatusValues.map((status) => (
+                    {getEnumValues(OrderStatus).map((status) => (
                       <CommandItem
                         key={status}
                         value={status}
@@ -282,7 +273,7 @@ export default function OrderTable() {
                             table.getColumn('status')?.getFilterValue() === status ? 'opacity-100' : 'opacity-0'
                           )}
                         />
-                        {getVietnameseOrderStatus(status)}
+                        {tOrderStatus(status)}
                       </CommandItem>
                     ))}
                   </CommandList>

@@ -3,18 +3,21 @@
 import { useEffect, useRef } from 'react';
 import QRCode from 'qrcode';
 import { getTableLink } from '@/lib/utils';
+import { useLocale } from 'next-intl';
 
 interface QRCodeTableProps {
   token: string;
-  tableNumber: number;
+  tableNumber: string;
   size?: number;
 }
 
 export default function QRCodeTable({ token, tableNumber, size = 200 }: QRCodeTableProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const locale = useLocale();
   const url = getTableLink({
     token,
-    tableNumber
+    tableNumber,
+    locale
   });
 
   useEffect(() => {

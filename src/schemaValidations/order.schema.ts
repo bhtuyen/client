@@ -1,52 +1,67 @@
-import { DishStatusValues, OrderStatusValues } from '@/constants/type';
+import { DishStatus, DishCategory, OrderStatus } from '@/constants/enum';
 import { AccountSchema } from '@/schemaValidations/account.schema';
 import { TableSchema } from '@/schemaValidations/table.schema';
 import z from 'zod';
 
 const DishSnapshotSchema = z.object({
-  id: z.number(),
+  id: z.string().uuid(),
   name: z.string(),
-  price: z.number(),
-  image: z.string(),
+  price: z.number().positive(),
+  image: z.string().url(),
   description: z.string(),
-  status: z.enum(DishStatusValues),
-  dishId: z.number().nullable(),
+  category: z.enum([DishCategory.Buffet, DishCategory.Paid]),
+  options: z.string(),
+  groupId: z.string().uuid(),
+  status: z.enum([DishStatus.Available, DishStatus.Unavailable, DishStatus.Hidden]),
+  dishId: z.string().uuid().nullable(),
   createdAt: z.date(),
   updatedAt: z.date()
 });
 export const OrderSchema = z.object({
-  id: z.number(),
-  guestId: z.number().nullable(),
+  id: z.string().uuid(),
+  guestId: z.string().uuid().nullable(),
   guest: z
     .object({
-      id: z.number(),
+      id: z.string().uuid(),
       name: z.string(),
-      tableNumber: z.number().nullable(),
+      tableNumber: z.string().nullable(),
       createdAt: z.date(),
       updatedAt: z.date()
     })
     .nullable(),
-  tableNumber: z.number().nullable(),
-  dishSnapshotId: z.number(),
+  tableNumber: z.string().nullable(),
+  dishSnapshotId: z.string().uuid(),
   dishSnapshot: DishSnapshotSchema,
   quantity: z.number(),
-  orderHandlerId: z.number().nullable(),
+  orderHandlerId: z.string().uuid().nullable(),
   orderHandler: AccountSchema.nullable(),
-  status: z.enum(OrderStatusValues),
+  status: z.enum([
+    OrderStatus.Processing,
+    OrderStatus.Delivered,
+    OrderStatus.Paid,
+    OrderStatus.Rejected,
+    OrderStatus.Pending
+  ]),
   createdAt: z.date(),
   updatedAt: z.date()
 });
 
 export const UpdateOrderBody = z.object({
-  status: z.enum(OrderStatusValues),
-  dishId: z.number(),
+  status: z.enum([
+    OrderStatus.Processing,
+    OrderStatus.Delivered,
+    OrderStatus.Paid,
+    OrderStatus.Rejected,
+    OrderStatus.Pending
+  ]),
+  dishId: z.string().uuid(),
   quantity: z.number()
 });
 
 export type UpdateOrderBodyType = z.TypeOf<typeof UpdateOrderBody>;
 
 export const OrderParam = z.object({
-  orderId: z.coerce.number()
+  orderId: z.string().uuid()
 });
 
 export type OrderParamType = z.TypeOf<typeof OrderParam>;
@@ -82,7 +97,7 @@ export const GetOrderDetailRes = z.object({
 export type GetOrderDetailResType = z.TypeOf<typeof GetOrderDetailRes>;
 
 export const PayGuestOrdersBody = z.object({
-  guestId: z.number()
+  guestId: z.string().uuid()
 });
 
 export type PayGuestOrdersBodyType = z.TypeOf<typeof PayGuestOrdersBody>;
@@ -93,10 +108,10 @@ export type PayGuestOrdersResType = z.TypeOf<typeof PayGuestOrdersRes>;
 
 export const CreateOrdersBody = z
   .object({
-    guestId: z.number(),
+    guestId: z.string().uuid(),
     orders: z.array(
       z.object({
-        dishId: z.number(),
+        dishId: z.string().uuid(),
         quantity: z.number()
       })
     )

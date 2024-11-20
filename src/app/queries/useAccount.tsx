@@ -24,7 +24,7 @@ export const useAccountListQuery = () =>
     queryFn: accountApiRequest.list
   });
 
-export const useAccountQuery = ({ id, enabled }: { id: number; enabled: boolean }) => {
+export const useAccountQuery = ({ id, enabled }: { id: string; enabled: boolean }) => {
   return useQuery({
     queryKey: ['account', id],
     queryFn: () => accountApiRequest.getEmployee(id),
@@ -48,7 +48,7 @@ export const useAddEmployeeMutation = () => {
 export const useDeleteEmployeeMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: number) => accountApiRequest.deleteEmployee(id),
+    mutationFn: (id: string) => accountApiRequest.deleteEmployee(id),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['accounts']
@@ -60,7 +60,7 @@ export const useDeleteEmployeeMutation = () => {
 export const useUpdateEmployeeMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...body }: UpdateEmployeeAccountBodyType & { id: number }) =>
+    mutationFn: ({ id, ...body }: UpdateEmployeeAccountBodyType & { id: string }) =>
       accountApiRequest.updateEmployee(id, body),
     // Invalidate and refetch the data after the mutation
     onSuccess: () => {

@@ -1,7 +1,7 @@
 import guestApiRequest from '@/app/apiRequests/guest';
 import { cookies } from 'next/headers';
 
-export async function POST(_request: Request) {
+export async function POST(request: Request) {
   const cookieStore = cookies();
 
   const accessToken = cookieStore.get('accessToken')?.value;

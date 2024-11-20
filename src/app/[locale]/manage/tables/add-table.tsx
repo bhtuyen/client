@@ -16,24 +16,26 @@ import { PlusCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { getVietnameseTableStatus, handleErrorApi } from '@/lib/utils';
+import { getEnumValues, handleErrorApi } from '@/lib/utils';
 import { CreateTableBody, CreateTableBodyType } from '@/schemaValidations/table.schema';
-import { TableStatus, TableStatusValues } from '@/constants/type';
+import { TableStatus } from '@/constants/enum';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useCreateTableMutation } from '@/app/queries/useTable';
 import { toast } from '@/components/ui/use-toast';
+import { useTranslations } from 'next-intl';
 
 export default function AddTable() {
   const [open, setOpen] = useState(false);
   const form = useForm<CreateTableBodyType>({
     resolver: zodResolver(CreateTableBody),
     defaultValues: {
-      number: 0,
+      number: undefined,
       capacity: 2,
       status: TableStatus.Hidden
     }
   });
 
+  const tTableStatus = useTranslations('table-status');
   const reset = () => {
     form.reset();
   };
@@ -86,7 +88,7 @@ export default function AddTable() {
                     <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
                       <Label htmlFor='name'>Số hiệu bàn</Label>
                       <div className='col-span-3 w-full space-y-2'>
-                        <Input id='number' type='number' className='w-full' {...field} />
+                        <Input id='number' type='text' className='w-full' {...field} />
                         <FormMessage />
                       </div>
                     </div>
@@ -123,9 +125,9 @@ export default function AddTable() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {TableStatusValues.map((status) => (
+                            {getEnumValues(TableStatus).map((status) => (
                               <SelectItem key={status} value={status}>
-                                {getVietnameseTableStatus(status)}
+                                {tTableStatus(status)}
                               </SelectItem>
                             ))}
                           </SelectContent>

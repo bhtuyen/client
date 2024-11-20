@@ -25,7 +25,7 @@ import { CreateOrdersBodyType } from '@/schemaValidations/order.schema';
 import Quantity from '@/app/[locale]/guest/menu/quantity';
 import Image from 'next/image';
 import { cn, formatCurrency, handleErrorApi } from '@/lib/utils';
-import { DishStatus } from '@/constants/type';
+import { DishStatus } from '@/constants/enum';
 import { useDishListQuery } from '@/app/queries/useDish';
 import { useCreateOrderMutation } from '@/app/queries/useOrder';
 import { useCreateGuestMutation } from '@/app/queries/useAccount';
@@ -54,13 +54,13 @@ export default function AddOrder() {
     resolver: zodResolver(GuestLoginBody),
     defaultValues: {
       name: '',
-      tableNumber: 0
+      tableNumber: undefined
     }
   });
   const name = form.watch('name');
   const tableNumber = form.watch('tableNumber');
 
-  const handleQuantityChange = (dishId: number, quantity: number) => {
+  const handleQuantityChange = (dishId: string, quantity: number) => {
     setOrders((prevOrders) => {
       if (quantity === 0) {
         return prevOrders.filter((order) => order.dishId !== dishId);

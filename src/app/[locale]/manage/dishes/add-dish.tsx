@@ -15,21 +15,26 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircle, Upload } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { getVietnameseDishStatus, handleErrorApi } from '@/lib/utils';
+import { getEnumValues, handleErrorApi } from '@/lib/utils';
 import { CreateDishBody, CreateDishBodyType } from '@/schemaValidations/dish.schema';
-import { DishStatus, DishStatusValues } from '@/constants/type';
+import { DishStatus, DishCategory } from '@/constants/enum';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { useCreateDishMutation } from '@/app/queries/useDish';
+import { useCreateDishMutation, useDishGroupQuery } from '@/app/queries/useDish';
 import { toast } from '@/components/ui/use-toast';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
 import revalidateApiRequest from '@/app/apiRequests/revalidate';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useTranslations } from 'next-intl';
+import AddDishGroup from '@/app/[locale]/manage/dishes/add-dish-group';
 
 export default function AddDish() {
   const [file, setFile] = useState<File | null>(null);
   const [open, setOpen] = useState(false);
+  const [openFormAdd, setOpenFormAdd] = useState(false);
+  const [isShowPrice, setIsShowPrice] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const form = useForm<CreateDishBodyType>({
     resolver: zodResolver(CreateDishBody),
@@ -38,7 +43,10 @@ export default function AddDish() {
       description: '',
       price: 0,
       image: '',
-      status: DishStatus.Unavailable
+      category: DishCategory.Buffet,
+      options: '',
+      groupId: '',
+      status: DishStatus.Available
     }
   });
   const image = form.watch('image');
@@ -57,10 +65,11 @@ export default function AddDish() {
 
   const createDishMutation = useCreateDishMutation();
   const uploadMediaMutation = useUploadMediaMutation();
+  const dishGroupQuery = useDishGroupQuery();
+  const tDishStatus = useTranslations('dish-status');
 
   const onSubmit = async (body: CreateDishBodyType) => {
     if (createDishMutation.isPending) return;
-
     try {
       if (file) {
         const formData = new FormData();
@@ -101,7 +110,7 @@ export default function AddDish() {
           <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>Thêm món ăn</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[600px] max-h-screen overflow-auto'>
+      <DialogContent className='sm:max-w-[750px] max-h-screen overflow-auto'>
         <DialogHeader>
           <DialogTitle>Thêm món ăn</DialogTitle>
           <DialogDescription />
@@ -122,7 +131,9 @@ export default function AddDish() {
                     <div className='flex gap-2 items-start justify-start'>
                       <Avatar className='aspect-square w-[100px] h-[100px] rounded-md object-cover'>
                         <AvatarImage src={previewAvatarFromFile} />
-                        <AvatarFallback className='rounded-none'>{name || 'Avatar'}</AvatarFallback>
+                        <AvatarFallback className='rounded-none text-center text-sm'>
+                          {name || 'Ảnh chụp'}
+                        </AvatarFallback>
                       </Avatar>
                       <input
                         type='file'
@@ -165,21 +176,92 @@ export default function AddDish() {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
-                name='price'
+                name='category'
+                render={({ field, formState }) => (
+                  <FormItem>
+                    <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
+                      <FormLabel>Thuộc loại</FormLabel>
+                      <RadioGroup
+                        defaultValue={field.value}
+                        className='flex col-span-3 w-full gap-10'
+                        onValueChange={(e) => {
+                          field.onChange(e);
+                          setIsShowPrice(e === DishCategory.Paid);
+                        }}
+                      >
+                        <div className='flex items-center space-x-2'>
+                          <RadioGroupItem value='Buffet' id='Buffet' />
+                          <Label htmlFor='Buffet'>Buffet</Label>
+                        </div>
+                        <div className='flex items-center space-x-2'>
+                          <RadioGroupItem value='Paid' id='Paid' />
+                          <Label htmlFor='Paid'>Tính tiền</Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='groupId'
                 render={({ field }) => (
                   <FormItem>
                     <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
-                      <Label htmlFor='price'>Giá</Label>
-                      <div className='col-span-3 w-full space-y-2'>
-                        <Input id='price' className='w-full' {...field} type='number' />
-                        <FormMessage />
+                      <Label htmlFor='description'>Thuộc nhóm</Label>
+                      <div className='col-span-3 w-full flex gap-4'>
+                        <div className='space-y-2 flex-auto'>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder='Chọn nhóm cho món ăn' />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {dishGroupQuery.data?.payload.data.map((status) => (
+                                <SelectItem key={status.id} value={status.id}>
+                                  {status.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </div>
+                        <Button
+                          className='col-span-1 m-0'
+                          type='button'
+                          onClick={() => {
+                            setOpenFormAdd(true);
+                          }}
+                        >
+                          Tạo nhóm
+                        </Button>
                       </div>
                     </div>
                   </FormItem>
                 )}
               />
+              {isShowPrice && (
+                <FormField
+                  control={form.control}
+                  name='price'
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
+                        <Label htmlFor='price'>Giá</Label>
+                        <div className='col-span-3 w-full space-y-2'>
+                          <Input id='price' className='w-full' {...field} type='number' min={0} />
+                          <FormMessage />
+                        </div>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <FormField
                 control={form.control}
                 name='description'
@@ -190,6 +272,20 @@ export default function AddDish() {
                       <div className='col-span-3 w-full space-y-2'>
                         <Textarea id='description' className='w-full' {...field} />
                         <FormMessage />
+                      </div>
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='options'
+                render={({ field }) => (
+                  <FormItem>
+                    <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
+                      <Label htmlFor='description'>Thêm tùy chọn</Label>
+                      <div className='col-span-3 w-full space-y-2'>
+                        <Textarea id='description' className='w-full' {...field} />
                       </div>
                     </div>
                   </FormItem>
@@ -210,9 +306,9 @@ export default function AddDish() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {DishStatusValues.map((status) => (
+                            {getEnumValues(DishStatus).map((status) => (
                               <SelectItem key={status} value={status}>
-                                {getVietnameseDishStatus(status)}
+                                {tDishStatus(status)}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -233,6 +329,7 @@ export default function AddDish() {
           </Button>
         </DialogFooter>
       </DialogContent>
+      <AddDishGroup open={openFormAdd} setOpen={setOpenFormAdd} />
     </Dialog>
   );
 }

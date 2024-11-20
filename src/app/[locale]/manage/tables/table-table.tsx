@@ -36,7 +36,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
-import { getVietnameseTableStatus, handleErrorApi } from '@/lib/utils';
+import { handleErrorApi } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
 import AutoPagination from '@/components/auto-pagination';
 import { TableListResType } from '@/schemaValidations/table.schema';
@@ -45,78 +45,22 @@ import AddTable from '@/app/[locale]/manage/tables/add-table';
 import { useDeleteTableMutation, useTableListQuery } from '@/app/queries/useTable';
 import QRCodeTable from '@/components/qrcode-table';
 import { toast } from '@/components/ui/use-toast';
+import { useTranslations } from 'next-intl';
+import { TableStatus } from '@/constants/enum';
 
 type TableItem = TableListResType['data'][0];
 
 const TableTableContext = createContext<{
-  setTableIdEdit: (_value: number) => void;
-  tableIdEdit: number | undefined;
+  setTableIdEdit: (_value: string) => void;
+  tableIdEdit: string | undefined;
   tableDelete: TableItem | null;
   setTableDelete: (_value: TableItem | null) => void;
 }>({
-  setTableIdEdit: (_value: number | undefined) => {},
+  setTableIdEdit: (_value: string | undefined) => {},
   tableIdEdit: undefined,
   tableDelete: null,
   setTableDelete: (_value: TableItem | null) => {}
 });
-
-export const columns: ColumnDef<TableItem>[] = [
-  {
-    accessorKey: 'number',
-    header: 'Số bàn',
-    cell: ({ row }) => <div className='capitalize'>{row.getValue('number')}</div>,
-    filterFn: 'weakEquals'
-  },
-  {
-    accessorKey: 'capacity',
-    header: 'Sức chứa',
-    cell: ({ row }) => <div className='capitalize'>{row.getValue('capacity')}</div>
-  },
-  {
-    accessorKey: 'status',
-    header: 'Trạng thái',
-    cell: ({ row }) => <div>{getVietnameseTableStatus(row.getValue('status'))}</div>
-  },
-  {
-    accessorKey: 'token',
-    header: 'QR Code',
-    cell: ({ row }) => (
-      <div>
-        <QRCodeTable tableNumber={row.getValue('number')} token={row.getValue('token')} />
-      </div>
-    )
-  },
-  {
-    id: 'actions',
-    enableHiding: false,
-    cell: function Actions({ row }) {
-      const { setTableIdEdit, setTableDelete } = useContext(TableTableContext);
-      const openEditTable = () => {
-        setTableIdEdit(row.original.number);
-      };
-
-      const openDeleteTable = () => {
-        setTableDelete(row.original);
-      };
-      return (
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0'>
-              <span className='sr-only'>Open menu</span>
-              <DotsHorizontalIcon className='h-4 w-4' />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={openEditTable}>Sửa</DropdownMenuItem>
-            <DropdownMenuItem onClick={openDeleteTable}>Xóa</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    }
-  }
-];
 
 function AlertDialogDeleteTable({
   tableDelete,
@@ -171,7 +115,7 @@ export default function TableTable() {
   const page = searchParam.get('page') ? Number(searchParam.get('page')) : 1;
   const pageIndex = page - 1;
   // const params = Object.fromEntries(searchParam.entries())
-  const [tableIdEdit, setTableIdEdit] = useState<number | undefined>();
+  const [tableIdEdit, setTableIdEdit] = useState<string | undefined>();
   const [tableDelete, setTableDelete] = useState<TableItem | null>(null);
 
   const tableListQuery = useTableListQuery();
@@ -184,6 +128,66 @@ export default function TableTable() {
     pageIndex, // Gía trị mặc định ban đầu, không có ý nghĩa khi data được fetch bất đồng bộ
     pageSize: PAGE_SIZE //default page size
   });
+
+  const tTableStatus = useTranslations('table-status');
+
+  const columns: ColumnDef<TableItem>[] = [
+    {
+      accessorKey: 'number',
+      header: 'Số bàn',
+      cell: ({ row }) => <div className='capitalize'>{row.getValue('number')}</div>,
+      filterFn: 'weakEquals'
+    },
+    {
+      accessorKey: 'capacity',
+      header: 'Sức chứa',
+      cell: ({ row }) => <div className='capitalize'>{row.getValue('capacity')}</div>
+    },
+    {
+      accessorKey: 'status',
+      header: 'Trạng thái',
+      cell: ({ row }) => <div>{tTableStatus(row.getValue<TableStatus>('status'))}</div>
+    },
+    {
+      accessorKey: 'token',
+      header: 'QR Code',
+      cell: ({ row }) => (
+        <div>
+          <QRCodeTable tableNumber={row.getValue('number')} token={row.getValue('token')} />
+        </div>
+      )
+    },
+    {
+      id: 'actions',
+      enableHiding: false,
+      cell: function Actions({ row }) {
+        const { setTableIdEdit, setTableDelete } = useContext(TableTableContext);
+        const openEditTable = () => {
+          setTableIdEdit(row.original.number);
+        };
+
+        const openDeleteTable = () => {
+          setTableDelete(row.original);
+        };
+        return (
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button variant='ghost' className='h-8 w-8 p-0'>
+                <span className='sr-only'>Open menu</span>
+                <DotsHorizontalIcon className='h-4 w-4' />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={openEditTable}>Sửa</DropdownMenuItem>
+              <DropdownMenuItem onClick={openDeleteTable}>Xóa</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      }
+    }
+  ];
 
   const table = useReactTable({
     data,

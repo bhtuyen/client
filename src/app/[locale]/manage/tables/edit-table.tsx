@@ -13,24 +13,25 @@ import { Label } from '@/components/ui/label';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { getTableLink, getVietnameseTableStatus, handleErrorApi } from '@/lib/utils';
+import { getEnumValues, getTableLink, handleErrorApi } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UpdateTableBody, UpdateTableBodyType } from '@/schemaValidations/table.schema';
-import { TableStatus, TableStatusValues } from '@/constants/type';
+import { TableStatus } from '@/constants/enum';
 import { Switch } from '@/components/ui/switch';
 import { Link } from '@/i18n/routing';
 import { useTableQuery, useUpdateTableMutation } from '@/app/queries/useTable';
 import { toast } from '@/components/ui/use-toast';
 import { useEffect } from 'react';
 import QRCodeTable from '@/components/qrcode-table';
+import { useLocale, useTranslations } from 'next-intl';
 
 export default function EditTable({
   id,
   setId,
   onSubmitSuccess
 }: {
-  id?: number | undefined;
-  setId: (_value: number | undefined) => void;
+  id?: string | undefined;
+  setId: (_value: string | undefined) => void;
   onSubmitSuccess?: () => void;
 }) {
   const form = useForm<UpdateTableBodyType>({
@@ -42,7 +43,8 @@ export default function EditTable({
     }
   });
 
-  const { data } = useTableQuery({ id: id as number, enabled: Boolean(id) });
+  const { data } = useTableQuery({ id: id!, enabled: Boolean(id) });
+  const tTableStatus = useTranslations('table-status');
 
   useEffect(() => {
     if (data) {
@@ -64,8 +66,8 @@ export default function EditTable({
   const onSubmit = async (body: UpdateTableBodyType) => {
     if (updateTableMutation.isPending) return;
     try {
-      let _body: UpdateTableBodyType & { id: number } = {
-        id: id as number,
+      let _body: UpdateTableBodyType & { id: string } = {
+        id: id!,
         ...body
       };
 
@@ -81,6 +83,8 @@ export default function EditTable({
       handleErrorApi({ error, setError: form.setError });
     }
   };
+
+  const locale = useLocale();
 
   return (
     <Dialog
@@ -155,9 +159,9 @@ export default function EditTable({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {TableStatusValues.map((status) => (
+                            {getEnumValues(TableStatus).map((status) => (
                               <SelectItem key={status} value={status}>
-                                {getVietnameseTableStatus(status)}
+                                {tTableStatus(status)}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -203,14 +207,16 @@ export default function EditTable({
                       <Link
                         href={getTableLink({
                           token: data.payload.data.token,
-                          tableNumber: data.payload.data.number
+                          tableNumber: data.payload.data.number,
+                          locale
                         })}
                         target='_blank'
                         className='break-all'
                       >
                         {getTableLink({
                           token: data.payload.data.token,
-                          tableNumber: data.payload.data.number
+                          tableNumber: data.payload.data.number,
+                          locale
                         })}
                       </Link>
                     )}

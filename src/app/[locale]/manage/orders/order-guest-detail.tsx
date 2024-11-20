@@ -1,23 +1,23 @@
 import { usePayOrderMutation } from '@/app/queries/useOrder';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { OrderStatus } from '@/constants/type';
+import { OrderStatus } from '@/constants/enum';
 import {
   OrderStatusIcon,
   formatCurrency,
   formatDateTimeToLocaleString,
   formatDateTimeToTimeString,
-  getVietnameseOrderStatus,
   handleErrorApi
 } from '@/lib/utils';
 import { GetOrdersResType, PayGuestOrdersResType } from '@/schemaValidations/order.schema';
 import { PopoverClose } from '@radix-ui/react-popover';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Fragment } from 'react';
 
 type Guest = GetOrdersResType['data'][0]['guest'];
 type Orders = GetOrdersResType['data'];
-export default function OrderGuestDetail({
+export default async function OrderGuestDetail({
   guest,
   orders,
   onPaySuccess
@@ -32,6 +32,8 @@ export default function OrderGuestDetail({
   const purchasedOrderFilter = guest ? orders.filter((order) => order.status === OrderStatus.Paid) : [];
 
   const payMutation = usePayOrderMutation();
+
+  const tOrderStatus = useTranslations('order-status');
 
   const pay = async () => {
     if (payMutation.isPending || guest === null) return;
@@ -68,7 +70,7 @@ export default function OrderGuestDetail({
           return (
             <div key={order.id} className='flex gap-2 items-center text-xs'>
               <span className='w-[10px]'>{index + 1}</span>
-              <span title={getVietnameseOrderStatus(order.status)}>
+              <span title={tOrderStatus(order.status)}>
                 {order.status === OrderStatus.Pending && <OrderStatusIcon.Pending className='w-4 h-4' />}
                 {order.status === OrderStatus.Processing && <OrderStatusIcon.Processing className='w-4 h-4' />}
                 {order.status === OrderStatus.Rejected && <OrderStatusIcon.Rejected className='w-4 h-4 text-red-400' />}

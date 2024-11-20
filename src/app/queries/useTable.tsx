@@ -9,7 +9,7 @@ export const useTableListQuery = () => {
   });
 };
 
-export const useTableQuery = ({ id, enabled }: { id: number; enabled: boolean }) => {
+export const useTableQuery = ({ id, enabled }: { id: string; enabled: boolean }) => {
   return useQuery({
     queryKey: ['table', id],
     queryFn: () => tableApiRequets.getById(id),
@@ -32,7 +32,7 @@ export const useCreateTableMutation = () => {
 export const useUpdateTableMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...body }: UpdateTableBodyType & { id: number }) => tableApiRequets.update(id, body),
+    mutationFn: ({ id, ...body }: UpdateTableBodyType & { id: string }) => tableApiRequets.update(id, body),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['tables']

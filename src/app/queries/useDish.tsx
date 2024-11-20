@@ -9,7 +9,7 @@ export const useDishListQuery = () => {
   });
 };
 
-export const useDishQuery = ({ id, enabled }: { id: number; enabled: boolean }) => {
+export const useDishQuery = ({ id, enabled }: { id: string; enabled: boolean }) => {
   return useQuery({
     queryKey: ['dish', id],
     queryFn: () => dishApiRequets.getById(id),
@@ -32,7 +32,7 @@ export const useCreateDishMutation = () => {
 export const useUpdateDishMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...body }: UpdateDishBodyType & { id: number }) => dishApiRequets.update(id, body),
+    mutationFn: ({ id, ...body }: UpdateDishBodyType & { id: string }) => dishApiRequets.update(id, body),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['dishes']
@@ -48,6 +48,25 @@ export const useDeleteDishMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['dishes']
+      });
+    }
+  });
+};
+
+export const useDishGroupQuery = () => {
+  return useQuery({
+    queryKey: ['dish-groups'],
+    queryFn: dishApiRequets.getGroups
+  });
+};
+
+export const useCreateDishGroupMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: dishApiRequets.createGroup,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['dish-groups']
       });
     }
   });

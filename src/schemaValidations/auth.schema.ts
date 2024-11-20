@@ -1,9 +1,9 @@
-import { Role } from '@/constants/type';
+import { Role } from '@/constants/enum';
 import z from 'zod';
 
 export const LoginBody = z
   .object({
-    email: z.string().email('invalid-email'),
+    email: z.string().email(),
     password: z.string().min(6).max(100)
   })
   .strict();
@@ -15,10 +15,11 @@ export const LoginRes = z.object({
     accessToken: z.string(),
     refreshToken: z.string(),
     account: z.object({
-      id: z.number(),
+      id: z.string().uuid(),
       name: z.string(),
-      email: z.string(),
-      role: z.enum([Role.Owner, Role.Employee])
+      email: z.string().email(),
+      role: z.enum([Role.Owner, Role.Employee]),
+      avatar: z.string().url().nullable()
     })
   }),
   message: z.string()
@@ -56,9 +57,9 @@ export const LoginGoogleQuery = z.object({
   code: z.string()
 });
 
+export type LoginGoogleQueryType = z.TypeOf<typeof LoginGoogleQuery>;
+
 export type OauthLoginType = {
   accessToken: string;
   refreshToken: string;
 };
-
-export type LoginGoogleQueryType = z.TypeOf<typeof LoginGoogleQuery>;

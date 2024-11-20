@@ -18,7 +18,7 @@ export default function GuestLoginForm() {
   const searchParam = useSearchParams();
   const params = useParams();
   const router = useRouter();
-  const tableNumber = Number(params.number);
+  const tableNumber = params.number as string;
   const token = searchParam.get('token');
   const form = useForm<GuestLoginBodyType>({
     resolver: zodResolver(GuestLoginBody),

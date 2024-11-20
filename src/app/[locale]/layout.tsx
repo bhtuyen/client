@@ -8,6 +8,7 @@ import AppProvider from '@/components/app-provider';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, unstable_setRequestLocale } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
+import NextTopLoader from 'nextjs-toploader';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -38,6 +39,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
+        <NextTopLoader />
         <NextIntlClientProvider messages={message}>
           <AppProvider>
             <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>

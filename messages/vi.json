@@ -33,5 +33,31 @@
   },
   "message-validation": {
     "invalid-email": "Email không hợp lệ"
+  },
+  "role": {
+    "Owner": "Quản lý",
+    "Employee": "Nhân viên",
+    "Guest": "Khách hàng"
+  },
+  "dish-status": {
+    "Available": "Có sẵn",
+    "Unavailable": "Hết hàng",
+    "Hidden": "Ẩn"
+  },
+  "table-status": {
+    "Available": "Có thể đặt",
+    "Reserved": "Đã được đặt",
+    "Hidden": "Ẩn"
+  },
+  "order-status": {
+    "Pending": "Đang xử lý",
+    "Processing": "Đang nấu",
+    "Rejected": "Từ chối",
+    "Delivered": "Đã phục vụ",
+    "Paid": "Đã thanh toán"
+  },
+  "dish-category": {
+    "Buffet": "Món Buffet",
+    "Paid": "Món trả tiền"
   }
 }

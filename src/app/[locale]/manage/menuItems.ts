@@ -1,4 +1,4 @@
-import { Role } from '@/constants/type';
+import { Role } from '@/constants/enum';
 import { RoleType } from '@/types/jwt.types';
 import { Home, ShoppingCart, Users2, Salad, Table, LucideProps } from 'lucide-react';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';

@@ -35,7 +35,7 @@ export const useStore = create<StoreType>((set) => ({
   socket: null,
   setRole: (role: RoleType | null) => {
     set({ role });
-    if (!role) {
+    if (role === null) {
       removeAuthTokens();
     }
   },

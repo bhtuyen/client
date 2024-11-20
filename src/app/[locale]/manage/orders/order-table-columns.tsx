@@ -14,14 +14,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { GetOrdersResType } from '@/schemaValidations/order.schema';
 import { useContext } from 'react';
-import { formatCurrency, formatDateTimeToLocaleString, getVietnameseOrderStatus, simpleMatchText } from '@/lib/utils';
+import { formatCurrency, formatDateTimeToLocaleString, getEnumValues, simpleMatchText } from '@/lib/utils';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
-import { OrderStatus, OrderStatusValues } from '@/constants/type';
+import { OrderStatus } from '@/constants/enum';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { OrderTableContext } from '@/app/[locale]/manage/orders/order-table';
 import OrderGuestDetail from '@/app/[locale]/manage/orders/order-guest-detail';
 import { PopoverClose } from '@radix-ui/react-popover';
+import { useTranslations } from 'next-intl';
 
 type OrderItem = GetOrdersResType['data'][0];
 const orderTableColumns: ColumnDef<OrderItem>[] = [
@@ -119,7 +120,7 @@ const orderTableColumns: ColumnDef<OrderItem>[] = [
     header: 'Trạng thái',
     cell: function Cell({ row }) {
       const { changeStatus } = useContext(OrderTableContext);
-      const changeOrderStatus = async (status: (typeof OrderStatusValues)[number]) => {
+      const changeOrderStatus = async (status: OrderStatus) => {
         changeStatus({
           orderId: row.original.id,
           dishId: row.original.dishSnapshot.dishId!,
@@ -127,9 +128,10 @@ const orderTableColumns: ColumnDef<OrderItem>[] = [
           quantity: row.original.quantity
         });
       };
+      const tOrderStatus = useTranslations('order-status');
       return (
         <Select
-          onValueChange={(value: (typeof OrderStatusValues)[number]) => {
+          onValueChange={(value: OrderStatus) => {
             changeOrderStatus(value);
           }}
           defaultValue={OrderStatus.Pending}
@@ -139,9 +141,9 @@ const orderTableColumns: ColumnDef<OrderItem>[] = [
             <SelectValue placeholder='Theme' />
           </SelectTrigger>
           <SelectContent>
-            {OrderStatusValues.map((status) => (
+            {getEnumValues(OrderStatus).map((status) => (
               <SelectItem key={status} value={status}>
-                {getVietnameseOrderStatus(status)}
+                {tOrderStatus(status)}
               </SelectItem>
             ))}
           </SelectContent>

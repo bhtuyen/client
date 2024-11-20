@@ -13,7 +13,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction
 } from '@/components/ui/alert-dialog';
-import { Role } from '@/constants/type';
+import { Role } from '@/constants/enum';
 import { Link } from '@/i18n/routing';
 import { cn, handleErrorApi } from '@/lib/utils';
 import { RoleType } from '@/types/jwt.types';

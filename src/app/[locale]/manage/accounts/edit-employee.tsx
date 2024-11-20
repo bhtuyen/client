@@ -20,18 +20,19 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import { useAccountQuery, useUpdateEmployeeMutation } from '@/app/queries/useAccount';
 import { toast } from '@/components/ui/use-toast';
-import { handleErrorApi } from '@/lib/utils';
+import { getEnumValues, handleErrorApi } from '@/lib/utils';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
-import { Role, RoleValues } from '@/constants/type';
+import { Role } from '@/constants/enum';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useTranslations } from 'next-intl';
 
 export default function EditEmployee({
   id,
   setId,
   onSubmitSuccess
 }: {
-  id?: number | undefined;
-  setId: (_value: number | undefined) => void;
+  id?: string | undefined;
+  setId: (_value: string | undefined) => void;
   onSubmitSuccess?: () => void;
 }) {
   const [file, setFile] = useState<File | null>(null);
@@ -49,7 +50,9 @@ export default function EditEmployee({
     }
   });
 
-  const { data } = useAccountQuery({ id: id as number, enabled: Boolean(id) });
+  const { data } = useAccountQuery({ id: id!, enabled: Boolean(id) });
+
+  const tRole = useTranslations('role');
 
   useEffect(() => {
     if (data) {
@@ -87,8 +90,8 @@ export default function EditEmployee({
   const onSubmit = async (me: UpdateEmployeeAccountBodyType) => {
     if (updateEmployeeMutation.isPending) return;
     try {
-      let body: UpdateEmployeeAccountBodyType & { id: number } = {
-        id: id as number,
+      let body: UpdateEmployeeAccountBodyType & { id: string } = {
+        id: id!,
         ...me
       };
       if (file) {
@@ -217,11 +220,13 @@ export default function EditEmployee({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {RoleValues.filter((role) => role !== Role.Guest).map((role) => (
-                              <SelectItem key={role} value={role}>
-                                {role}
-                              </SelectItem>
-                            ))}
+                            {getEnumValues(Role)
+                              .filter((role) => role !== Role.Guest)
+                              .map((role) => (
+                                <SelectItem key={role} value={role}>
+                                  {tRole(role)}
+                                </SelectItem>
+                              ))}
                           </SelectContent>
                         </Select>
                       </div>

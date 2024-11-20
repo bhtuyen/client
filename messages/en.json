@@ -33,5 +33,31 @@
   },
   "message-validation": {
     "invalid-email": "Invalid email"
+  },
+  "role": {
+    "Owner": "Owner",
+    "Employee": "Employee",
+    "Guest": "Guest"
+  },
+  "dish-status": {
+    "Available": "Available",
+    "Unavailable": "Unavailable",
+    "Hidden": "Hidden"
+  },
+  "table-status": {
+    "Available": "Available",
+    "Reserved": "Reserved",
+    "Hidden": "Hidden"
+  },
+  "order-status": {
+    "Pending": "Pending",
+    "Processing": "Processing",
+    "Rejected": "Rejected",
+    "Delivered": "Delivered",
+    "Paid": "Paid"
+  },
+  "dish-category": {
+    "Buffet": "Buffet",
+    "Paid": "Paid"
   }
 }

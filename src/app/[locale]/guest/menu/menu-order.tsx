@@ -9,7 +9,7 @@ import { cn, formatCurrency, handleErrorApi } from '@/lib/utils';
 import { GuestCreateOrdersBodyType } from '@/schemaValidations/guest.schema';
 import { useRouter } from '@/i18n/routing';
 import { useGuestOrderMutation } from '@/app/queries/useGuest';
-import { DishStatus } from '@/constants/type';
+import { DishStatus } from '@/constants/enum';
 
 export default function MenuOrder() {
   const { data } = useDishListQuery();
@@ -23,7 +23,7 @@ export default function MenuOrder() {
 
   const [orders, setOrders] = useState<GuestCreateOrdersBodyType>([]);
 
-  const handleQuantityChange = (dishId: number, quantity: number) => {
+  const handleQuantityChange = (dishId: string, quantity: number) => {
     setOrders((prevOrder) => {
       if (quantity === 0) {
         return prevOrder.filter((dish) => dish.dishId !== dishId);

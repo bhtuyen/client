@@ -6,6 +6,11 @@ import * as SelectPrimitive from '@radix-ui/react-select';
 
 import { cn } from '@/lib/utils';
 
+// eslint-disable-next-line no-unused-vars
+interface SelectProps {
+  value: string | number;
+}
+
 const Select = SelectPrimitive.Root;
 
 const SelectGroup = SelectPrimitive.Group;

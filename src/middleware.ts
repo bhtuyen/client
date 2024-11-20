@@ -1,13 +1,13 @@
 import { decodeJWT } from '@/lib/utils';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { Role } from '@/constants/type';
+import { Role } from '@/constants/enum';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from '@/i18n/routing';
 import { defaultLocale } from '@/config';
 
 const managePaths = ['/vi/manage', '/en/manage'];
-const guestPaths = ['/vi/guest', '/en/guest'];
+const guestPaths = ['/vi/guest/menu', '/en/guest/menu', '/vi/guest/orders', '/en/guest/orders'];
 const ownerPaths = ['/vi/manage/accounts', '/en/manage/accounts'];
 const privatePaths = [...managePaths, ...guestPaths];
 const unAuthPaths = ['/vi/login', '/en/login'];

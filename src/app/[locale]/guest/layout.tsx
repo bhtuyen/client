@@ -1,5 +1,3 @@
-import PublicLayout from '@/app/[locale]/(public)/layout';
-import { defaultLocale } from '@/config';
 import { unstable_setRequestLocale } from 'next-intl/server';
 
 export default function GuestLayout({
@@ -12,9 +10,5 @@ export default function GuestLayout({
   };
 }>) {
   unstable_setRequestLocale(locale);
-  return (
-    <PublicLayout modal={null} params={{ locale: defaultLocale }}>
-      {children}
-    </PublicLayout>
-  );
+  return <div className='min-h-screen'>{children}</div>;
 }

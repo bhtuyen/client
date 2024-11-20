@@ -50,12 +50,12 @@ import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-p
 type AccountItem = AccountListResType['data'][0];
 
 const AccountTableContext = createContext<{
-  setEmployeeIdEdit: (_value: number) => void;
-  employeeIdEdit: number | undefined;
+  setEmployeeIdEdit: (_value: string | undefined) => void;
+  employeeIdEdit: string | undefined;
   employeeDelete: AccountItem | null;
   setEmployeeDelete: (_value: AccountItem | null) => void;
 }>({
-  setEmployeeIdEdit: (_value: number | undefined) => {},
+  setEmployeeIdEdit: (_value: string | undefined) => {},
   employeeIdEdit: undefined,
   employeeDelete: null,
   setEmployeeDelete: (_value: AccountItem | null) => {}
@@ -181,7 +181,7 @@ export default function AccountTable() {
   const page = searchParams?.get('page') ? Number(searchParams?.get('page')) : 1;
   const pageIndex = page - 1;
   // const params = Object.fromEntries(searchParam.entries())
-  const [employeeIdEdit, setEmployeeIdEdit] = useState<number | undefined>();
+  const [employeeIdEdit, setEmployeeIdEdit] = useState<string | undefined>();
   const [employeeDelete, setEmployeeDelete] = useState<AccountItem | null>(null);
 
   const accountListQuery = useAccountListQuery();

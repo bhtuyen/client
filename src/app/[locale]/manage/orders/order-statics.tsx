@@ -1,14 +1,15 @@
 import { Fragment, useState } from 'react';
 import { Users } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { OrderStatusIcon, cn, getVietnameseOrderStatus } from '@/lib/utils';
+import { OrderStatusIcon, cn, getEnumValues } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { OrderStatus, OrderStatusValues } from '@/constants/type';
+import { OrderStatus } from '@/constants/enum';
 import { TableListResType } from '@/schemaValidations/table.schema';
 import { Badge } from '@/components/ui/badge';
 import { ServingGuestByTableNumber, Statics, StatusCountObject } from '@/app/[locale]/manage/orders/order-table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import OrderGuestDetail from '@/app/[locale]/manage/orders/order-guest-detail';
+import { useTranslations } from 'next-intl';
 export default function OrderStatics({
   statics,
   tableList,
@@ -18,8 +19,10 @@ export default function OrderStatics({
   tableList: TableListResType['data'];
   servingGuestByTableNumber: ServingGuestByTableNumber;
 }) {
-  const [selectedTableNumber, setSelectedTableNumber] = useState<number>(0);
+  const [selectedTableNumber, setSelectedTableNumber] = useState<string>('');
   const selectedServingGuest = servingGuestByTableNumber[selectedTableNumber];
+
+  const tOrderStatus = useTranslations('order-status');
 
   return (
     <Fragment>
@@ -27,7 +30,7 @@ export default function OrderStatics({
         open={Boolean(selectedTableNumber)}
         onOpenChange={(open) => {
           if (!open) {
-            setSelectedTableNumber(0);
+            setSelectedTableNumber('');
           }
         }}
       >
@@ -40,14 +43,14 @@ export default function OrderStatics({
           <div>
             {selectedServingGuest &&
               Object.keys(selectedServingGuest).map((guestId, index) => {
-                const orders = selectedServingGuest[Number(guestId)];
+                const orders = selectedServingGuest[guestId];
                 return (
                   <div key={guestId}>
                     <OrderGuestDetail
                       guest={orders[0].guest}
                       orders={orders}
                       onPaySuccess={() => {
-                        setSelectedTableNumber(0);
+                        setSelectedTableNumber('');
                       }}
                     />
                     {index !== Object.keys(selectedServingGuest).length - 1 && <Separator className='my-5' />}
@@ -59,8 +62,8 @@ export default function OrderStatics({
       </Dialog>
       <div className='flex justify-start items-stretch gap-4 flex-wrap py-4'>
         {tableList.map((table) => {
-          const tableNumber: number = table.number;
-          const tableStatics: Record<number, StatusCountObject> | undefined = statics.table[tableNumber];
+          const tableNumber = table.number;
+          const tableStatics: Record<string, StatusCountObject> | undefined = statics.table[tableNumber];
           let isEmptyTable = true;
           let countObject: StatusCountObject = {
             Pending: 0,
@@ -132,7 +135,7 @@ export default function OrderStatics({
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
-                        {getVietnameseOrderStatus(OrderStatus.Pending)}: {countObject[OrderStatus.Pending] ?? 0} đơn
+                        {tOrderStatus(OrderStatus.Pending)}: {countObject[OrderStatus.Pending] ?? 0} đơn
                       </TooltipContent>
                     </Tooltip>
 
@@ -144,8 +147,7 @@ export default function OrderStatics({
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
-                        {getVietnameseOrderStatus(OrderStatus.Processing)}: {countObject[OrderStatus.Processing] ?? 0}{' '}
-                        đơn
+                        {tOrderStatus(OrderStatus.Processing)}: {countObject[OrderStatus.Processing] ?? 0} đơn
                       </TooltipContent>
                     </Tooltip>
                     <Tooltip>
@@ -156,7 +158,7 @@ export default function OrderStatics({
                         </div>
                       </TooltipTrigger>
                       <TooltipContent>
-                        {getVietnameseOrderStatus(OrderStatus.Delivered)}: {countObject[OrderStatus.Delivered] ?? 0} đơn
+                        {tOrderStatus(OrderStatus.Delivered)}: {countObject[OrderStatus.Delivered] ?? 0} đơn
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -167,9 +169,9 @@ export default function OrderStatics({
         })}
       </div>
       <div className='flex justify-start items-end gap-4 flex-wrap py-4'>
-        {OrderStatusValues.map((status) => (
+        {getEnumValues(OrderStatus).map((status) => (
           <Badge variant='secondary' key={status}>
-            {getVietnameseOrderStatus(status)}: {statics.status[status] ?? 0}
+            {tOrderStatus(status)}:{statics.status[status] ?? 0}
           </Badge>
         ))}
       </div>

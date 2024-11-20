@@ -7,8 +7,8 @@ import { UpdateOrderBody, UpdateOrderBodyType } from '@/schemaValidations/order.
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { getVietnameseOrderStatus, handleErrorApi } from '@/lib/utils';
-import { OrderStatus, OrderStatusValues } from '@/constants/type';
+import { getEnumValues, handleErrorApi } from '@/lib/utils';
+import { OrderStatus } from '@/constants/enum';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DishesDialog } from '@/app/[locale]/manage/orders/dishes-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -16,20 +16,21 @@ import { useEffect, useState } from 'react';
 import { DishListResType } from '@/schemaValidations/dish.schema';
 import { useOrderQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
 import { toast } from '@/components/ui/use-toast';
+import { useTranslations } from 'next-intl';
 
 export default function EditOrder({
   id,
   setId,
   onSubmitSuccess
 }: {
-  id?: number | undefined;
-  setId: (_value: number | undefined) => void;
+  id?: string | undefined;
+  setId: (_value: string | undefined) => void;
   onSubmitSuccess?: () => void;
 }) {
   const [selectedDish, setSelectedDish] = useState<DishListResType['data'][0] | null>(null);
   const updateOrderMutation = useUpdateOrderMutation();
   const { data } = useOrderQuery({
-    orderId: id as number,
+    orderId: id!,
     enabled: Boolean(id)
   });
 
@@ -37,10 +38,12 @@ export default function EditOrder({
     resolver: zodResolver(UpdateOrderBody),
     defaultValues: {
       status: OrderStatus.Pending,
-      dishId: 0,
+      dishId: undefined,
       quantity: 1
     }
   });
+
+  const tOrderStatus = useTranslations('order-status');
 
   useEffect(() => {
     if (data) {
@@ -52,7 +55,7 @@ export default function EditOrder({
 
       form.reset({
         status,
-        dishId: dishId ?? 0,
+        dishId: dishId!,
         quantity
       });
 
@@ -64,8 +67,8 @@ export default function EditOrder({
     if (updateOrderMutation.isPending) return;
 
     try {
-      let body: UpdateOrderBodyType & { orderId: number } = {
-        orderId: id as number,
+      let body: UpdateOrderBodyType & { orderId: string } = {
+        orderId: id!,
         ...values
       };
 
@@ -177,9 +180,9 @@ export default function EditOrder({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {OrderStatusValues.map((status) => (
+                          {getEnumValues(OrderStatus).map((status) => (
                             <SelectItem key={status} value={status}>
-                              {getVietnameseOrderStatus(status)}
+                              {tOrderStatus(status)}
                             </SelectItem>
                           ))}
                         </SelectContent>

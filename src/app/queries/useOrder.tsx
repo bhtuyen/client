@@ -8,7 +8,7 @@ export const useOrderListQuery = (queryParam: GetOrdersQueryParamsType) =>
     queryFn: () => orderApiRequest.getOrders(queryParam)
   });
 
-export const useOrderQuery = ({ orderId, enabled }: { orderId: number; enabled: boolean }) =>
+export const useOrderQuery = ({ orderId, enabled }: { orderId: string; enabled: boolean }) =>
   useQuery({
     queryKey: ['order', orderId],
     queryFn: () => orderApiRequest.getOrderDetail(orderId),
@@ -22,7 +22,7 @@ export const useCreateOrderMutation = () =>
 
 export const useUpdateOrderMutation = () =>
   useMutation({
-    mutationFn: ({ orderId, ...body }: { orderId: number } & UpdateOrderBodyType) =>
+    mutationFn: ({ orderId, ...body }: { orderId: string } & UpdateOrderBodyType) =>
       orderApiRequest.updateOrder({ orderId, body })
   });
 

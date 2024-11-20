@@ -1,12 +1,14 @@
-import { Role } from '@/constants/type';
+import { Role } from '@/constants/enum';
+import { LoginRes } from '@/schemaValidations/auth.schema';
 import z from 'zod';
 
 export const AccountSchema = z.object({
-  id: z.number(),
+  id: z.string().uuid(),
   name: z.string(),
-  email: z.string(),
-  role: z.enum([Role.Owner, Role.Employee]),
-  avatar: z.string().nullable()
+  email: z.string().email(),
+  role: z.enum([Role.Employee, Role.Guest]),
+  avatar: z.string().url().nullable(),
+  isVerified: z.boolean().nullable()
 });
 
 export type AccountType = z.TypeOf<typeof AccountSchema>;
@@ -56,7 +58,7 @@ export const UpdateEmployeeAccountBody = z
     changePassword: z.boolean().optional(),
     password: z.string().min(6).max(100).optional(),
     confirmPassword: z.string().min(6).max(100).optional(),
-    role: z.enum([Role.Owner, Role.Employee]).optional().default(Role.Employee)
+    role: z.enum([Role.Employee, Role.Guest]).optional().default(Role.Employee)
   })
   .strict()
   .superRefine(({ confirmPassword, password, changePassword }, ctx) => {
@@ -107,8 +109,16 @@ export const ChangePasswordBody = z
 
 export type ChangePasswordBodyType = z.TypeOf<typeof ChangePasswordBody>;
 
+export const ChangePasswordV2Body = ChangePasswordBody;
+
+export type ChangePasswordV2BodyType = z.TypeOf<typeof ChangePasswordV2Body>;
+
+export const ChangePasswordV2Res = LoginRes;
+
+export type ChangePasswordV2ResType = z.TypeOf<typeof ChangePasswordV2Res>;
+
 export const AccountIdParam = z.object({
-  id: z.coerce.number()
+  id: z.string().uuid()
 });
 
 export type AccountIdParamType = z.TypeOf<typeof AccountIdParam>;
@@ -116,9 +126,9 @@ export type AccountIdParamType = z.TypeOf<typeof AccountIdParam>;
 export const GetListGuestsRes = z.object({
   data: z.array(
     z.object({
-      id: z.number(),
+      id: z.string().uuid(),
       name: z.string(),
-      tableNumber: z.number().nullable(),
+      tableNumber: z.string().nullable(),
       createdAt: z.date(),
       updatedAt: z.date()
     })
@@ -137,8 +147,8 @@ export type GetGuestListQueryParamsType = z.TypeOf<typeof GetGuestListQueryParam
 
 export const CreateGuestBody = z
   .object({
-    name: z.string().trim().min(2).max(256),
-    tableNumber: z.number()
+    name: z.string().trim().min(2).max(255),
+    tableNumber: z.string().min(1).max(50)
   })
   .strict();
 
@@ -147,10 +157,10 @@ export type CreateGuestBodyType = z.TypeOf<typeof CreateGuestBody>;
 export const CreateGuestRes = z.object({
   message: z.string(),
   data: z.object({
-    id: z.number(),
-    name: z.string(),
-    role: z.enum([Role.Guest]),
-    tableNumber: z.number().nullable(),
+    id: z.string().uuid(),
+    name: z.string().nullable(),
+    role: z.nativeEnum(Role),
+    tableNumber: z.string().min(1).max(50),
     createdAt: z.date(),
     updatedAt: z.date()
   })

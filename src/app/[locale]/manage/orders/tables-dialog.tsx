@@ -1,3 +1,4 @@
+'use client';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -15,35 +16,14 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { cn, getVietnameseTableStatus, simpleMatchText } from '@/lib/utils';
+import { cn, simpleMatchText } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { TableListResType } from '@/schemaValidations/table.schema';
-import { TableStatus } from '@/constants/type';
+import { TableStatus } from '@/constants/enum';
 import { useTableListQuery } from '@/app/queries/useTable';
+import { useTranslations } from 'next-intl';
 
 type TableItem = TableListResType['data'][0];
-
-export const columns: ColumnDef<TableItem>[] = [
-  {
-    accessorKey: 'number',
-    header: 'Số bàn',
-    cell: ({ row }) => <div className='capitalize'>{row.getValue('number')}</div>,
-    filterFn: (row, columnId, filterValue: string) => {
-      if (filterValue === undefined) return true;
-      return simpleMatchText(String(row.original.number), String(filterValue));
-    }
-  },
-  {
-    accessorKey: 'capacity',
-    header: 'Sức chứa',
-    cell: ({ row }) => <div className='capitalize'>{row.getValue('capacity')}</div>
-  },
-  {
-    accessorKey: 'status',
-    header: 'Trạng thái',
-    cell: ({ row }) => <div>{getVietnameseTableStatus(row.getValue('status'))}</div>
-  }
-];
 
 const PAGE_SIZE = 10;
 
@@ -59,6 +39,30 @@ export function TablesDialog({ onChoose }: { onChoose: (_table: TableItem) => vo
     pageIndex: 0, // Gía trị mặc định ban đầu, không có ý nghĩa khi data được fetch bất đồng bộ
     pageSize: PAGE_SIZE //default page size
   });
+
+  const tTableStatus = useTranslations('table-status');
+
+  const columns: ColumnDef<TableItem>[] = [
+    {
+      accessorKey: 'number',
+      header: 'Số bàn',
+      cell: ({ row }) => <div className='capitalize'>{row.getValue('number')}</div>,
+      filterFn: (row, columnId, filterValue: string) => {
+        if (filterValue === undefined) return true;
+        return simpleMatchText(String(row.original.number), String(filterValue));
+      }
+    },
+    {
+      accessorKey: 'capacity',
+      header: 'Sức chứa',
+      cell: ({ row }) => <div className='capitalize'>{row.getValue('capacity')}</div>
+    },
+    {
+      accessorKey: 'status',
+      header: 'Trạng thái',
+      cell: ({ row }) => <div>{tTableStatus(row.getValue<TableStatus>('status'))}</div>
+    }
+  ];
 
   const table = useReactTable({
     data,
