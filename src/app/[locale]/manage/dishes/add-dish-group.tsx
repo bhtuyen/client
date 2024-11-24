@@ -14,7 +14,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateDishGroupMutation } from '@/app/queries/useDish';
 import { handleErrorApi } from '@/lib/utils';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 
 export default function AddDishGroup({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) {

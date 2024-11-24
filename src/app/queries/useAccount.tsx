@@ -24,13 +24,11 @@ export const useAccountListQuery = () =>
     queryFn: accountApiRequest.list
   });
 
-export const useAccountQuery = ({ id, enabled }: { id: string; enabled: boolean }) => {
-  return useQuery({
+export const useAccountQuery = (id: string) =>
+  useQuery({
     queryKey: ['account', id],
-    queryFn: () => accountApiRequest.getEmployee(id),
-    enabled
+    queryFn: () => accountApiRequest.getEmployee(id)
   });
-};
 
 export const useAddEmployeeMutation = () => {
   const queryClient = useQueryClient();

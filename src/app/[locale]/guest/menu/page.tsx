@@ -34,7 +34,7 @@ export default function MenuPage() {
         </nav>
         <Tabs tabs={menuType} />
       </div>
-      <div className='bg-[#f6f6f6] flex-1 p-4 overflow-y-auto pt-[100px]'>
+      <div className='bg-[#f6f6f6] flex-1 p-4 overflow-y-auto pt-[110px]'>
         <MenuGroup />
       </div>
     </div>

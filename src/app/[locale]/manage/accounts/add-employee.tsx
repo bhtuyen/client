@@ -20,7 +20,7 @@ import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAddEmployeeMutation } from '@/app/queries/useAccount';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { handleErrorApi } from '@/lib/utils';
 
 export default function AddEmployee() {

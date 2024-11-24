@@ -1,36 +1,8 @@
 'use client';
 
-import { CaretSortIcon, DotsHorizontalIcon } from '@radix-ui/react-icons';
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable
-} from '@tanstack/react-table';
-
-import { Button } from '@/components/ui/button';
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AccountListResType, AccountType } from '@/schemaValidations/account.schema';
 import AddEmployee from '@/app/[locale]/manage/accounts/add-employee';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import EditEmployee from '@/app/[locale]/manage/accounts/edit-employee';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { useAccountListQuery, useDeleteEmployeeMutation } from '@/app/queries/useAccount';
+import DataTable, { RowAction } from '@/components/data-table';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,88 +13,62 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
-import AutoPagination from '@/components/auto-pagination';
-import { useAccountListQuery, useDeleteEmployeeMutation } from '@/app/queries/useAccount';
-import { toast } from '@/components/ui/use-toast';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/hooks/use-toast';
 import { handleErrorApi } from '@/lib/utils';
-import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
+import { AccountListResType, AccountType } from '@/schemaValidations/account.schema';
+import { CaretSortIcon } from '@radix-ui/react-icons';
+import { ColumnDef } from '@tanstack/react-table';
 
 type AccountItem = AccountListResType['data'][0];
 
-const AccountTableContext = createContext<{
-  setEmployeeIdEdit: (_value: string | undefined) => void;
-  employeeIdEdit: string | undefined;
-  employeeDelete: AccountItem | null;
-  setEmployeeDelete: (_value: AccountItem | null) => void;
-}>({
-  setEmployeeIdEdit: (_value: string | undefined) => {},
-  employeeIdEdit: undefined,
-  employeeDelete: null,
-  setEmployeeDelete: (_value: AccountItem | null) => {}
-});
-
 export const columns: ColumnDef<AccountType>[] = [
   {
-    accessorKey: 'id',
-    header: 'ID'
-  },
-  {
     accessorKey: 'avatar',
-    header: 'Avatar',
+    header: 'Nhân viên',
     cell: ({ row }) => (
-      <div>
-        <Avatar className='aspect-square w-[100px] h-[100px] rounded-md object-cover'>
+      <div className='flex items-center gap-4 w-[200px]'>
+        <Avatar className='size-10 rounded-full object-cover'>
           <AvatarImage src={row.getValue('avatar')} />
           <AvatarFallback className='rounded-none'>{row.original.name}</AvatarFallback>
         </Avatar>
+        <span className='capitalize'>{row.original.name}</span>
       </div>
     )
   },
   {
-    accessorKey: 'name',
-    header: 'Tên',
-    cell: ({ row }) => <div className='capitalize'>{row.getValue('name')}</div>
+    accessorKey: 'phone',
+    header: 'Số điện thoại',
+    cell: ({ row }) => <div className='w-[200px]'>{row.getValue('phone')}</div>
   },
   {
     accessorKey: 'email',
     header: ({ column }) => {
       return (
-        <Button variant='ghost' onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <Button
+          variant='ghost'
+          size='sm'
+          className='w-[200px] justify-start -ml-3'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
           Email
           <CaretSortIcon className='ml-2 h-4 w-4' />
         </Button>
       );
     },
-    cell: ({ row }) => <div className='lowercase'>{row.getValue('email')}</div>
+    cell: ({ row }) => <div className='lowercase w-[200px]'>{row.getValue('email')}</div>
+  },
+  {
+    accessorKey: 'role',
+    header: 'Chức vụ',
+    cell: ({ row }) => <div className='lowercase w-[200px]'>{row.getValue('role')}</div>
   },
   {
     id: 'actions',
     enableHiding: false,
     cell: function Actions({ row }) {
-      const { setEmployeeIdEdit, setEmployeeDelete } = useContext(AccountTableContext);
-      const openEditEmployee = () => {
-        setEmployeeIdEdit(row.original.id);
-      };
-
-      const openDeleteEmployee = () => {
-        setEmployeeDelete(row.original);
-      };
-      return (
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0'>
-              <span className='sr-only'>Open menu</span>
-              <DotsHorizontalIcon className='h-4 w-4' />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={openEditEmployee}>Sửa</DropdownMenuItem>
-            <DropdownMenuItem onClick={openDeleteEmployee}>Xóa</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+      return <RowAction urlEdit={`/manage/accounts/${row.original.id}/edit`} onDelete={() => {}} />;
     }
   }
 ];
@@ -174,128 +120,25 @@ function AlertDialogDeleteAccount({
     </AlertDialog>
   );
 }
-// Số lượng item trên 1 trang
-const PAGE_SIZE = 10;
 export default function AccountTable() {
-  const { searchParams, setSearchParams } = useSearchParamsLoader();
-  const page = searchParams?.get('page') ? Number(searchParams?.get('page')) : 1;
-  const pageIndex = page - 1;
-  // const params = Object.fromEntries(searchParam.entries())
-  const [employeeIdEdit, setEmployeeIdEdit] = useState<string | undefined>();
-  const [employeeDelete, setEmployeeDelete] = useState<AccountItem | null>(null);
-
   const accountListQuery = useAccountListQuery();
   const data = accountListQuery.data?.payload.data ?? [];
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
-  const [pagination, setPagination] = useState({
-    pageIndex, // Gía trị mặc định ban đầu, không có ý nghĩa khi data được fetch bất đồng bộ
-    pageSize: PAGE_SIZE //default page size
-  });
-
-  const table = useReactTable({
-    data,
-    columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    onPaginationChange: setPagination,
-    autoResetPageIndex: false,
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-      pagination
-    }
-  });
-
-  useEffect(() => {
-    table.setPagination({
-      pageIndex,
-      pageSize: PAGE_SIZE
-    });
-  }, [table, pageIndex]);
 
   return (
-    <AccountTableContext.Provider
-      value={{
-        employeeIdEdit,
-        setEmployeeIdEdit,
-        employeeDelete,
-        setEmployeeDelete
-      }}
-    >
-      <SearchParamsLoader onParamsReceived={setSearchParams} />
-      <div className='w-full'>
-        <EditEmployee id={employeeIdEdit} setId={setEmployeeIdEdit} onSubmitSuccess={() => {}} />
-        <AlertDialogDeleteAccount employeeDelete={employeeDelete} setEmployeeDelete={setEmployeeDelete} />
-        <div className='flex items-center py-4'>
-          <Input
-            placeholder='Filter emails...'
-            value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-            onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
-            className='max-w-sm'
-          />
-          <div className='ml-auto flex items-center gap-2'>
-            <AddEmployee />
-          </div>
-        </div>
-        <div className='rounded-md border'>
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id}>
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className='h-24 text-center'>
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <div className='flex items-center justify-end space-x-2 py-4'>
-          <div className='text-xs text-muted-foreground py-4 flex-1 '>
-            Hiển thị <strong>{table.getPaginationRowModel().rows.length}</strong> trong <strong>{data.length}</strong>{' '}
-            kết quả
-          </div>
-          <div>
-            <AutoPagination
-              page={table.getState().pagination.pageIndex + 1}
-              pageSize={table.getPageCount()}
-              pathname='/manage/accounts'
-            />
-          </div>
+    <div className='w-full space-y-4'>
+      <div className='flex items-center'>
+        {/* <Input
+          placeholder='Filter emails...'
+          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
+          onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
+          className='max-w-sm'
+          IconLeft={Search}
+        /> */}
+        <div className='ml-auto flex items-center gap-2'>
+          <AddEmployee />
         </div>
       </div>
-    </AccountTableContext.Provider>
+      <DataTable data={data} columns={columns} />
+    </div>
   );
 }

@@ -28,6 +28,10 @@ export const DishSchema = z.object({
   updatedAt: z.date()
 });
 
+export const DishInCart = DishSchema.extend({ quantity: z.number().positive() });
+
+export type DishInCartType = z.TypeOf<typeof DishInCart>;
+
 export const DishRes = z.object({
   data: DishSchema,
   message: z.string()
@@ -40,7 +44,7 @@ export type DishResType = z.TypeOf<typeof DishRes>;
 export const DishListRes = z.object({
   data: z.array(
     DishSchema.extend({
-      groupName: z.string()
+      groupName: z.string().nullable().optional()
     })
   ),
   message: z.string()

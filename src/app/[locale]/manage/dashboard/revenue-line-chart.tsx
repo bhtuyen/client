@@ -5,6 +5,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { format, parse } from 'date-fns';
 import { DashboardIndicatorResType } from '@/schemaValidations/indicator.schema';
+import { useTranslations } from 'next-intl';
+import { TrendingUp } from 'lucide-react';
 const chartConfig = {
   desktop: {
     label: 'Desktop',
@@ -13,10 +15,11 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function RevenueLineChart({ chartData }: { chartData: DashboardIndicatorResType['data']['revenueByDate'] }) {
+  const tDashboard = useTranslations('manage.dashboard');
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Doanh thu</CardTitle>
+        <CardTitle>{tDashboard('revenue')}</CardTitle>
         {/* <CardDescription>January - June 2024</CardDescription> */}
       </CardHeader>
       <CardContent>
@@ -52,12 +55,10 @@ export function RevenueLineChart({ chartData }: { chartData: DashboardIndicatorR
         </ChartContainer>
       </CardContent>
       <CardFooter className='flex-col items-start gap-2 text-sm'>
-        {/* <div className='flex gap-2 font-medium leading-none'>
+        <div className='flex gap-2 font-medium leading-none'>
           Trending up by 5.2% this month <TrendingUp className='h-4 w-4' />
         </div>
-        <div className='leading-none text-muted-foreground'>
-          Showing total visitors for the last 6 months
-        </div> */}
+        <div className='leading-none text-muted-foreground'>Showing total visitors for the last 6 months</div>
       </CardFooter>
     </Card>
   );

@@ -15,7 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useEffect, useState } from 'react';
 import { DishListResType } from '@/schemaValidations/dish.schema';
 import { useOrderQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { useTranslations } from 'next-intl';
 
 export default function EditOrder({
@@ -152,12 +152,7 @@ export default function EditOrder({
                           {...field}
                           value={field.value}
                           onChange={(e) => {
-                            let value = e.target.value;
-                            const numberValue = Number(value);
-                            if (isNaN(numberValue)) {
-                              return;
-                            }
-                            field.onChange(numberValue);
+                            field.onChange(e.target.value);
                           }}
                         />
                         <FormMessage />

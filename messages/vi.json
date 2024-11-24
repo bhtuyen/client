@@ -59,5 +59,96 @@
   "dish-category": {
     "Buffet": "Món Buffet",
     "Paid": "Món trả tiền"
+  },
+
+  "manage-sidebar": {
+    "dashboard": "Bảng điều khiển",
+    "accounts": "Nhân viên",
+    "dishes": "Món ăn",
+    "orders": "Đơn hàng",
+    "tables": "Bàn ăn",
+    "logout": "Đăng xuất",
+    "setting": "Cài đặt",
+    "collapse": "Thu gọn",
+    "expand": "Mở rộng"
+  },
+
+  "manage": {
+    "title": "Quản lý",
+
+    "accounts": {
+      "title": "Danh sách nhân viên",
+      "create": {
+        "title": "Tạo nhân viên",
+        "description": "Nhập thông tin nhân viên để tạo tài khoản mới"
+      },
+      "edit": {
+        "title": "Chỉnh sửa nhân viên",
+        "description": "Chỉnh sửa thông tin nhân viên"
+      }
+    },
+
+    "dashboard": {
+      "title": "Bảng điều khiển",
+      "from": "Từ",
+      "to": "Đến",
+      "reset": "Đặt lại",
+      "revenue": "Doanh thu",
+      "total-revenue": "Tổng doanh thu",
+      "guest": "Khách hàng",
+      "ordered": "Đã gọi món",
+      "order": "Đơn hàng",
+      "paied": "Đã thanh toán",
+      "serving-table": "Bàn đang phục vụ",
+      "dish-ranking": "Xếp hạng món ăn",
+      "most-ordered": "Món ăn được gọi nhiều nhất"
+    },
+
+    "dishes": {
+      "title": "Danh sách món ăn",
+      "create": {
+        "title": "Tạo món ăn",
+        "description": "Nhập thông tin món ăn để tạo món ăn mới"
+      },
+      "edit": {
+        "title": "Chỉnh sửa món ăn",
+        "description": "Chỉnh sửa thông tin món ăn"
+      }
+    },
+
+    "orders": {
+      "title": "Danh sách đơn hàng",
+      "create": {
+        "title": "Tạo đơn hàng",
+        "description": "Nhập thông tin đơn hàng để tạo đơn hàng mới"
+      },
+      "edit": {
+        "title": "Chỉnh sửa đơn hàng",
+        "description": "Chỉnh sửa thông tin đơn hàng"
+      }
+    },
+
+    "tables": {
+      "title": "Danh sách bàn ăn",
+      "create": {
+        "title": "Tạo bàn ăn",
+        "description": "Nhập thông tin bàn ăn để tạo bàn ăn mới"
+      },
+      "edit": {
+        "title": "Chỉnh sửa bàn ăn",
+        "description": "Chỉnh sửa thông tin bàn ăn"
+      }
+    },
+    "setting": {
+      "title": "Cài đặt",
+      "personal-information": "Thông tin cá nhân",
+      "name": "Họ và tên",
+      "save": "Lưu thông tin",
+      "cancel": "Hủy",
+      "change-password": "Đổi mật khẩu",
+      "old-password": "Mật khẩu cũ",
+      "new-password": "Mật khẩu mới",
+      "confirm-password": "Xác nhận mật khẩu mới"
+    }
   }
 }

@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useDishListQuery } from '@/app/queries/useDish';
-import Quantity from '@/app/[locale]/guest/menu/quantity';
+import Quantity from '@/components/quantity';
 import { useMemo, useState } from 'react';
 import { cn, formatCurrency, handleErrorApi } from '@/lib/utils';
 import { GuestCreateOrdersBodyType } from '@/schemaValidations/guest.schema';
@@ -24,21 +24,18 @@ export default function MenuOrder() {
   const [orders, setOrders] = useState<GuestCreateOrdersBodyType>([]);
 
   const handleQuantityChange = (dishId: string, quantity: number) => {
-    setOrders((prevOrder) => {
-      if (quantity === 0) {
-        return prevOrder.filter((dish) => dish.dishId !== dishId);
-      }
-
-      const dishIndex = prevOrder.findIndex((dish) => dish.dishId === dishId);
-
-      if (dishIndex === -1) {
-        return [...prevOrder, { dishId, quantity }];
-      }
-
-      const newOrder = [...prevOrder];
-      newOrder[dishIndex].quantity = quantity;
-      return newOrder;
-    });
+    // setOrders((prevOrder) => {
+    //   if (quantity === 0) {
+    //     return prevOrder.filter((dish) => dish.dishId !== dishId);
+    //   }
+    //   const dishIndex = prevOrder.findIndex((dish) => dish.dishId === dishId);
+    //   if (dishIndex === -1) {
+    //     return [...prevOrder, { dishId, quantity }];
+    //   }
+    //   const newOrder = [...prevOrder];
+    //   newOrder[dishIndex].quantity = quantity;
+    //   return newOrder;
+    // });
   };
 
   const totalPrice = useMemo(() => {

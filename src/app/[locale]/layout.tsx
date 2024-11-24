@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
-import './globals.css';
+import '@/app/globals.css';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
@@ -38,7 +38,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
+      <body className={cn('h-full bg-background font-sans antialiased', fontSans.variable)}>
         <NextTopLoader />
         <NextIntlClientProvider messages={message}>
           <AppProvider>

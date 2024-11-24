@@ -128,7 +128,7 @@ export default function AutoPagination({
                 }
               }}
               className={cn({
-                'cursor-not-allowed': page === 1
+                'cursor-not-allowed pointer-events-none': page === 1
               })}
               onClick={(e) => {
                 if (page === 1) {
@@ -162,7 +162,7 @@ export default function AutoPagination({
                 }
               }}
               className={cn({
-                'cursor-not-allowed': page === pageSize
+                'cursor-not-allowed pointer-events-none': page === pageSize
               })}
               onClick={(e) => {
                 if (page === pageSize) {

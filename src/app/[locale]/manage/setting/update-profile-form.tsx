@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useAccountMeQuery, useUpdateMeMutation } from '@/app/queries/useAccount';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { handleErrorApi } from '@/lib/utils';
 
 export default function UpdateProfileForm() {

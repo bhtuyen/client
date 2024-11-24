@@ -44,7 +44,7 @@ import EditTable from '@/app/[locale]/manage/tables/edit-table';
 import AddTable from '@/app/[locale]/manage/tables/add-table';
 import { useDeleteTableMutation, useTableListQuery } from '@/app/queries/useTable';
 import QRCodeTable from '@/components/qrcode-table';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { useTranslations } from 'next-intl';
 import { TableStatus } from '@/constants/enum';
 

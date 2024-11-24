@@ -21,7 +21,7 @@ import { CreateTableBody, CreateTableBodyType } from '@/schemaValidations/table.
 import { TableStatus } from '@/constants/enum';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useCreateTableMutation } from '@/app/queries/useTable';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { useTranslations } from 'next-intl';
 
 export default function AddTable() {

@@ -8,22 +8,24 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { endOfDay, format, startOfDay } from 'date-fns';
 import { useIndicatorQuery } from '@/app/queries/useIndicator';
+import { useTranslations } from 'next-intl';
 
 const initFromDate = startOfDay(new Date());
 const initToDate = endOfDay(new Date());
 export default function DashboardMain() {
   const [fromDate, setFromDate] = useState(initFromDate);
   const [toDate, setToDate] = useState(initToDate);
+  const { data } = useIndicatorQuery({
+    fromDate,
+    toDate
+  });
+
+  const tDashboard = useTranslations('manage.dashboard');
 
   const resetDateFilter = () => {
     setFromDate(initFromDate);
     setToDate(initToDate);
   };
-
-  const { data } = useIndicatorQuery({
-    fromDate,
-    toDate
-  });
 
   const revenue = data?.payload.data.revenue ?? 0;
   const guestCount = data?.payload.data.guestCount ?? 0;
@@ -36,32 +38,32 @@ export default function DashboardMain() {
     <div className='space-y-4'>
       <div className='flex flex-wrap gap-2'>
         <div className='flex items-center'>
-          <span className='mr-2'>Từ</span>
+          <span className='mr-2'>{tDashboard('from')}</span>
           <Input
             type='datetime-local'
-            placeholder='Từ ngày'
+            placeholder={tDashboard('from')}
             className='text-sm'
             value={format(fromDate, 'yyyy-MM-dd HH:mm').replace(' ', 'T')}
             onChange={(event) => setFromDate(new Date(event.target.value))}
           />
         </div>
         <div className='flex items-center'>
-          <span className='mr-2'>Đến</span>
+          <span className='mr-2'>{tDashboard('to')}</span>
           <Input
             type='datetime-local'
-            placeholder='Đến ngày'
+            placeholder={tDashboard('to')}
             value={format(toDate, 'yyyy-MM-dd HH:mm').replace(' ', 'T')}
             onChange={(event) => setToDate(new Date(event.target.value))}
           />
         </div>
         <Button className='' variant={'outline'} onClick={resetDateFilter}>
-          Reset
+          {tDashboard('reset')}
         </Button>
       </div>
       <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Tổng doanh thu</CardTitle>
+            <CardTitle className='text-sm font-medium'>{tDashboard('total-revenue')}</CardTitle>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'
@@ -81,7 +83,7 @@ export default function DashboardMain() {
         </Card>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Khách</CardTitle>
+            <CardTitle className='text-sm font-medium'>{tDashboard('guest')}</CardTitle>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'
@@ -99,12 +101,12 @@ export default function DashboardMain() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>{guestCount}</div>
-            <p className='text-xs text-muted-foreground'>Gọi món</p>
+            <p className='text-xs text-muted-foreground'>{tDashboard('ordered')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Đơn hàng</CardTitle>
+            <CardTitle className='text-sm font-medium'>{tDashboard('order')}</CardTitle>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'
@@ -121,12 +123,12 @@ export default function DashboardMain() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold'>{orderCount}</div>
-            <p className='text-xs text-muted-foreground'>Đã thanh toán</p>
+            <p className='text-xs text-muted-foreground'>{tDashboard('paied')}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Bàn đang phục vụ</CardTitle>
+            <CardTitle className='text-sm font-medium'>{tDashboard('serving-table')}</CardTitle>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'
@@ -145,11 +147,11 @@ export default function DashboardMain() {
           </CardContent>
         </Card>
       </div>
-      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-7'>
+      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-8'>
         <div className='lg:col-span-4'>
           <RevenueLineChart chartData={reveenueByDate} />
         </div>
-        <div className='lg:col-span-3'>
+        <div className='lg:col-span-4'>
           <DishBarChart chartData={dishIndicator} />
         </div>
       </div>

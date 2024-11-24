@@ -1,5 +1,5 @@
 import authApiRequest from '@/app/apiRequests/auth';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import envConfig from '@/config';
 import { OrderStatus, Role } from '@/constants/enum';
 import { EntityError } from '@/lib/http';

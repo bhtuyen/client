@@ -59,5 +59,96 @@
   "dish-category": {
     "Buffet": "Buffet",
     "Paid": "Paid"
+  },
+
+  "manage-sidebar": {
+    "dashboard": "Dashboard",
+    "accounts": "Accounts",
+    "dishes": "Dishes",
+    "orders": "Orders",
+    "tables": "Tables",
+    "logout": "Logout",
+    "setting": "Setting",
+    "collapse": "Collapse",
+    "expand": " Expand"
+  },
+
+  "manage": {
+    "title": "Manage",
+
+    "accounts": {
+      "title": "Accounts",
+      "create": {
+        "title": "Create account",
+        "description": "Enter the information of the new account"
+      },
+      "edit": {
+        "title": "Edit account",
+        "description": "Edit the information of the account"
+      }
+    },
+
+    "dashboard": {
+      "title": "Dashboard",
+      "from": "From",
+      "to": "To",
+      "reset": "Reset",
+      "revenue": "Revenue",
+      "total-revenue": "Total revenue",
+      "guest": "Guest",
+      "ordered": "Ordered",
+      "order": "Order",
+      "paied": "Paied",
+      "serving-table": "Serving table",
+      "dish-ranking": "Dish ranking",
+      "most-ordered": "Most ordered"
+    },
+
+    "dishes": {
+      "title": "Dishes",
+      "create": {
+        "title": "Create dish",
+        "description": "Enter the information of the new dish"
+      },
+      "edit": {
+        "title": "Edit dish",
+        "description": "Edit the information of the dish"
+      }
+    },
+
+    "orders": {
+      "title": "Orders",
+      "create": {
+        "title": "Create order",
+        "description": "Enter the information of the new order"
+      },
+      "edit": {
+        "title": "Edit order",
+        "description": "Edit the information of the order"
+      }
+    },
+
+    "tables": {
+      "title": "Tables",
+      "create": {
+        "title": "Create table",
+        "description": "Enter the information of the new table"
+      },
+      "edit": {
+        "title": "Edit table",
+        "description": "Edit the information of the table"
+      }
+    },
+    "setting": {
+      "title": "Setting",
+      "personal-information": "Personal information",
+      "name": "Full name",
+      "save": "Save",
+      "cancel": "Cancel",
+      "change-password": "Change password",
+      "old-password": "Old password",
+      "new-password": "New password",
+      "confirm-password": "Confirm new password"
+    }
   }
 }

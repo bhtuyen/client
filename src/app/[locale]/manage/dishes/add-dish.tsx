@@ -23,7 +23,7 @@ import { DishStatus, DishCategory } from '@/constants/enum';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useCreateDishMutation, useDishGroupQuery } from '@/app/queries/useDish';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
 import revalidateApiRequest from '@/app/apiRequests/revalidate';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';

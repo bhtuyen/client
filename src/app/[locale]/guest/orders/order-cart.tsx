@@ -3,7 +3,7 @@
 import { useGuestOrderListQuery } from '@/app/queries/useGuest';
 import { useAppStore } from '@/components/app-provider';
 import { Badge } from '@/components/ui/badge';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { OrderStatus } from '@/constants/enum';
 import { formatCurrency } from '@/lib/utils';
 import { PayGuestOrdersResType, UpdateOrderResType } from '@/schemaValidations/order.schema';

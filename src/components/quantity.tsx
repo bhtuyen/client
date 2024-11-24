@@ -5,22 +5,31 @@ import { Minus, Plus } from 'lucide-react';
 export default function Quantity({
   onChange,
   value,
-  disabled = false
+  disabled = false,
+  classIcon,
+  classInput
 }: {
   onChange: (_value: number) => void;
   value: number;
   disabled?: boolean;
+  classIcon?: string;
+  classInput?: string;
 }) {
   return (
     <div className='flex gap-1 '>
-      <Button className='h-6 w-6 p-0' disabled={value === 0 || disabled} onClick={() => onChange(value - 1)}>
+      <Button
+        variant={'ghost'}
+        className={`h-6 w-6 p-0 ${classIcon}`}
+        disabled={value === 0 || disabled}
+        onClick={() => onChange(value - 1)}
+      >
         <Minus className='w-3 h-3' />
       </Button>
       <Input
         type='text'
         inputMode='numeric'
         pattern='[0-9]*'
-        className='h-6 p-1 w-8 text-center'
+        className={`h-6 p-1 w-8 text-center ${classInput}`}
         value={value}
         onChange={(e) => {
           let value = e.target.value;
@@ -31,7 +40,12 @@ export default function Quantity({
           onChange(numberValue);
         }}
       />
-      <Button className='h-6 w-6 p-0' onClick={() => onChange(value + 1)} disabled={disabled}>
+      <Button
+        variant={'ghost'}
+        className={`h-6 w-6 p-0 ${classIcon}`}
+        onClick={() => onChange(value + 1)}
+        disabled={disabled}
+      >
         <Plus className='w-3 h-3' />
       </Button>
     </div>

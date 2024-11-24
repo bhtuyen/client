@@ -31,7 +31,7 @@ import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { endOfDay, format, startOfDay } from 'date-fns';
 import TableSkeleton from '@/app/[locale]/manage/orders/table-skeleton';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { GuestCreateOrdersResType } from '@/schemaValidations/guest.schema';
 import { useOrderListQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
 import { useTableListQuery } from '@/app/queries/useTable';

@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { DashboardIndicatorResType } from '@/schemaValidations/indicator.schema';
 import { useMemo } from 'react';
+import { TrendingUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const colors = [
   'var(--color-chrome)',
@@ -54,11 +56,13 @@ export function DishBarChart({
       })),
     [chartData]
   );
+
+  const tDashboard = useTranslations('manage.dashboard');
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Xếp hạng món ăn</CardTitle>
-        <CardDescription>Được gọi nhiều nhất</CardDescription>
+        <CardTitle>{tDashboard('dish-ranking')}</CardTitle>
+        <CardDescription>{tDashboard('most-ordered')}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -81,20 +85,19 @@ export function DishBarChart({
 
                 // return chartConfig[value as keyof typeof chartConfig]?.label
               }}
+              width={150}
             />
             <XAxis dataKey='successOrders' type='number' hide />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Bar dataKey='successOrders' name={'Đơn thanh toán'} layout='vertical' radius={5} />
+            <Bar dataKey='successOrders' name={tDashboard('paied')} layout='vertical' radius={5} />
           </BarChart>
         </ChartContainer>
       </CardContent>
       <CardFooter className='flex-col items-start gap-2 text-sm'>
-        {/* <div className='flex gap-2 font-medium leading-none'>
+        <div className='flex gap-2 font-medium leading-none'>
           Trending up by 5.2% this month <TrendingUp className='h-4 w-4' />
-        </div> */}
-        {/* <div className='leading-none text-muted-foreground'>
-          Showing total visitors for the last 6 months
-        </div> */}
+        </div>
+        <div className='leading-none text-muted-foreground'>Showing total visitors for the last 6 months</div>
       </CardFooter>
     </Card>
   );

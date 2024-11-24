@@ -6,7 +6,8 @@ export const AccountSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
   email: z.string().email(),
-  role: z.enum([Role.Employee, Role.Guest]),
+  phone: z.string().nullable(),
+  role: z.enum([Role.Employee, Role.Owner]),
   avatar: z.string().url().nullable(),
   isVerified: z.boolean().nullable()
 });
@@ -58,7 +59,7 @@ export const UpdateEmployeeAccountBody = z
     changePassword: z.boolean().optional(),
     password: z.string().min(6).max(100).optional(),
     confirmPassword: z.string().min(6).max(100).optional(),
-    role: z.enum([Role.Employee, Role.Guest]).optional().default(Role.Employee)
+    role: z.enum([Role.Employee, Role.Owner]).optional().default(Role.Employee)
   })
   .strict()
   .superRefine(({ confirmPassword, password, changePassword }, ctx) => {

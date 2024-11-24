@@ -8,7 +8,7 @@ import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { LoginBody, LoginBodyType } from '@/schemaValidations/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLoginMutation } from '@/app/queries/useAuth';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { getOauthGoogleUrl, handleErrorApi } from '@/lib/utils';
 import { useAppStore } from '@/components/app-provider';
 import { useEffect } from 'react';

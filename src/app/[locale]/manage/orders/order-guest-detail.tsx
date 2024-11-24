@@ -141,17 +141,15 @@ export default async function OrderGuestDetail({
       </div>
 
       <div>
-        <PopoverClose className='w-full' disabled={ordersFilterToPurchase.length === 0}>
-          <Button
-            className='w-full'
-            size={'sm'}
-            variant={'secondary'}
-            disabled={ordersFilterToPurchase.length === 0}
-            onClick={pay}
-          >
-            Thanh toán tất cả ({ordersFilterToPurchase.length} đơn)
-          </Button>
-        </PopoverClose>
+        <Button
+          className='w-full'
+          size={'sm'}
+          variant={'secondary'}
+          disabled={ordersFilterToPurchase.length === 0}
+          onClick={pay}
+        >
+          Thanh toán tất cả ({ordersFilterToPurchase.length} đơn)
+        </Button>
       </div>
     </div>
   );

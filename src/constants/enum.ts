@@ -36,3 +36,13 @@ export enum DishCategory {
   Buffet = 'Buffet',
   Paid = 'Paid'
 }
+
+export enum RouteAction {
+  Create = 'create',
+  Edit = 'edit'
+}
+
+export enum RowAction {
+  Edit = 'Edit',
+  Delete = 'Delete'
+}

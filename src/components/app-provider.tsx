@@ -3,6 +3,7 @@ import ListenLogoutSocket from '@/components/listen-logout-socket';
 import RefreshToken from '@/components/refresh-token';
 import envConfig from '@/config';
 import { decodeJWT, getAccessTokenFromLocalStorage, removeAuthTokens } from '@/lib/utils';
+import { DishInCartType } from '@/schemaValidations/dish.schema';
 import { RoleType } from '@/types/jwt.types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -24,10 +25,15 @@ const queryClient = new QueryClient({
 
 type StoreType = {
   role: RoleType | null;
-  setRole: (_role: RoleType | null) => void;
+  setRole: (role: RoleType | null) => void;
   socket: Socket | null;
-  createConnectSocket: (_accessToken: string) => void;
+  createConnectSocket: (accessToken: string) => void;
   disconnectSocket: () => void;
+  cart: DishInCartType[];
+  pushToCart: (dish: DishInCartType) => void;
+  removeDishFromCart: (dishId: string) => void;
+  changeQuantity: (dishId: string, quantity: number) => void;
+  removeAllCart: () => void;
 };
 
 export const useStore = create<StoreType>((set) => ({
@@ -58,6 +64,35 @@ export const useStore = create<StoreType>((set) => ({
       }
       return state;
     });
+  },
+  cart: [],
+  pushToCart: (dish) => {
+    set((state) => {
+      return { cart: [...state.cart, dish] };
+    });
+  },
+  removeDishFromCart: (dishId) => {
+    set((state) => {
+      return { cart: state.cart.filter((dish) => dish.id !== dishId) };
+    });
+  },
+  changeQuantity: (dishId, quantity) => {
+    set((state) => {
+      if (quantity === 0) {
+        return { cart: state.cart.filter((dish) => dish.id !== dishId) };
+      }
+      return {
+        cart: state.cart.map((dish) => {
+          if (dish.id === dishId) {
+            return { ...dish, quantity };
+          }
+          return dish;
+        })
+      };
+    });
+  },
+  removeAllCart: () => {
+    set({ cart: [] });
   }
 }));
 
@@ -67,7 +102,23 @@ export const useAppStore = () => {
   const socket = useStore((state) => state.socket);
   const createConnectSocket = useStore((state) => state.createConnectSocket);
   const disconnectSocket = useStore((state) => state.disconnectSocket);
-  return { role, setRole, socket, createConnectSocket, disconnectSocket };
+  const cart = useStore((state) => state.cart);
+  const pushToCart = useStore((state) => state.pushToCart);
+  const removeDishFromCart = useStore((state) => state.removeDishFromCart);
+  const changeQuantity = useStore((state) => state.changeQuantity);
+  const removeAllCart = useStore((state) => state.removeAllCart);
+  return {
+    role,
+    setRole,
+    socket,
+    createConnectSocket,
+    disconnectSocket,
+    cart,
+    pushToCart,
+    removeDishFromCart,
+    changeQuantity,
+    removeAllCart
+  };
 };
 
 const AppProvider = ({

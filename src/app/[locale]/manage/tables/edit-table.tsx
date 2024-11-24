@@ -20,7 +20,7 @@ import { TableStatus } from '@/constants/enum';
 import { Switch } from '@/components/ui/switch';
 import { Link } from '@/i18n/routing';
 import { useTableQuery, useUpdateTableMutation } from '@/app/queries/useTable';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { useEffect } from 'react';
 import QRCodeTable from '@/components/qrcode-table';
 import { useLocale, useTranslations } from 'next-intl';

@@ -75,7 +75,7 @@ export default function OrderStatics({
           const servingGuestCount = Object.values(servingGuestByTableNumber[tableNumber] ?? []).length;
           if (tableStatics) {
             for (const guestId in tableStatics) {
-              const guestStatics = tableStatics[Number(guestId)];
+              const guestStatics = tableStatics[guestId];
               if (
                 [guestStatics.Pending, guestStatics.Processing, guestStatics.Delivered].some(
                   (status) => status !== 0 && status !== undefined

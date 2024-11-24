@@ -22,14 +22,14 @@ import { GetListGuestsResType } from '@/schemaValidations/account.schema';
 import { Switch } from '@/components/ui/switch';
 import GuestsDialog from '@/app/[locale]/manage/orders/guests-dialog';
 import { CreateOrdersBodyType } from '@/schemaValidations/order.schema';
-import Quantity from '@/app/[locale]/guest/menu/quantity';
+import Quantity from '@/components/quantity';
 import Image from 'next/image';
 import { cn, formatCurrency, handleErrorApi } from '@/lib/utils';
 import { DishStatus } from '@/constants/enum';
 import { useDishListQuery } from '@/app/queries/useDish';
 import { useCreateOrderMutation } from '@/app/queries/useOrder';
 import { useCreateGuestMutation } from '@/app/queries/useAccount';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 
 export default function AddOrder() {
   const [open, setOpen] = useState(false);

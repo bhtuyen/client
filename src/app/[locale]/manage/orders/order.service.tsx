@@ -59,11 +59,11 @@ export const useOrderService = (orderList: GetOrdersResType['data']) => {
           [OrderStatus.Pending, OrderStatus.Processing, OrderStatus.Delivered].includes(order.status as any)
         );
         if (isServingGuest) {
-          servingGuestObject[Number(guestId)] = guestOrders;
+          servingGuestObject[guestId] = guestOrders;
         }
       }
       if (Object.keys(servingGuestObject).length) {
-        servingGuestByTableNumber[Number(tableNumber)] = servingGuestObject;
+        servingGuestByTableNumber[tableNumber] = servingGuestObject;
       }
     }
     return {

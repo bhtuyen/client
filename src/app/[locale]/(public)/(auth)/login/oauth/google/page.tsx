@@ -3,7 +3,7 @@
 import { useSetCookieOauthMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
 import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { useRouter } from '@/i18n/routing';
 import { decodeJWT } from '@/lib/utils';
 import { useEffect, useRef } from 'react';
