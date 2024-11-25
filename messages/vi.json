@@ -25,11 +25,31 @@
     "logout": "Đăng xuất",
     "login-with-google": "Đăng nhập với Google",
     "cancel": "Hủy",
-    "confirm": "Xác nhận"
+    "confirm": "Xác nhận",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa"
   },
   "alert-dialog": {
-    "title-logout": "Bạn có muốn đăng xuất không?",
-    "description-logout": "Việc đăng xuất có thể làm mất đi hóa đơn của bạn"
+    "title": {
+      "default": "Tiêu đề",
+      "delete-row-table-default": "Xóa hàng",
+      "delete-dish": "Xóa món ăn",
+      "delete-order": "Xóa đơn hàng",
+      "delete-table": "Xóa bàn ăn",
+      "delete-account": "Xóa nhân viên",
+
+      "logout": "Đăng xuất"
+    },
+    "description": {
+      "default": "Mô tả",
+      "delete-row-table-default": "Bạn có chắc chắn muốn xóa hàng này không?",
+      "delete-dish": "Bạn có chắc chắn muốn xóa món {name} không?",
+      "delete-order": "Bạn có chắc chắn muốn xóa đơn hàng {id} không?",
+      "delete-table": "Bạn có chắc chắn muốn xóa bàn {name} không?",
+      "delete-account": "Bạn có chắc chắn muốn xóa nhân viên {name} không?",
+
+      "logout": "Bạn có chắc chắn muốn đăng xuất không?"
+    }
   },
   "message-validation": {
     "invalid-email": "Email không hợp lệ"

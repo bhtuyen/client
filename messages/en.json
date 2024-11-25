@@ -25,11 +25,31 @@
     "logout": "Logout",
     "login-with-google": "Login with Google",
     "cancel": "Cancel",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "alert-dialog": {
-    "title-logout": "Do you want to logout?",
-    "description-logout": "Logging out may lose your invoices"
+    "title": {
+      "default": "Title",
+      "delete-row-table-default": "Delete row",
+      "delete-dish": "Delete dish",
+      "delete-order": "Delete order",
+      "delete-table": "Delete table",
+      "delete-account": "Delete employee",
+
+      "logout": "Logout"
+    },
+    "description": {
+      "default": "Description",
+      "delete-row-table-default": "Are you sure you want to delete this row?",
+      "delete-dish": "Are you sure you want to delete dish {name}?",
+      "delete-order": "Are you sure you want to delete order {id}?",
+      "delete-table": "Are you sure you want to delete table {name}?",
+      "delete-account": "Are you sure you want to delete account {name}?",
+
+      "logout": "Are you sure you want to logout?"
+    }
   },
   "message-validation": {
     "invalid-email": "Invalid email"

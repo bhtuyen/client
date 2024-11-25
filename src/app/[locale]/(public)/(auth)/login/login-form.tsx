@@ -1,21 +1,21 @@
 'use client';
+import { useLoginMutation } from '@/app/queries/useAuth';
+import { useAppStore } from '@/components/app-provider';
+import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useForm } from 'react-hook-form';
-import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { LoginBody, LoginBodyType } from '@/schemaValidations/auth.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useLoginMutation } from '@/app/queries/useAuth';
 import { toast } from '@/hooks/use-toast';
-import { getOauthGoogleUrl, handleErrorApi } from '@/lib/utils';
-import { useAppStore } from '@/components/app-provider';
-import { useEffect } from 'react';
 import { Link, useRouter } from '@/i18n/routing';
+import { getOauthGoogleUrl, handleErrorApi } from '@/lib/utils';
+import { LoginBody, LoginBodyType } from '@/schemaValidations/auth.schema';
+import { TMessageKeys } from '@/types/message.type';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
-import { KeysOfMessageType } from '@/types/message.type';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 
 export default function LoginForm() {
   const { setRole, socket, createConnectSocket, disconnectSocket } = useAppStore();
@@ -92,7 +92,7 @@ export default function LoginForm() {
                       <FormMessage
                         message={
                           errors.email?.message
-                            ? tMessageValidation(errors.email?.message as KeysOfMessageType<'message-validation'>)
+                            ? tMessageValidation(errors.email?.message as TMessageKeys<'message-validation'>)
                             : null
                         }
                       />

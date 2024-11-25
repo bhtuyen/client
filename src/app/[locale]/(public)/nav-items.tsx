@@ -3,15 +3,15 @@
 import { useLogoutMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
 import {
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTrigger,
   AlertDialog,
-  AlertDialogContent,
-  AlertDialogTitle,
-  AlertDialogDescription,
+  AlertDialogAction,
   AlertDialogCancel,
-  AlertDialogAction
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
 } from '@/components/ui/alert-dialog';
 import { Role } from '@/constants/enum';
 import { Link } from '@/i18n/routing';
@@ -19,8 +19,8 @@ import { cn, handleErrorApi } from '@/lib/utils';
 import { RoleType } from '@/types/jwt.types';
 
 import { useRouter } from '@/i18n/routing';
+import { TMessageKeys } from '@/types/message.type';
 import { useTranslations } from 'next-intl';
-import { KeysOfMessageType } from '@/types/message.type';
 
 const menuItems: {
   titleKey: string;
@@ -67,7 +67,8 @@ export default function NavItems({
 
   const tMenuItems = useTranslations('menu-items');
   const tButton = useTranslations('button');
-  const tAlertDialog = useTranslations('alert-dialog');
+  const tAlertDialogTitle = useTranslations('alert-dialog.title');
+  const tAlertDialogDescription = useTranslations('alert-dialog.description');
 
   const handleLogout = async () => {
     if (lgoutMutation.isPending) return;
@@ -91,7 +92,7 @@ export default function NavItems({
         if (isAuthenticator || isShow) {
           return (
             <Link href={item.href} key={item.href} className={className} onClick={handleNavItemClick}>
-              {tMenuItems(item.titleKey as KeysOfMessageType<'menu-items'>)}
+              {tMenuItems(item.titleKey as TMessageKeys<'menu-items'>)}
             </Link>
           );
         }
@@ -104,8 +105,8 @@ export default function NavItems({
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>{tAlertDialog('title-logout')}</AlertDialogTitle>
-              <AlertDialogDescription>{tAlertDialog('description-logout')}</AlertDialogDescription>
+              <AlertDialogTitle>{tAlertDialogTitle('logout')}</AlertDialogTitle>
+              <AlertDialogDescription>{tAlertDialogDescription('logout')}</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>{tButton('cancel')}</AlertDialogCancel>

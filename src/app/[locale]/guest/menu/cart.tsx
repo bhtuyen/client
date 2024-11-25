@@ -13,15 +13,13 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
-import { toast } from '@/hooks/use-toast';
-import { DishCategory, OrderStatus } from '@/constants/enum';
+import { DishCategory } from '@/constants/enum';
 import { formatCurrency, handleErrorApi } from '@/lib/utils';
-import { PayGuestOrdersResType, UpdateOrderResType } from '@/schemaValidations/order.schema';
 import clsx from 'clsx';
 import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 const tabs = [
   { key: 'cart', label: 'Giỏ đồ ăn' },
@@ -54,8 +52,6 @@ export default function Cart() {
       handleErrorApi({ error });
     }
   };
-
-  const { socket } = useAppStore();
 
   const orders = useMemo(() => data?.payload.data || [], [data]);
 

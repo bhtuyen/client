@@ -10,7 +10,6 @@ import {
   handleErrorApi
 } from '@/lib/utils';
 import { GetOrdersResType, PayGuestOrdersResType } from '@/schemaValidations/order.schema';
-import { PopoverClose } from '@radix-ui/react-popover';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Fragment } from 'react';

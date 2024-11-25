@@ -1,27 +1,13 @@
 'use client';
 
 import AddEmployee from '@/app/[locale]/manage/accounts/add-employee';
-import { useAccountListQuery, useDeleteEmployeeMutation } from '@/app/queries/useAccount';
-import DataTable, { RowAction } from '@/components/data-table';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/components/ui/alert-dialog';
+import { useAccountListQuery } from '@/app/queries/useAccount';
+import TTable, { TCellAction } from '@/components/t-data-table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/hooks/use-toast';
-import { handleErrorApi } from '@/lib/utils';
-import { AccountListResType, AccountType } from '@/schemaValidations/account.schema';
+import { AccountType } from '@/schemaValidations/account.schema';
 import { CaretSortIcon } from '@radix-ui/react-icons';
 import { ColumnDef } from '@tanstack/react-table';
-
-type AccountItem = AccountListResType['data'][0];
 
 export const columns: ColumnDef<AccountType>[] = [
   {
@@ -68,77 +54,45 @@ export const columns: ColumnDef<AccountType>[] = [
     id: 'actions',
     enableHiding: false,
     cell: function Actions({ row }) {
-      return <RowAction urlEdit={`/manage/accounts/${row.original.id}/edit`} onDelete={() => {}} />;
+      return (
+        <TCellAction
+          editOption={{
+            urlEdit: `/manage/accounts/${row.original.id}/edit`
+          }}
+          deleteOption={{
+            action: {
+              key: 'confirm'
+            },
+            cancel: {
+              key: 'cancel'
+            },
+            description: {
+              key: 'delete-account',
+              values: {
+                name: row.original.name
+              }
+            },
+            title: {
+              key: 'delete-account'
+            },
+            onAction: () => {}
+          }}
+        />
+      );
     }
   }
 ];
 
-function AlertDialogDeleteAccount({
-  employeeDelete,
-  setEmployeeDelete
-}: {
-  employeeDelete: AccountItem | null;
-  setEmployeeDelete: (_value: AccountItem | null) => void;
-}) {
-  const deleteAccount = useDeleteEmployeeMutation();
-
-  const handleDeleteAccount = async () => {
-    if (employeeDelete) {
-      try {
-        const result = await deleteAccount.mutateAsync(employeeDelete.id);
-        setEmployeeDelete(null);
-        toast({
-          description: result.payload.message
-        });
-      } catch (error: any) {
-        handleErrorApi({ error });
-      }
-    }
-  };
-  return (
-    <AlertDialog
-      open={Boolean(employeeDelete)}
-      onOpenChange={(value) => {
-        if (!value) {
-          setEmployeeDelete(null);
-        }
-      }}
-    >
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Xóa nhân viên?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Tài khoản <span className='bg-foreground text-primary-foreground rounded px-1'>{employeeDelete?.name}</span>{' '}
-            sẽ bị xóa vĩnh viễn
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDeleteAccount}>Continue</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
 export default function AccountTable() {
   const accountListQuery = useAccountListQuery();
   const data = accountListQuery.data?.payload.data ?? [];
 
   return (
-    <div className='w-full space-y-4'>
-      <div className='flex items-center'>
-        {/* <Input
-          placeholder='Filter emails...'
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('email')?.setFilterValue(event.target.value)}
-          className='max-w-sm'
-          IconLeft={Search}
-        /> */}
-        <div className='ml-auto flex items-center gap-2'>
-          <AddEmployee />
-        </div>
-      </div>
-      <DataTable data={data} columns={columns} />
-    </div>
+    <TTable
+      data={data}
+      columns={columns}
+      childrenToolbar={<AddEmployee />}
+      filter={{ placeholder: 'Tìm kiếm nhân viên', column: 'email' }}
+    />
   );
 }

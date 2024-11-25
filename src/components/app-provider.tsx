@@ -3,12 +3,12 @@ import ListenLogoutSocket from '@/components/listen-logout-socket';
 import RefreshToken from '@/components/refresh-token';
 import envConfig from '@/config';
 import { decodeJWT, getAccessTokenFromLocalStorage, removeAuthTokens } from '@/lib/utils';
-import { DishInCartType } from '@/schemaValidations/dish.schema';
+import { StoreType } from '@/types/common.type';
 import { RoleType } from '@/types/jwt.types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useEffect, useRef } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
 import { create } from 'zustand';
 
 // Default
@@ -22,19 +22,6 @@ const queryClient = new QueryClient({
     }
   }
 });
-
-type StoreType = {
-  role: RoleType | null;
-  setRole: (role: RoleType | null) => void;
-  socket: Socket | null;
-  createConnectSocket: (accessToken: string) => void;
-  disconnectSocket: () => void;
-  cart: DishInCartType[];
-  pushToCart: (dish: DishInCartType) => void;
-  removeDishFromCart: (dishId: string) => void;
-  changeQuantity: (dishId: string, quantity: number) => void;
-  removeAllCart: () => void;
-};
 
 export const useStore = create<StoreType>((set) => ({
   role: null,
@@ -93,33 +80,36 @@ export const useStore = create<StoreType>((set) => ({
   },
   removeAllCart: () => {
     set({ cart: [] });
+  },
+  isShowAlertDialog: false,
+  optionAlertDialog: {
+    title: {
+      key: 'default',
+      values: {}
+    },
+    description: {
+      key: 'default',
+      values: {}
+    },
+    onAction: () => {},
+    cancel: {
+      key: 'cancel',
+      values: {}
+    },
+    action: {
+      key: 'confirm',
+      values: {}
+    }
+  },
+  closeAlertDialog: () => {
+    set({ isShowAlertDialog: false });
+  },
+  showAlertDialog: (option) => {
+    set({ isShowAlertDialog: true, optionAlertDialog: option });
   }
 }));
 
-export const useAppStore = () => {
-  const role = useStore((state) => state.role);
-  const setRole = useStore((state) => state.setRole);
-  const socket = useStore((state) => state.socket);
-  const createConnectSocket = useStore((state) => state.createConnectSocket);
-  const disconnectSocket = useStore((state) => state.disconnectSocket);
-  const cart = useStore((state) => state.cart);
-  const pushToCart = useStore((state) => state.pushToCart);
-  const removeDishFromCart = useStore((state) => state.removeDishFromCart);
-  const changeQuantity = useStore((state) => state.changeQuantity);
-  const removeAllCart = useStore((state) => state.removeAllCart);
-  return {
-    role,
-    setRole,
-    socket,
-    createConnectSocket,
-    disconnectSocket,
-    cart,
-    pushToCart,
-    removeDishFromCart,
-    changeQuantity,
-    removeAllCart
-  };
-};
+export const useAppStore = () => useStore((state) => state);
 
 const AppProvider = ({
   children

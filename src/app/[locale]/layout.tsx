@@ -1,13 +1,14 @@
-import type { Metadata } from 'next';
-import { Inter as FontSans } from 'next/font/google';
 import '@/app/globals.css';
-import { cn } from '@/lib/utils';
+import AppProvider from '@/components/app-provider';
+import TAlterDialog from '@/components/t-alert-dialog';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
-import AppProvider from '@/components/app-provider';
+import { routing } from '@/i18n/routing';
+import { cn } from '@/lib/utils';
+import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, unstable_setRequestLocale } from 'next-intl/server';
-import { routing } from '@/i18n/routing';
+import { Inter as FontSans } from 'next/font/google';
 import NextTopLoader from 'nextjs-toploader';
 
 const fontSans = FontSans({
@@ -45,6 +46,7 @@ export default async function RootLayout({
             <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
               {children}
               <Toaster />
+              <TAlterDialog />
             </ThemeProvider>
           </AppProvider>
         </NextIntlClientProvider>

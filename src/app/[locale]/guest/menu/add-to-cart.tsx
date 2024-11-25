@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -10,22 +11,19 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 
-import { Dish, DishInCartType } from '@/schemaValidations/dish.schema';
-import { Plus } from 'lucide-react';
-import { Cross2Icon } from '@radix-ui/react-icons';
-import Image from 'next/image';
-import { DishCategory, DishStatus } from '@/constants/enum';
-import { formatCurrency } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
+import { useAppStore } from '@/components/app-provider';
+import Quantity from '@/components/quantity';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import Quantity from '@/components/quantity';
-import { useEffect, useState } from 'react';
-import { useAppStore } from '@/components/app-provider';
-import { toast } from '@/hooks/use-toast';
-import { Checkbox } from '@/components/ui/checkbox';
+import { DishCategory, DishStatus } from '@/constants/enum';
+import { formatCurrency } from '@/lib/utils';
+import { Dish, DishInCartType } from '@/schemaValidations/dish.schema';
+import { Cross2Icon } from '@radix-ui/react-icons';
+import { Plus } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
 
 export default function AddToCart({ dish }: { dish: Dish }) {
   const [quantity, setQuantity] = useState(0);

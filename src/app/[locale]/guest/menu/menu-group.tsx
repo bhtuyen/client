@@ -5,7 +5,6 @@ import { DishCategory } from '@/constants/enum';
 import { formatCurrency } from '@/lib/utils';
 import { DishListResType } from '@/schemaValidations/dish.schema';
 import Image from 'next/image';
-import React from 'react';
 
 export default function MenuGroup() {
   const tabs = [
