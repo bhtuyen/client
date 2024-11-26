@@ -32,14 +32,13 @@ export default function DishTable() {
 
   const tDishStatus = useTranslations('dish-status');
   const tDishCategory = useTranslations('dish-category');
+  const tTableColumn = useTranslations('t-data-table.column');
 
   const columns: ColumnDef<DishItem>[] = useMemo(
     () => [
       {
         accessorKey: 'image',
-        header: ({}) => {
-          return <div className='text-center w-[100px]'>Ảnh</div>;
-        },
+        header: ({ column }) => <div className='text-center w-[100px]'>{tTableColumn('image')}</div>,
         cell: ({ row }) => (
           <div className='w-[100px]'>
             <Image
@@ -58,34 +57,34 @@ export default function DishTable() {
       },
       {
         accessorKey: 'name',
-        header: 'Tên',
+        header: () => <div className='text-center w-[100px]'>{tTableColumn('name')}</div>,
         cell: ({ row }) => <div className='capitalize'>{row.getValue('name')}</div>
       },
       {
         accessorKey: 'price',
-        header: 'Giá cả',
+        header: () => <div className='text-center w-[100px]'>{tTableColumn('price')}</div>,
         cell: ({ row }) => <div className='capitalize'>{formatCurrency(row.getValue('price'))}</div>
       },
       {
         accessorKey: 'description',
-        header: 'Mô tả',
+        header: () => <div className='text-center w-[100px]'>{tTableColumn('description')}</div>,
         cell: ({ row }) => (
           <div dangerouslySetInnerHTML={{ __html: row.getValue('description') }} className='whitespace-pre-line' />
         )
       },
       {
         accessorKey: 'category',
-        header: 'Loại món',
+        header: () => <div className='text-center w-[100px]'>{tTableColumn('category')}</div>,
         cell: ({ row }) => <div>{tDishCategory(row.getValue<DishCategory>('category'))}</div>
       },
       {
         accessorKey: 'groupName',
-        header: 'Nhóm',
+        header: () => <div className='text-center w-[100px]'>{tTableColumn('group-name')}</div>,
         cell: ({ row }) => <div>{row.getValue('groupName')}</div>
       },
       {
         accessorKey: 'status',
-        header: 'Trạng thái',
+        header: () => <div className='text-center w-[100px]'>{tTableColumn('status')}</div>,
         cell: ({ row }) => <div>{tDishStatus(row.getValue<DishStatus>('status'))}</div>
       },
       {
@@ -97,21 +96,15 @@ export default function DishTable() {
               urlEdit: `/manage/accounts/${row.original.id}/edit`
             }}
             deleteOption={{
-              action: {
-                key: 'confirm'
-              },
-              cancel: {
-                key: 'cancel'
-              },
+              action: 'confirm',
+              cancel: 'cancel',
               description: {
                 key: 'delete-dish',
                 values: {
                   name: row.original.name
                 }
               },
-              title: {
-                key: 'delete-dish'
-              },
+              title: 'delete-dish',
               onAction: () => {
                 handleDeleteAccount(row.original.id);
               }
@@ -120,7 +113,7 @@ export default function DishTable() {
         )
       }
     ],
-    []
+    [handleDeleteAccount, tDishCategory, tDishStatus, tTableColumn]
   );
 
   return <TTable data={data} columns={columns} childrenToolbar={<AddDish />} />;

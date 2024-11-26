@@ -20,16 +20,22 @@
     "manage-dashboard": "Quản lý",
     "login": "Đăng nhập"
   },
-  "button": {
+  "t-button": {
+    "default": "Mặc định",
     "login": "Đăng nhập",
     "logout": "Đăng xuất",
     "login-with-google": "Đăng nhập với Google",
     "cancel": "Hủy",
     "confirm": "Xác nhận",
     "edit": "Chỉnh sửa",
-    "delete": "Xóa"
+    "delete": "Xóa",
+    "customize": "Tùy chỉnh",
+    "first": "Trang đầu",
+    "last": "Trang cuối",
+    "next": "Trang sau",
+    "previous": "Trang trước"
   },
-  "alert-dialog": {
+  "t-alert-dialog": {
     "title": {
       "default": "Tiêu đề",
       "delete-row-table-default": "Xóa hàng",
@@ -37,7 +43,6 @@
       "delete-order": "Xóa đơn hàng",
       "delete-table": "Xóa bàn ăn",
       "delete-account": "Xóa nhân viên",
-
       "logout": "Đăng xuất"
     },
     "description": {
@@ -47,7 +52,6 @@
       "delete-order": "Bạn có chắc chắn muốn xóa đơn hàng {id} không?",
       "delete-table": "Bạn có chắc chắn muốn xóa bàn {name} không?",
       "delete-account": "Bạn có chắc chắn muốn xóa nhân viên {name} không?",
-
       "logout": "Bạn có chắc chắn muốn đăng xuất không?"
     }
   },
@@ -169,6 +173,36 @@
       "old-password": "Mật khẩu cũ",
       "new-password": "Mật khẩu mới",
       "confirm-password": "Xác nhận mật khẩu mới"
+    }
+  },
+  "t-data-table": {
+    "column": {
+      "name": "Tên",
+      "email": "Email",
+      "role": "Vai trò",
+      "status": "Trạng thái",
+      "category": "Loại món",
+      "price": "Giá",
+      "description": "Mô tả",
+      "table": "Bàn",
+      "image": "Hình ảnh",
+      "phone": "Số điện thoại",
+      "employee": "Nhân viên",
+      "group-name": "Nhóm"
+    },
+    "customize": {
+      "toggle-column": "Chọn cột"
+    },
+    "filter": {
+      "input-placeholder-default": "Tìm kiếm...",
+      "input-placeholder-employee": "Tìm kiếm theo email..."
+    },
+    "no-data": "Không có dữ liệu.",
+    "no-result": "Không tìm thấy kết quả phù hợp.",
+    "pagination": {
+      "rows-per-page": "Dòng trên trang",
+      "page-info": "Trang {page} của {total}",
+      "row-selected-info": "Đã chọn {count} bản ghi"
     }
   }
 }

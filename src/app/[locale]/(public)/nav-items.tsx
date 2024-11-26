@@ -66,9 +66,9 @@ export default function NavItems({
   const router = useRouter();
 
   const tMenuItems = useTranslations('menu-items');
-  const tButton = useTranslations('button');
-  const tAlertDialogTitle = useTranslations('alert-dialog.title');
-  const tAlertDialogDescription = useTranslations('alert-dialog.description');
+  const tButton = useTranslations('t-button');
+  const tAlertDialogTitle = useTranslations('t-alert-dialog.title');
+  const tAlertDialogDescription = useTranslations('t-alert-dialog.description');
 
   const handleLogout = async () => {
     if (lgoutMutation.isPending) return;

@@ -1,4 +1,11 @@
 'use client';
+import GuestsDialog from '@/app/[locale]/manage/orders/guests-dialog';
+import { TablesDialog } from '@/app/[locale]/manage/orders/tables-dialog';
+import { useCreateGuestMutation } from '@/app/queries/useAccount';
+import { useDishListQuery } from '@/app/queries/useDish';
+import { useCreateOrderMutation } from '@/app/queries/useOrder';
+import TQuantity from '@/components/t-quantity';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,28 +15,21 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
-import { PlusCircle } from 'lucide-react';
-import { useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { GuestLoginBody, GuestLoginBodyType } from '@/schemaValidations/guest.schema';
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { TablesDialog } from '@/app/[locale]/manage/orders/tables-dialog';
-import { GetListGuestsResType } from '@/schemaValidations/account.schema';
 import { Switch } from '@/components/ui/switch';
-import GuestsDialog from '@/app/[locale]/manage/orders/guests-dialog';
-import { CreateOrdersBodyType } from '@/schemaValidations/order.schema';
-import Quantity from '@/components/quantity';
-import Image from 'next/image';
-import { cn, formatCurrency, handleErrorApi } from '@/lib/utils';
 import { DishStatus } from '@/constants/enum';
-import { useDishListQuery } from '@/app/queries/useDish';
-import { useCreateOrderMutation } from '@/app/queries/useOrder';
-import { useCreateGuestMutation } from '@/app/queries/useAccount';
 import { toast } from '@/hooks/use-toast';
+import { cn, formatCurrency, handleErrorApi } from '@/lib/utils';
+import { GetListGuestsResType } from '@/schemaValidations/account.schema';
+import { GuestLoginBody, GuestLoginBodyType } from '@/schemaValidations/guest.schema';
+import { CreateOrdersBodyType } from '@/schemaValidations/order.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { PlusCircle } from 'lucide-react';
+import Image from 'next/image';
+import { useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 export default function AddOrder() {
   const [open, setOpen] = useState(false);
@@ -225,7 +225,7 @@ export default function AddOrder() {
                 <p className='text-xs font-semibold'>{formatCurrency(dish.price)}</p>
               </div>
               <div className='flex-shrink-0 ml-auto flex justify-center items-center'>
-                <Quantity
+                <TQuantity
                   onChange={(value) => handleQuantityChange(dish.id, value)}
                   value={orders.find((order) => order.dishId === dish.id)?.quantity ?? 0}
                 />

@@ -20,16 +20,22 @@
     "manage-dashboard": "Manage",
     "login": "Login"
   },
-  "button": {
+  "t-button": {
+    "default": "Default",
     "login": "Login",
     "logout": "Logout",
     "login-with-google": "Login with Google",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "customize": "Customize",
+    "first": "First",
+    "last": "Last",
+    "next": "Next",
+    "previous": "Previous"
   },
-  "alert-dialog": {
+  "t-alert-dialog": {
     "title": {
       "default": "Title",
       "delete-row-table-default": "Delete row",
@@ -37,7 +43,6 @@
       "delete-order": "Delete order",
       "delete-table": "Delete table",
       "delete-account": "Delete employee",
-
       "logout": "Logout"
     },
     "description": {
@@ -47,7 +52,6 @@
       "delete-order": "Are you sure you want to delete order {id}?",
       "delete-table": "Are you sure you want to delete table {name}?",
       "delete-account": "Are you sure you want to delete account {name}?",
-
       "logout": "Are you sure you want to logout?"
     }
   },
@@ -169,6 +173,36 @@
       "old-password": "Old password",
       "new-password": "New password",
       "confirm-password": "Confirm new password"
+    }
+  },
+  "t-data-table": {
+    "column": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "category": "Category",
+      "price": "Price",
+      "description": "Description",
+      "table": "Table",
+      "image": "Image",
+      "phone": "Phone",
+      "employee": "Employee",
+      "group-name": "Group name"
+    },
+    "customize": {
+      "toggle-column": "Toggle column"
+    },
+    "filter": {
+      "input-placeholder-default": "Search...",
+      "input-placeholder-employee": "Search by email..."
+    },
+    "no-data": "No data available.",
+    "no-result": "No matching records found.",
+    "pagination": {
+      "rows-per-page": "Rows per page",
+      "page-info": "Page {page} of {total}",
+      "row-selected-info": "{count} rows selected"
     }
   }
 }

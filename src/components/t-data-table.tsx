@@ -1,8 +1,7 @@
 'use client';
 
 import { useAppStore } from '@/components/app-provider';
-import { DataTablePagination } from '@/components/pagination';
-import { Button } from '@/components/ui/button';
+import TButton from '@/components/t-button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -12,10 +11,11 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Link } from '@/i18n/routing';
+import { convertToKebabCase } from '@/lib/utils';
 import { DeleteOption, EditOption } from '@/types/common.type';
+import { TMessageKeys, TMessageOption } from '@/types/message.type';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -31,7 +31,16 @@ import {
   VisibilityState,
   type Table as TableType
 } from '@tanstack/react-table';
-import { PencilIcon, Search, Settings2, TrashIcon } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  PencilIcon,
+  Search,
+  Settings2,
+  TrashIcon
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { ReactNode, useState } from 'react';
 
@@ -45,7 +54,7 @@ interface TToolbarProps<TData> {
   table: TableType<TData>;
   children?: ReactNode;
   filter?: {
-    placeholder: string;
+    placeholder: TMessageOption<'t-data-table.filter'>;
     column: string;
   };
 }
@@ -54,7 +63,7 @@ interface TFilterProps<TData> {
   table: TableType<TData>;
 
   filter?: {
-    placeholder: string;
+    placeholder: TMessageOption<'t-data-table.filter'>;
     column: string;
   };
 }
@@ -70,9 +79,13 @@ interface TTableProps<TData, TValue> {
   childrenToolbar?: ReactNode;
 
   filter?: {
-    placeholder: string;
+    placeholder: TMessageOption<'t-data-table.filter'>;
     column: string;
   };
+}
+
+interface DataTablePaginationProps<TData> {
+  table: TableType<TData>;
 }
 
 export default function TTable<TData, TValue>({ data, columns, childrenToolbar, filter }: TTableProps<TData, TValue>) {
@@ -101,6 +114,7 @@ export default function TTable<TData, TValue>({ data, columns, childrenToolbar, 
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues()
   });
+  const tDataTable = useTranslations('t-data-table');
 
   return (
     <div className='h-full flex flex-col gap-4 w-full'>
@@ -133,7 +147,7 @@ export default function TTable<TData, TValue>({ data, columns, childrenToolbar, 
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className='h-24 text-center w-auto'>
-                No results.
+                {tDataTable('no-data')}
               </TableCell>
             </TableRow>
           )}
@@ -144,29 +158,42 @@ export default function TTable<TData, TValue>({ data, columns, childrenToolbar, 
   );
 }
 
-export function TFilter<TData>({ table, filter }: TFilterProps<TData>) {
-  const { column, placeholder } = filter ?? {};
+export function TFilter<TData>({
+  table,
+  filter = {
+    placeholder: {
+      key: 'input-placeholder-default',
+      values: {}
+    },
+    column: 'name'
+  }
+}: TFilterProps<TData>) {
+  const { column, placeholder } = filter;
+  const tTableFilter = useTranslations('t-data-table.filter');
   return (
     <Input
-      placeholder={placeholder ?? 'Search...'}
-      value={(table.getColumn(column ?? 'name')?.getFilterValue() as string) ?? ''}
-      onChange={(event) => table.getColumn(column ?? 'name')?.setFilterValue(event.target.value)}
+      placeholder={tTableFilter(placeholder?.key, placeholder?.values)}
+      value={(table.getColumn(column)?.getFilterValue() as string) ?? ''}
+      onChange={(event) => table.getColumn(column)?.setFilterValue(event.target.value)}
       className='max-w-sm'
       IconLeft={Search}
     />
   );
 }
 export function TOption<TData>({ table }: TOptionProps<TData>) {
+  const tButton = useTranslations('t-button');
+  const tTableColumn = useTranslations('t-data-table.column');
+  const tTableCustomize = useTranslations('t-data-table.customize');
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='outline' size='sm' className='ml-auto hidden h-8 lg:flex'>
+        <TButton variant='outline' size='sm'>
           <Settings2 />
-          View
-        </Button>
+          {tButton('customize')}
+        </TButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-[150px]'>
-        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+        <DropdownMenuLabel className='text-center'>{tTableCustomize('toggle-column')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
@@ -174,12 +201,12 @@ export function TOption<TData>({ table }: TOptionProps<TData>) {
           .map((column) => {
             return (
               <DropdownMenuCheckboxItem
+                className='cursor-pointer'
                 key={column.id}
-                className='capitalize'
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {column.id}
+                {tTableColumn(convertToKebabCase(column.id) as TMessageKeys<'t-data-table.column'>)}
               </DropdownMenuCheckboxItem>
             );
           })}
@@ -201,27 +228,14 @@ export function TToolbar<TData>({ table, children, filter }: TToolbarProps<TData
 
 export function TCellAction({ editOption, deleteOption }: TCellActionsProps) {
   const { showAlertDialog } = useAppStore();
-  const tButton = useTranslations('button');
   const { urlEdit } = editOption;
 
   const deleteOptionDefault: DeleteOption = {
-    action: {
-      key: 'confirm',
-      values: {}
-    },
-    cancel: {
-      key: 'cancel',
-      values: {}
-    },
-    description: {
-      key: 'delete-row-table-default',
-      values: {}
-    },
+    action: 'confirm',
+    cancel: 'cancel',
+    description: 'delete-row-table-default',
     onAction: () => {},
-    title: {
-      key: 'delete-row-table-default',
-      values: {}
-    }
+    title: 'delete-row-table-default'
   };
 
   const handleDeleteRow = () => {
@@ -229,31 +243,80 @@ export function TCellAction({ editOption, deleteOption }: TCellActionsProps) {
   };
   return (
     <div className='flex items-center gap-4 w-full'>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Link
-            href={urlEdit}
-            className='rounded-md border border-input size-9 inline-flex items-center justify-center hover:bg-accent'
+      <TButton size='icon' href={urlEdit} tooltip='edit' variant='outline' asLink>
+        <PencilIcon height={16} width={16} />
+      </TButton>
+      <TButton size='icon' onClick={handleDeleteRow} variant='outline' tooltip='delete'>
+        <TrashIcon />
+      </TButton>
+    </div>
+  );
+}
+
+export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
+  const tDataTablePagination = useTranslations('t-data-table.pagination');
+  return (
+    <div className='flex items-center justify-between py-1'>
+      <div className='flex-1 text-sm text-muted-foreground'>
+        {tDataTablePagination('row-selected-info', { count: table.getFilteredSelectedRowModel().rows.length })}
+      </div>
+      <div className='flex items-center space-x-6 lg:space-x-8'>
+        <div className='flex items-center space-x-2'>
+          <p className='text-sm font-medium'>{tDataTablePagination('rows-per-page')}</p>
+          <Select
+            value={`${table.getState().pagination.pageSize}`}
+            onValueChange={(value) => {
+              table.setPageSize(Number(value));
+            }}
           >
-            <span className='sr-only'>{tButton('edit')}</span>
-            <PencilIcon height={16} width={16} />
-          </Link>
-        </TooltipTrigger>
-        <TooltipContent side='top' align='center'>
-          <span>{tButton('edit')}</span>
-        </TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button variant='outline' size='icon' onClick={handleDeleteRow}>
-            <span className='sr-only'>{tButton('delete')}</span>
-            <TrashIcon />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side='top' align='center'>
-          {tButton('delete')}
-        </TooltipContent>
-      </Tooltip>
+            <SelectTrigger className='h-8 w-[70px]'>
+              <SelectValue placeholder={table.getState().pagination.pageSize} />
+            </SelectTrigger>
+            <SelectContent side='top'>
+              {[5, 10, 15, 40, 50].map((pageSize) => (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  {pageSize}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className='flex w-[100px] items-center justify-center text-sm font-medium'>
+          {tDataTablePagination('page-info', {
+            page: table.getState().pagination.pageIndex + 1,
+            total: table.getPageCount()
+          })}
+        </div>
+        <div className='flex items-center space-x-2'>
+          <TButton
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+            tooltip='first'
+            size='icon'
+          >
+            <ChevronsLeft />
+          </TButton>
+          <TButton
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            tooltip='previous'
+            size='icon'
+          >
+            <ChevronLeft />
+          </TButton>
+          <TButton size='icon' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} tooltip='next'>
+            <ChevronRight />
+          </TButton>
+          <TButton
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            size='icon'
+            tooltip='last'
+            disabled={!table.getCanNextPage()}
+          >
+            <ChevronsRight />
+          </TButton>
+        </div>
+      </div>
     </div>
   );
 }

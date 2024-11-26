@@ -1,17 +1,18 @@
 import authApiRequest from '@/app/apiRequests/auth';
-import { toast } from '@/hooks/use-toast';
+import guestApiRequest from '@/app/apiRequests/guest';
 import envConfig from '@/config';
 import { OrderStatus, Role } from '@/constants/enum';
+import { toast } from '@/hooks/use-toast';
 import { EntityError } from '@/lib/http';
+import { TokenPayload } from '@/types/jwt.types';
+import { TMessageOption, TMessKey, TNamespaceKeys, TranslationFunctionParams } from '@/types/message.type';
 import { type ClassValue, clsx } from 'clsx';
+import { format } from 'date-fns';
 import { decode } from 'jsonwebtoken';
 import { BookX, CookingPot, HandCoins, Loader, Truck } from 'lucide-react';
 import { UseFormSetError } from 'react-hook-form';
-import { twMerge } from 'tailwind-merge';
-import { format } from 'date-fns';
-import { TokenPayload } from '@/types/jwt.types';
-import guestApiRequest from '@/app/apiRequests/guest';
 import slugify from 'slugify';
+import { twMerge } from 'tailwind-merge';
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -201,3 +202,22 @@ export const OrderStatusIcon = {
   [OrderStatus.Delivered]: Truck,
   [OrderStatus.Paid]: HandCoins
 };
+
+export function convertToKebabCase(str: string) {
+  return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+}
+
+export function getArguments<T extends TNamespaceKeys = TNamespaceKeys>(
+  tMessKey: TMessKey<T>
+): TranslationFunctionParams<T> {
+  if (isMessageOption(tMessKey)) {
+    return tMessKey.values ? [tMessKey.key, tMessKey.values] : [tMessKey.key];
+  }
+  return [tMessKey];
+}
+
+export function isMessageOption<T extends TNamespaceKeys = TNamespaceKeys>(
+  value: TMessKey<T>
+): value is TMessageOption<T> {
+  return typeof value === 'object' && value !== null && 'key' in value;
+}

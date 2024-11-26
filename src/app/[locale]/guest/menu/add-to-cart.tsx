@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 
 import { useAppStore } from '@/components/app-provider';
-import Quantity from '@/components/quantity';
+import TQuantity from '@/components/t-quantity';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -88,7 +88,7 @@ export default function AddToCart({ dish }: { dish: Dish }) {
           </div>
         </div>
         <DialogFooter className='flex flex-row items-center gap-4 py-2 px-4'>
-          <Quantity
+          <TQuantity
             value={quantity}
             onChange={(value) => setQuantity(value)}
             disabled={dish.status === DishStatus.Unavailable}

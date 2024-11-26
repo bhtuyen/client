@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
+import { getArguments } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
 export default function TAlterDialog() {
@@ -17,9 +18,9 @@ export default function TAlterDialog() {
 
   const { title, description, onAction, cancel, action, onCancel } = optionAlertDialog;
 
-  const tButton = useTranslations('button');
-  const tAlertDialogTitle = useTranslations('alert-dialog.title');
-  const tAlertDialogDescription = useTranslations('alert-dialog.description');
+  const tButton = useTranslations('t-button');
+  const tAlertDialogTitle = useTranslations('t-alert-dialog.title');
+  const tAlertDialogDescription = useTranslations('t-alert-dialog.description');
 
   const handleClose = () => {
     onCancel && onCancel();
@@ -35,14 +36,12 @@ export default function TAlterDialog() {
     <AlertDialog open={isShowAlertDialog}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{tAlertDialogTitle(title.key, title.values)}</AlertDialogTitle>
-          <AlertDialogDescription>
-            {tAlertDialogDescription(description.key, description.values)}
-          </AlertDialogDescription>
+          <AlertDialogTitle>{tAlertDialogTitle(...getArguments(title))}</AlertDialogTitle>
+          <AlertDialogDescription>{tAlertDialogDescription(...getArguments(description))}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleClose}>{tButton(cancel.key, cancel.values)}</AlertDialogCancel>
-          <AlertDialogAction onClick={handleAction}>{tButton(action.key, action.values)}</AlertDialogAction>
+          <AlertDialogCancel onClick={handleClose}>{tButton(...getArguments(cancel))}</AlertDialogCancel>
+          <AlertDialogAction onClick={handleAction}>{tButton(...getArguments(action))}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

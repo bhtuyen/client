@@ -1,15 +1,15 @@
 'use client';
 
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
 import { useDishListQuery } from '@/app/queries/useDish';
-import Quantity from '@/components/quantity';
-import { useMemo, useState } from 'react';
+import { useGuestOrderMutation } from '@/app/queries/useGuest';
+import TQuantity from '@/components/t-quantity';
+import { Button } from '@/components/ui/button';
+import { DishStatus } from '@/constants/enum';
+import { useRouter } from '@/i18n/routing';
 import { cn, formatCurrency, handleErrorApi } from '@/lib/utils';
 import { GuestCreateOrdersBodyType } from '@/schemaValidations/guest.schema';
-import { useRouter } from '@/i18n/routing';
-import { useGuestOrderMutation } from '@/app/queries/useGuest';
-import { DishStatus } from '@/constants/enum';
+import Image from 'next/image';
+import { useMemo, useState } from 'react';
 
 export default function MenuOrder() {
   const { data } = useDishListQuery();
@@ -84,7 +84,7 @@ export default function MenuOrder() {
               <p className='text-xs font-semibold'>{formatCurrency(dish.price)}</p>
             </div>
             <div className='flex-shrink-0 ml-auto flex justify-center items-center'>
-              <Quantity
+              <TQuantity
                 onChange={(value) => handleQuantityChange(dish.id, value)}
                 value={orders.find((order) => order.dishId === dish.id)?.quantity || 0}
                 disabled={dish.status === DishStatus.Unavailable}

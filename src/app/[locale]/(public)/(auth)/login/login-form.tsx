@@ -33,7 +33,7 @@ export default function LoginForm() {
   const { searchParams, setSearchParams } = useSearchParamsLoader();
 
   const tLoginForm = useTranslations('login-form');
-  const tButton = useTranslations('button');
+  const tButton = useTranslations('t-button');
 
   const router = useRouter();
 

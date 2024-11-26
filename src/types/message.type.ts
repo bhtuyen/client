@@ -1,9 +1,9 @@
-import { MessageKeys, NamespaceKeys, NestedKeyOf, NestedValueOf } from 'next-intl';
+import { MessageKeys, NamespaceKeys, NestedKeyOf, NestedValueOf, TranslationValues } from 'next-intl';
 import en from '~/en.json';
 
 export type MessageType = typeof en;
-
-export type TMessageKeys<NestedKey extends NamespaceKeys<IntlMessages, NestedKeyOf<IntlMessages>>> = MessageKeys<
+export type TNamespaceKeys = NamespaceKeys<IntlMessages, NestedKeyOf<IntlMessages>>;
+export type TMessageKeys<NestedKey extends TNamespaceKeys = TNamespaceKeys> = MessageKeys<
   NestedValueOf<
     {
       '!': IntlMessages;
@@ -20,7 +20,13 @@ export type TMessageKeys<NestedKey extends NamespaceKeys<IntlMessages, NestedKey
   >
 >;
 
-export type TMessageOption<NestedKey extends NamespaceKeys<IntlMessages, NestedKeyOf<IntlMessages>>> = {
+export type TMessageOption<NestedKey extends TNamespaceKeys = TNamespaceKeys> = {
   key: TMessageKeys<NestedKey>;
-  values?: Record<string, string | number | boolean | Date | null | undefined>;
+  values?: TranslationValues;
 };
+
+export type TranslationFunctionParams<NestedKey extends TNamespaceKeys = TNamespaceKeys> = [TMessageKeys<NestedKey>, TranslationValues?];
+
+export type TMessKey<NestedKey extends TNamespaceKeys = TNamespaceKeys> =
+  | TMessageOption<NestedKey>
+  | TMessageKeys<NestedKey>;

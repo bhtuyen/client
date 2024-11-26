@@ -2,19 +2,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Minus, Plus } from 'lucide-react';
 
-export default function Quantity({
-  onChange,
-  value,
-  disabled = false,
-  classIcon,
-  classInput
-}: {
+interface TQuantityProps {
   onChange: (_value: number) => void;
   value: number;
   disabled?: boolean;
   classIcon?: string;
   classInput?: string;
-}) {
+}
+
+export default function TQuantity({ onChange, value, disabled = false, classIcon, classInput }: TQuantityProps) {
   return (
     <div className='flex gap-1 '>
       <Button
