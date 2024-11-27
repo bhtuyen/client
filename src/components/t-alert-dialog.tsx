@@ -36,12 +36,14 @@ export default function TAlterDialog() {
     <AlertDialog open={isShowAlertDialog}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{tAlertDialogTitle(...getArguments(title))}</AlertDialogTitle>
-          <AlertDialogDescription>{tAlertDialogDescription(...getArguments(description))}</AlertDialogDescription>
+          <AlertDialogTitle>{tAlertDialogTitle(...getArguments(title ?? 'default'))}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {tAlertDialogDescription(...getArguments(description ?? 'default'))}
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleClose}>{tButton(...getArguments(cancel))}</AlertDialogCancel>
-          <AlertDialogAction onClick={handleAction}>{tButton(...getArguments(action))}</AlertDialogAction>
+          <AlertDialogCancel onClick={handleClose}>{tButton(...getArguments(cancel ?? 'cancel'))}</AlertDialogCancel>
+          <AlertDialogAction onClick={handleAction}>{tButton(...getArguments(action ?? 'confirm'))}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

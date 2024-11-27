@@ -18,6 +18,8 @@ export const TableSchema = z.object({
   updatedAt: z.date()
 });
 
+export type TableType = z.TypeOf<typeof TableSchema>;
+
 export const TableRes = z.object({
   data: TableSchema,
   message: z.string()

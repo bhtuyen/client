@@ -2,8 +2,8 @@ import { DishSchema } from '@/schemaValidations/dish.schema';
 import z from 'zod';
 
 export const DashboardIndicatorQueryParams = z.object({
-  fromDate: z.coerce.date(),
-  toDate: z.coerce.date()
+  fromDate: z.coerce.date().optional(),
+  toDate: z.coerce.date().optional()
 });
 
 export type DashboardIndicatorQueryParamsType = z.TypeOf<typeof DashboardIndicatorQueryParams>;

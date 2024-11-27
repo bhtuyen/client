@@ -88,7 +88,12 @@ interface DataTablePaginationProps<TData> {
   table: TableType<TData>;
 }
 
-export default function TTable<TData, TValue>({ data, columns, childrenToolbar, filter }: TTableProps<TData, TValue>) {
+export default function TDataTable<TData, TValue>({
+  data,
+  columns,
+  childrenToolbar,
+  filter
+}: TTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -117,7 +122,7 @@ export default function TTable<TData, TValue>({ data, columns, childrenToolbar, 
   const tDataTable = useTranslations('t-data-table');
 
   return (
-    <div className='h-full flex flex-col gap-4 w-full'>
+    <div className='flex flex-col gap-2 p-2 w-full overflow-hidden'>
       <TToolbar table={table} filter={filter}>
         {childrenToolbar}
       </TToolbar>
@@ -153,7 +158,7 @@ export default function TTable<TData, TValue>({ data, columns, childrenToolbar, 
           )}
         </TableBody>
       </Table>
-      <DataTablePagination table={table} />
+      <TDataTablePagination table={table} />
     </div>
   );
 }
@@ -175,7 +180,7 @@ export function TFilter<TData>({
       placeholder={tTableFilter(placeholder?.key, placeholder?.values)}
       value={(table.getColumn(column)?.getFilterValue() as string) ?? ''}
       onChange={(event) => table.getColumn(column)?.setFilterValue(event.target.value)}
-      className='max-w-sm'
+      className='max-w-sm h-8'
       IconLeft={Search}
     />
   );
@@ -217,7 +222,7 @@ export function TOption<TData>({ table }: TOptionProps<TData>) {
 export function TToolbar<TData>({ table, children, filter }: TToolbarProps<TData>) {
   return (
     <div className='flex items-center justify-between'>
-      <div className='flex items-center gap-4'>
+      <div className='flex items-center gap-2'>
         <TFilter table={table} filter={filter} />
         <TOption table={table} />
       </div>
@@ -253,10 +258,10 @@ export function TCellAction({ editOption, deleteOption }: TCellActionsProps) {
   );
 }
 
-export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
+export function TDataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
   const tDataTablePagination = useTranslations('t-data-table.pagination');
   return (
-    <div className='flex items-center justify-between py-1'>
+    <div className='flex items-center justify-between'>
       <div className='flex-1 text-sm text-muted-foreground'>
         {tDataTablePagination('row-selected-info', { count: table.getFilteredSelectedRowModel().rows.length })}
       </div>

@@ -2,39 +2,39 @@
 
 import AddDish from '@/app/[locale]/manage/dishes/add-dish';
 import { useDeleteDishMutation, useDishListQuery } from '@/app/queries/useDish';
-import TTable, { TCellAction } from '@/components/t-data-table';
+import TDataTable, { TCellAction } from '@/components/t-data-table';
 import { DishCategory, DishStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { formatCurrency, handleErrorApi } from '@/lib/utils';
-import { DishListResType } from '@/schemaValidations/dish.schema';
+import { DishType } from '@/schemaValidations/dish.schema';
 import { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { useMemo } from 'react';
-
-type DishItem = DishListResType['data'][0];
+import { useCallback, useMemo } from 'react';
 
 export default function DishTable() {
   const dishesListQuery = useDishListQuery();
   const data = dishesListQuery.data?.payload.data ?? [];
   const deleteDishMutation = useDeleteDishMutation();
 
-  const handleDeleteAccount = async (id: string) => {
-    try {
-      const result = await deleteDishMutation.mutateAsync(id);
-      toast({
-        description: result.payload.message
-      });
-    } catch (error: any) {
-      handleErrorApi({ error });
-    }
-  };
-
+  const handleDeleteAccount = useCallback(
+    async (id: string) => {
+      try {
+        const result = await deleteDishMutation.mutateAsync(id);
+        toast({
+          description: result.payload.message
+        });
+      } catch (error: any) {
+        handleErrorApi({ error });
+      }
+    },
+    [deleteDishMutation]
+  );
   const tDishStatus = useTranslations('dish-status');
   const tDishCategory = useTranslations('dish-category');
   const tTableColumn = useTranslations('t-data-table.column');
 
-  const columns: ColumnDef<DishItem>[] = useMemo(
+  const columns: ColumnDef<DishType>[] = useMemo(
     () => [
       {
         accessorKey: 'image',
@@ -96,8 +96,6 @@ export default function DishTable() {
               urlEdit: `/manage/accounts/${row.original.id}/edit`
             }}
             deleteOption={{
-              action: 'confirm',
-              cancel: 'cancel',
               description: {
                 key: 'delete-dish',
                 values: {
@@ -116,5 +114,5 @@ export default function DishTable() {
     [handleDeleteAccount, tDishCategory, tDishStatus, tTableColumn]
   );
 
-  return <TTable data={data} columns={columns} childrenToolbar={<AddDish />} />;
+  return <TDataTable data={data} columns={columns} childrenToolbar={<AddDish />} />;
 }

@@ -39,7 +39,7 @@ export default function ManageHeader() {
   const tManage = useTranslations('manage');
 
   return (
-    <header className='flex h-14 shrink-0 shadow items-center pr-4 pl-2 gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12'>
+    <header className='flex h-12 shrink-0 shadow items-center p-1 pr-2 gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12'>
       <SidebarTrigger />
       <Separator orientation='vertical' className='mr-2 h-4' />
       <Breadcrumb>

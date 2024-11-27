@@ -83,23 +83,11 @@ export const useStore = create<StoreType>((set) => ({
   },
   isShowAlertDialog: false,
   optionAlertDialog: {
-    title: {
-      key: 'default',
-      values: {}
-    },
-    description: {
-      key: 'default',
-      values: {}
-    },
+    title: 'default',
+    description: 'default',
     onAction: () => {},
-    cancel: {
-      key: 'cancel',
-      values: {}
-    },
-    action: {
-      key: 'confirm',
-      values: {}
-    }
+    cancel: 'cancel',
+    action: 'confirm'
   },
   closeAlertDialog: () => {
     set({ isShowAlertDialog: false });

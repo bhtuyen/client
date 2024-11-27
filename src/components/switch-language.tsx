@@ -9,7 +9,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Locale, locales } from '@/config';
-import { useRouter, usePathname } from '@/i18n/routing';
+import { usePathname, useRouter } from '@/i18n/routing';
 import { useLocale, useTranslations } from 'next-intl';
 
 export function SwitchLanguage() {
@@ -24,7 +24,7 @@ export function SwitchLanguage() {
         router.replace(pathname, { locale: value as Locale });
       }}
     >
-      <SelectTrigger className='w-[180px]' title='swith-language'>
+      <SelectTrigger className='w-[180px] h-8' title='swith-language'>
         <SelectValue placeholder={tSwitchLanguage('title')} />
       </SelectTrigger>
       <SelectContent>

@@ -33,7 +33,8 @@
     "first": "Trang đầu",
     "last": "Trang cuối",
     "next": "Trang sau",
-    "previous": "Trang trước"
+    "previous": "Trang trước",
+    "reset": "Đặt lại"
   },
   "t-alert-dialog": {
     "title": {
@@ -116,7 +117,7 @@
       "title": "Bảng điều khiển",
       "from": "Từ",
       "to": "Đến",
-      "reset": "Đặt lại",
+
       "revenue": "Doanh thu",
       "total-revenue": "Tổng doanh thu",
       "guest": "Khách hàng",
@@ -188,7 +189,10 @@
       "image": "Hình ảnh",
       "phone": "Số điện thoại",
       "employee": "Nhân viên",
-      "group-name": "Nhóm"
+      "group-name": "Nhóm",
+      "table-number": "Số bàn",
+      "capacity": "Sức chứa",
+      "qr-code": "Mã QR"
     },
     "customize": {
       "toggle-column": "Chọn cột"

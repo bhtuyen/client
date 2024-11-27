@@ -1,4 +1,4 @@
-import { DishStatus, DishCategory } from '@/constants/enum';
+import { DishCategory, DishStatus } from '@/constants/enum';
 import z from 'zod';
 
 export const CreateDishBody = z.object({
@@ -27,6 +27,8 @@ export const DishSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date()
 });
+
+export type DishType = z.TypeOf<typeof DishSchema>;
 
 export const DishInCart = DishSchema.extend({ quantity: z.number().positive() });
 

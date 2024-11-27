@@ -3,7 +3,7 @@
 import AddEmployee from '@/app/[locale]/manage/accounts/add-employee';
 import { useAccountListQuery } from '@/app/queries/useAccount';
 import TButton from '@/components/t-button';
-import TTable, { TCellAction } from '@/components/t-data-table';
+import TDataTable, { TCellAction } from '@/components/t-data-table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AccountType } from '@/schemaValidations/account.schema';
 import { ColumnDef } from '@tanstack/react-table';
@@ -66,8 +66,6 @@ export default function AccountTable() {
               urlEdit: `/manage/accounts/${row.original.id}/edit`
             }}
             deleteOption={{
-              action: 'confirm',
-              cancel: 'cancel',
               description: {
                 key: 'delete-account',
                 values: {
@@ -83,7 +81,7 @@ export default function AccountTable() {
     }
   ];
   return (
-    <TTable
+    <TDataTable
       data={data}
       columns={columns}
       childrenToolbar={<AddEmployee />}

@@ -5,10 +5,10 @@ import { Socket } from 'socket.io-client';
 export interface ShowAlertDialogOption {
   onAction: () => void;
   onCancel?: () => void;
-  title: TMessKey<'t-alert-dialog.title'>;
-  description: TMessKey<'t-alert-dialog.title'>;
-  cancel: TMessKey<'t-button'>;
-  action: TMessKey<'t-button'>;
+  title?: TMessKey<'t-alert-dialog.title'>;
+  description?: TMessKey<'t-alert-dialog.title'>;
+  cancel?: TMessKey<'t-button'>;
+  action?: TMessKey<'t-button'>;
 }
 
 export interface DeleteOption extends ShowAlertDialogOption {}
@@ -33,4 +33,3 @@ export type StoreType = {
   showAlertDialog: (option: ShowAlertDialogOption) => void;
   closeAlertDialog: () => void;
 };
-

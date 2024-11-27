@@ -33,7 +33,8 @@
     "first": "First",
     "last": "Last",
     "next": "Next",
-    "previous": "Previous"
+    "previous": "Previous",
+    "reset": "Reset"
   },
   "t-alert-dialog": {
     "title": {
@@ -116,7 +117,7 @@
       "title": "Dashboard",
       "from": "From",
       "to": "To",
-      "reset": "Reset",
+
       "revenue": "Revenue",
       "total-revenue": "Total revenue",
       "guest": "Guest",
@@ -188,7 +189,10 @@
       "image": "Image",
       "phone": "Phone",
       "employee": "Employee",
-      "group-name": "Group name"
+      "group-name": "Group name",
+      "table-number": "Table number",
+      "capacity": "Capacity",
+      "qr-code": "QR code"
     },
     "customize": {
       "toggle-column": "Toggle column"
