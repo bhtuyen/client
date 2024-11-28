@@ -34,7 +34,11 @@
     "last": "Trang cuối",
     "next": "Trang sau",
     "previous": "Trang trước",
-    "reset": "Đặt lại"
+    "reset": "Đặt lại",
+    "upload-image": "Tải ảnh lên",
+    "create": "Tạo mới",
+    "create-employee": "Tạo nhân viên",
+    "save-change": "Lưu thay đổi"
   },
   "t-alert-dialog": {
     "title": {
@@ -208,5 +212,23 @@
       "page-info": "Trang {page} của {total}",
       "row-selected-info": "Đã chọn {count} bản ghi"
     }
+  },
+  "t-form": {
+    "name": "Họ và tên",
+    "email": "Email",
+    "role": "Vai trò",
+    "status": "Trạng thái",
+    "category": "Loại món",
+    "price": "Giá",
+    "description": "Mô tả",
+    "table": "Bàn",
+    "image": "Hình ảnh",
+    "phone": "Số điện thoại",
+    "password": "Mật khẩu",
+    "old-password": "Mật khẩu cũ",
+    "new-password": "Mật khẩu mới",
+    "confirm-password": "Xác nhận mật khẩu mới",
+    "change-password": "Đổi mật khẩu",
+    "change-password-description": "Tích chọn để thay đổi mật khẩu"
   }
 }

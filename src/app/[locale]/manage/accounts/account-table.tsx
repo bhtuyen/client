@@ -1,19 +1,19 @@
 'use client';
 
-import AddEmployee from '@/app/[locale]/manage/accounts/add-employee';
 import { useAccountListQuery } from '@/app/queries/useAccount';
 import TButton from '@/components/t-button';
 import TDataTable, { TCellAction } from '@/components/t-data-table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AccountType } from '@/schemaValidations/account.schema';
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, PlusCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 export default function AccountTable() {
   const accountListQuery = useAccountListQuery();
   const data = accountListQuery.data?.payload.data ?? [];
   const tTableColumn = useTranslations('t-data-table.column');
+  const tButton = useTranslations('t-button');
   const columns: ColumnDef<AccountType>[] = [
     {
       accessorKey: 'avatar',
@@ -44,7 +44,7 @@ export default function AccountTable() {
             className='justify-start -ml-3'
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            Email
+            {tTableColumn('email')}
             <ArrowUpDown className='ml-2 h-4 w-4' />
           </TButton>
         );
@@ -84,7 +84,12 @@ export default function AccountTable() {
     <TDataTable
       data={data}
       columns={columns}
-      childrenToolbar={<AddEmployee />}
+      childrenToolbar={
+        <TButton size='sm' className='h-7 gap-1' asLink href='/manage/accounts/create'>
+          <PlusCircle className='h-3.5 w-3.5' />
+          <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>{tButton('create-employee')}</span>
+        </TButton>
+      }
       filter={{ placeholder: { key: 'input-placeholder-employee' }, column: 'email' }}
     />
   );

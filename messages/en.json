@@ -34,7 +34,11 @@
     "last": "Last",
     "next": "Next",
     "previous": "Previous",
-    "reset": "Reset"
+    "reset": "Reset",
+    "upload-image": "Upload image",
+    "create": "Create",
+    "create-employee": "Create employee",
+    "save-change": "Save change"
   },
   "t-alert-dialog": {
     "title": {
@@ -56,6 +60,7 @@
       "logout": "Are you sure you want to logout?"
     }
   },
+
   "message-validation": {
     "invalid-email": "Invalid email"
   },
@@ -208,5 +213,23 @@
       "page-info": "Page {page} of {total}",
       "row-selected-info": "{count} rows selected"
     }
+  },
+  "t-form": {
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "category": "Category",
+    "price": "Price",
+    "description": "Description",
+    "table": "Table",
+    "image": "Image",
+    "phone": "Phone",
+    "password": "Password",
+    "old-password": "Old password",
+    "new-password": "New password",
+    "confirm-password": "Confirm password",
+    "change-password": "Change password",
+    "change-password-description": "Switch to change password"
   }
 }
