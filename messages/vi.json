@@ -171,13 +171,7 @@
     "setting": {
       "title": "Cài đặt",
       "personal-information": "Thông tin cá nhân",
-      "name": "Họ và tên",
-      "save": "Lưu thông tin",
-      "cancel": "Hủy",
-      "change-password": "Đổi mật khẩu",
-      "old-password": "Mật khẩu cũ",
-      "new-password": "Mật khẩu mới",
-      "confirm-password": "Xác nhận mật khẩu mới"
+      "change-password": "Đổi mật khẩu"
     }
   },
   "t-data-table": {

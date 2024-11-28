@@ -172,13 +172,7 @@
     "setting": {
       "title": "Setting",
       "personal-information": "Personal information",
-      "name": "Full name",
-      "save": "Save",
-      "cancel": "Cancel",
-      "change-password": "Change password",
-      "old-password": "Old password",
-      "new-password": "New password",
-      "confirm-password": "Confirm new password"
+      "change-password": "Change password"
     }
   },
   "t-data-table": {

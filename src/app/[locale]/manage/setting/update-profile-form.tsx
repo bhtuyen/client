@@ -1,19 +1,19 @@
 'use client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Upload } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { UpdateMeBody, UpdateMeBodyType } from '@/schemaValidations/account.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useAccountMeQuery, useUpdateMeMutation } from '@/app/queries/useAccount';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
+import TButton from '@/components/t-button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { handleErrorApi } from '@/lib/utils';
+import { UpdateMeBody, UpdateMeBodyType } from '@/schemaValidations/account.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Upload, User } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 export default function UpdateProfileForm() {
   const [file, setFile] = useState<File | null>(null);
@@ -28,6 +28,11 @@ export default function UpdateProfileForm() {
   const { data: profile, refetch } = useAccountMeQuery();
   const updateMeMutation = useUpdateMeMutation();
   const uploadMediaMutation = useUploadMediaMutation();
+
+  const tButton = useTranslations('t-button');
+  const tForm = useTranslations('t-form');
+  const tManageSetting = useTranslations('manage.setting');
+
   useEffect(() => {
     if (profile) {
       const { name, avatar } = profile.payload.data;
@@ -43,13 +48,6 @@ export default function UpdateProfileForm() {
     }
     return avatar;
   }, [file, avatar]);
-
-  const changeAvatar = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFile(file);
-    }
-  };
 
   const onReset = () => {
     form.reset();
@@ -81,75 +79,86 @@ export default function UpdateProfileForm() {
   };
 
   return (
-    <Form {...form}>
-      <form
-        noValidate
-        className='grid auto-rows-max items-start gap-4 md:gap-8'
-        onReset={onReset}
-        onSubmit={form.handleSubmit(onSubmit, (e) => console.log(e))}
-      >
-        <Card x-chunk='dashboard-07-chunk-0'>
-          <CardHeader>
-            <CardTitle>Thông tin cá nhân</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='grid gap-6'>
-              <FormField
-                control={form.control}
-                name='avatar'
-                render={() => (
-                  <FormItem>
-                    <div className='flex gap-2 items-start justify-start'>
-                      <Avatar className='aspect-square w-[100px] h-[100px] rounded-md object-cover'>
-                        <AvatarImage src={previewAvatar} />
-                        <AvatarFallback className='rounded-none'>{name}</AvatarFallback>
-                      </Avatar>
-                      <input
-                        type='file'
-                        accept='image/*'
-                        className='hidden'
-                        ref={avatarInputRef}
-                        onChange={changeAvatar}
-                      />
-                      <button
-                        className='flex aspect-square w-[100px] items-center justify-center rounded-md border border-dashed'
-                        type='button'
-                        onClick={() => avatarInputRef.current?.click()}
-                      >
-                        <Upload className='h-4 w-4 text-muted-foreground' />
-                        <span className='sr-only'>Upload</span>
-                      </button>
-                    </div>
-                  </FormItem>
-                )}
-              />
+    <Card>
+      <CardHeader>
+        <CardTitle>{tManageSetting('personal-information')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form
+            noValidate
+            className='flex flex-col'
+            onReset={onReset}
+            onSubmit={form.handleSubmit(onSubmit, (e) => console.log(e))}
+          >
+            <FormField
+              control={form.control}
+              name='avatar'
+              render={({ field }) => (
+                <FormItem className='flex items-center gap-4 space-y-0 col-span-2 mb-4'>
+                  <FormDescription>
+                    <Avatar className='w-[100px] h-[100px] rounded-full object-cover'>
+                      <AvatarImage src={previewAvatar} />
+                      <AvatarFallback className='rounded-none'>{name || 'Avatar'}</AvatarFallback>
+                    </Avatar>
+                  </FormDescription>
+                  <FormControl>
+                    <input
+                      type='file'
+                      accept='image/*'
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setFile(file);
+                          field.onChange('http://localhost:3000/' + file.name);
+                        }
+                      }}
+                      ref={avatarInputRef}
+                      hidden
+                    />
+                  </FormControl>
+                  <FormLabel>
+                    <TButton
+                      type='button'
+                      variant='outline'
+                      onClick={() => avatarInputRef.current?.click()}
+                      tooltip='upload-image'
+                    >
+                      <Upload />
+                      <span className='sr-only'>{tButton('upload-image')}</span>
+                    </TButton>
+                  </FormLabel>
+                </FormItem>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name='name'
-                render={({ field }) => (
-                  <FormItem>
-                    <div className='grid gap-3'>
-                      <Label htmlFor='name'>Tên</Label>
-                      <Input id='name' type='text' className='w-full' {...field} />
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
+            <FormField
+              control={form.control}
+              name='name'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{tForm('name')}</FormLabel>
+                  <FormControl>
+                    <Input type='name' {...field} IconLeft={User} />
+                  </FormControl>
+                  <div className='h-5'>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
 
-              <div className=' items-center gap-2 md:ml-auto flex'>
-                <Button variant='outline' size='sm' type='reset'>
-                  Hủy
-                </Button>
-                <Button size='sm' type='submit'>
-                  Lưu thông tin
-                </Button>
-              </div>
+            <div className='items-center gap-4 md:ml-auto flex'>
+              <TButton variant='outline' size='sm' type='reset'>
+                {tButton('cancel')}
+              </TButton>
+              <TButton size='sm' type='submit'>
+                {tButton('save-change')}
+              </TButton>
             </div>
-          </CardContent>
-        </Card>
-      </form>
-    </Form>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }
