@@ -26,7 +26,19 @@ export default function EditDish({ id }: { id: string }) {
   const uploadMediaMutation = useUploadMediaMutation();
 
   const { data } = useDishQuery({ id: id!, enabled: Boolean(id) });
-  const dish = data?.payload.data;
+  const dish =
+    data?.payload.data ??
+    ({
+      id: '1fef656a-3d71-440a-8660-b1abd2e26e23',
+      name: 'Salad hành paro',
+      price: 69000,
+      description: 'Salad hành paro',
+      image: 'http://localhost:4000/static/0011b20501a14cce8d451357d7fc5282.jpg',
+      status: 'Available',
+      category: 'Paid',
+      groupId: 'da5e0a32-fb59-4474-9502-942f70811065',
+      options: ''
+    } as UpdateDishBodyType);
 
   const dishGroupQuery = useDishGroupQuery();
   const dishGroups = dishGroupQuery.data?.payload.data ?? [];
