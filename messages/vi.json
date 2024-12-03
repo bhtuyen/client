@@ -38,7 +38,11 @@
     "upload-image": "Tải ảnh lên",
     "create": "Tạo mới",
     "create-employee": "Tạo nhân viên",
-    "save-change": "Lưu thay đổi"
+    "save-change": "Lưu thay đổi",
+    "create-dish": "Tạo món ăn",
+    "create-order": "Tạo đơn hàng",
+    "create-table": "Tạo bàn ăn",
+    "create-dish-group": "Tạo nhóm"
   },
   "t-alert-dialog": {
     "title": {
@@ -92,7 +96,7 @@
 
   "manage-sidebar": {
     "dashboard": "Bảng điều khiển",
-    "accounts": "Nhân viên",
+    "employees": "Nhân viên",
     "dishes": "Món ăn",
     "orders": "Đơn hàng",
     "tables": "Bàn ăn",
@@ -105,7 +109,7 @@
   "manage": {
     "title": "Quản lý",
 
-    "accounts": {
+    "employees": {
       "title": "Danh sách nhân viên",
       "create": {
         "title": "Tạo nhân viên",
@@ -211,11 +215,6 @@
     "name": "Họ và tên",
     "email": "Email",
     "role": "Vai trò",
-    "status": "Trạng thái",
-    "category": "Loại món",
-    "price": "Giá",
-    "description": "Mô tả",
-    "table": "Bàn",
     "image": "Hình ảnh",
     "phone": "Số điện thoại",
     "password": "Mật khẩu",
@@ -223,6 +222,13 @@
     "new-password": "Mật khẩu mới",
     "confirm-password": "Xác nhận mật khẩu mới",
     "change-password": "Đổi mật khẩu",
-    "change-password-description": "Tích chọn để thay đổi mật khẩu"
+    "change-password-description": "Tích chọn để thay đổi mật khẩu",
+    "dish-name": "Tên món ăn",
+    "dish-category": "Loại món",
+    "dish-price": "Giá",
+    "dish-description": "Mô tả",
+    "dish-group": "Nhóm",
+    "dish-options": "Tùy chọn",
+    "dish-status": "Trạng thái"
   }
 }

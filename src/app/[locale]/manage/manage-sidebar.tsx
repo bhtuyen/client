@@ -26,7 +26,6 @@ import {
 import { Role } from '@/constants/enum';
 import { Link, usePathname, useRouter } from '@/i18n/routing';
 import { handleErrorApi } from '@/lib/utils';
-import { RoleType } from '@/types/jwt.types';
 import {
   ChevronsUpDown,
   HomeIcon,
@@ -46,7 +45,7 @@ export type MenuItemType = {
   key: string;
   Icon: ForwardRefExoticComponent<Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>>;
   href: string;
-  roles: RoleType[];
+  roles: Role[];
 };
 
 const menuItems: {
@@ -79,9 +78,9 @@ const menuItems: {
       roles: [Role.Owner, Role.Employee]
     },
     {
-      key: 'accounts',
+      key: 'employees',
       Icon: User2,
-      href: '/manage/accounts',
+      href: '/manage/employees',
       roles: [Role.Owner]
     }
   ],
@@ -212,7 +211,7 @@ export function ManageSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className='gap-1 cursor-pointer'>
+                <DropdownMenuItem className='gap-1 cursor-pointer' onClick={handleLogout}>
                   <div className='size-8 flex items-center justify-center'>
                     <LogOut height={16} width={16} />
                   </div>

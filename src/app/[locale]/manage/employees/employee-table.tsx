@@ -4,16 +4,18 @@ import { useAccountListQuery } from '@/app/queries/useAccount';
 import TButton from '@/components/t-button';
 import TDataTable, { TCellAction } from '@/components/t-data-table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Role } from '@/constants/enum';
 import { AccountType } from '@/schemaValidations/account.schema';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, PlusCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-export default function AccountTable() {
+export default function EmployeeTable() {
   const accountListQuery = useAccountListQuery();
   const data = accountListQuery.data?.payload.data ?? [];
   const tTableColumn = useTranslations('t-data-table.column');
   const tButton = useTranslations('t-button');
+  const tRole = useTranslations('role');
   const columns: ColumnDef<AccountType>[] = [
     {
       accessorKey: 'avatar',
@@ -53,8 +55,8 @@ export default function AccountTable() {
     },
     {
       accessorKey: 'role',
-      header: () => <div className='w-[200px]'>{tTableColumn('role')}</div>,
-      cell: ({ row }) => <div className='lowercase w-[200px]'>{row.getValue('role')}</div>
+      header: () => <div className='text-center w-[200px]'>{tTableColumn('role')}</div>,
+      cell: ({ row }) => <div className='w-[200px] text-center '>{tRole(row.getValue<Role>('role'))}</div>
     },
     {
       id: 'actions',
@@ -63,7 +65,7 @@ export default function AccountTable() {
         return (
           <TCellAction
             editOption={{
-              urlEdit: `/manage/accounts/${row.original.id}/edit`
+              urlEdit: `/manage/employees/${row.original.id}/edit`
             }}
             deleteOption={{
               description: {
@@ -85,7 +87,7 @@ export default function AccountTable() {
       data={data}
       columns={columns}
       childrenToolbar={
-        <TButton size='sm' className='h-7 gap-1' asLink href='/manage/accounts/create'>
+        <TButton size='sm' className='h-7 gap-1' asLink href='/manage/employees/create'>
           <PlusCircle className='h-3.5 w-3.5' />
           <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>{tButton('create-employee')}</span>
         </TButton>

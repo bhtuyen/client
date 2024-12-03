@@ -11,7 +11,7 @@ export type TabsProps<T extends TasbType> = {
   defaultValue?: TabsKeyType<T>;
 };
 
-export default function Tabs<T extends TasbType>({ tabs, onChangeActive, value, defaultValue }: TabsProps<T>) {
+export default function TTabs<T extends TasbType>({ tabs, onChangeActive, value, defaultValue }: TabsProps<T>) {
   const [activeTab, setActiveTab] = useState<TabsKeyType<T>>(defaultValue ?? tabs[0].key);
   return (
     <div className='flex items-center h-[40px] '>

@@ -18,7 +18,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-export default function EditForm({ id }: { id: string }) {
+export default function EditEmployee({ id }: { id: string }) {
   const [file, setFile] = useState<File | null>(null);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
   const form = useForm<UpdateEmployeeAccountBodyType>({

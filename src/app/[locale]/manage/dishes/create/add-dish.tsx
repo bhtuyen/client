@@ -1,4 +1,9 @@
 'use client';
+import AddDishGroup from '@/app/[locale]/manage/dishes/create/add-dish-group';
+import revalidateApiRequest from '@/app/apiRequests/revalidate';
+import { useCreateDishMutation, useDishGroupQuery } from '@/app/queries/useDish';
+import { useUploadMediaMutation } from '@/app/queries/useMedia';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -9,26 +14,21 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { PlusCircle, Upload } from 'lucide-react';
-import { useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { getEnumValues, handleErrorApi } from '@/lib/utils';
-import { CreateDishBody, CreateDishBodyType } from '@/schemaValidations/dish.schema';
-import { DishStatus, DishCategory } from '@/constants/enum';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { useCreateDishMutation, useDishGroupQuery } from '@/app/queries/useDish';
+import { DishCategory, DishStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
-import { useUploadMediaMutation } from '@/app/queries/useMedia';
-import revalidateApiRequest from '@/app/apiRequests/revalidate';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { getEnumValues, handleErrorApi } from '@/lib/utils';
+import { CreateDishBody, CreateDishBodyType } from '@/schemaValidations/dish.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { PlusCircle, Upload } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import AddDishGroup from '@/app/[locale]/manage/dishes/add-dish-group';
+import { useMemo, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 export default function AddDish() {
   const [file, setFile] = useState<File | null>(null);
@@ -107,7 +107,7 @@ export default function AddDish() {
       <DialogTrigger asChild>
         <Button size='sm' className='h-7 gap-1'>
           <PlusCircle className='h-3.5 w-3.5' />
-          <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>Thêm món ăn</span>
+          <span className='text-xs'>Thêm món ăn</span>
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[750px] max-h-screen overflow-auto'>

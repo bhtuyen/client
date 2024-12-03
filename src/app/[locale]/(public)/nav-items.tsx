@@ -16,7 +16,6 @@ import {
 import { Role } from '@/constants/enum';
 import { Link } from '@/i18n/routing';
 import { cn, handleErrorApi } from '@/lib/utils';
-import { RoleType } from '@/types/jwt.types';
 
 import { useRouter } from '@/i18n/routing';
 import { TMessageKeys } from '@/types/message.type';
@@ -25,7 +24,7 @@ import { useTranslations } from 'next-intl';
 const menuItems: {
   titleKey: string;
   href: string;
-  roles?: RoleType[];
+  roles?: Role[];
   hiddenWhenLogin?: boolean;
 }[] = [
   {

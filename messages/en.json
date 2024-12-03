@@ -38,7 +38,11 @@
     "upload-image": "Upload image",
     "create": "Create",
     "create-employee": "Create employee",
-    "save-change": "Save change"
+    "save-change": "Save change",
+    "create-dish": "Create dish",
+    "create-order": "Create order",
+    "create-table": "Create table",
+    "create-dish-group": "Create group"
   },
   "t-alert-dialog": {
     "title": {
@@ -93,7 +97,7 @@
 
   "manage-sidebar": {
     "dashboard": "Dashboard",
-    "accounts": "Accounts",
+    "employees": "Employees",
     "dishes": "Dishes",
     "orders": "Orders",
     "tables": "Tables",
@@ -105,9 +109,8 @@
 
   "manage": {
     "title": "Manage",
-
-    "accounts": {
-      "title": "Accounts",
+    "employees": {
+      "title": "Employees",
       "create": {
         "title": "Create account",
         "description": "Enter the information of the new account"
@@ -212,11 +215,6 @@
     "name": "Name",
     "email": "Email",
     "role": "Role",
-    "status": "Status",
-    "category": "Category",
-    "price": "Price",
-    "description": "Description",
-    "table": "Table",
     "image": "Image",
     "phone": "Phone",
     "password": "Password",
@@ -224,6 +222,13 @@
     "new-password": "New password",
     "confirm-password": "Confirm password",
     "change-password": "Change password",
-    "change-password-description": "Switch to change password"
+    "change-password-description": "Switch to change password",
+    "dish-name": "Dish name",
+    "dish-category": "Category",
+    "dish-price": "Price",
+    "dish-description": "Description",
+    "dish-group": "Group",
+    "dish-options": "Options",
+    "dish-status": "Status"
   }
 }

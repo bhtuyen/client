@@ -1,6 +1,6 @@
 import Cart from '@/app/[locale]/guest/menu/cart';
 import MenuGroup from '@/app/[locale]/guest/menu/menu-group';
-import Tabs from '@/components/tabs';
+import TTabs from '@/components/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -32,7 +32,7 @@ export default function MenuPage() {
             </div>
           </div>
         </nav>
-        <Tabs tabs={menuType} />
+        <TTabs tabs={menuType} />
       </div>
       <div className='bg-[#f6f6f6] flex-1 p-4 overflow-y-auto pt-[110px]'>
         <MenuGroup />

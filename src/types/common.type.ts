@@ -1,5 +1,5 @@
+import { Role } from '@/constants/enum';
 import { DishInCartType } from '@/schemaValidations/dish.schema';
-import { RoleType } from '@/types/jwt.types';
 import { TMessKey } from '@/types/message.type';
 import { Socket } from 'socket.io-client';
 export interface ShowAlertDialogOption {
@@ -18,8 +18,8 @@ export interface EditOption {
 }
 
 export type StoreType = {
-  role: RoleType | null;
-  setRole: (role: RoleType | null) => void;
+  role: Role | null;
+  setRole: (role: Role | null) => void;
   socket: Socket | null;
   createConnectSocket: (accessToken: string) => void;
   disconnectSocket: () => void;

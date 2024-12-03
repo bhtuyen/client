@@ -1,6 +1,6 @@
 'use client';
 
-import AddDish from '@/app/[locale]/manage/dishes/add-dish';
+import AddDish from '@/app/[locale]/manage/dishes/create/add-dish';
 import { useDeleteDishMutation, useDishListQuery } from '@/app/queries/useDish';
 import TDataTable, { TCellAction } from '@/components/t-data-table';
 import { DishCategory, DishStatus } from '@/constants/enum';
@@ -38,7 +38,7 @@ export default function DishTable() {
     () => [
       {
         accessorKey: 'image',
-        header: ({ column }) => <div className='text-center w-[100px]'>{tTableColumn('image')}</div>,
+        header: () => <div className='text-center w-[100px]'>{tTableColumn('image')}</div>,
         cell: ({ row }) => (
           <div className='w-[100px]'>
             <Image
@@ -57,35 +57,42 @@ export default function DishTable() {
       },
       {
         accessorKey: 'name',
-        header: () => <div className='text-center w-[100px]'>{tTableColumn('name')}</div>,
-        cell: ({ row }) => <div className='capitalize'>{row.getValue('name')}</div>
-      },
-      {
-        accessorKey: 'price',
-        header: () => <div className='text-center w-[100px]'>{tTableColumn('price')}</div>,
-        cell: ({ row }) => <div className='capitalize'>{formatCurrency(row.getValue('price'))}</div>
+        header: () => <div className='w-[150px]'>{tTableColumn('name')}</div>,
+        cell: ({ row }) => <div className='capitalize w-[150px]'>{row.getValue('name')}</div>
       },
       {
         accessorKey: 'description',
-        header: () => <div className='text-center w-[100px]'>{tTableColumn('description')}</div>,
+        header: () => <div className='w-auto'>{tTableColumn('description')}</div>,
         cell: ({ row }) => (
-          <div dangerouslySetInnerHTML={{ __html: row.getValue('description') }} className='whitespace-pre-line' />
+          <div
+            dangerouslySetInnerHTML={{ __html: row.getValue('description') }}
+            className='whitespace-pre-line w-auto'
+          />
         )
+      },
+      {
+        accessorKey: 'price',
+        header: () => <div className='text-right w-[100px]'>{tTableColumn('price')}</div>,
+        cell: ({ row }) => <div className='text-right w-[100px]'>{formatCurrency(row.getValue('price'))}</div>
       },
       {
         accessorKey: 'category',
         header: () => <div className='text-center w-[100px]'>{tTableColumn('category')}</div>,
-        cell: ({ row }) => <div>{tDishCategory(row.getValue<DishCategory>('category'))}</div>
+        cell: ({ row }) => (
+          <div className='text-center w-[100px]'>{tDishCategory(row.getValue<DishCategory>('category'))}</div>
+        )
       },
       {
         accessorKey: 'groupName',
         header: () => <div className='text-center w-[100px]'>{tTableColumn('group-name')}</div>,
-        cell: ({ row }) => <div>{row.getValue('groupName')}</div>
+        cell: ({ row }) => <div className='text-center w-[100px]'>{row.getValue('groupName')}</div>
       },
       {
         accessorKey: 'status',
         header: () => <div className='text-center w-[100px]'>{tTableColumn('status')}</div>,
-        cell: ({ row }) => <div>{tDishStatus(row.getValue<DishStatus>('status'))}</div>
+        cell: ({ row }) => (
+          <div className='text-center w-[100px]'>{tDishStatus(row.getValue<DishStatus>('status'))}</div>
+        )
       },
       {
         id: 'actions',
@@ -93,7 +100,7 @@ export default function DishTable() {
         cell: ({ row }) => (
           <TCellAction
             editOption={{
-              urlEdit: `/manage/accounts/${row.original.id}/edit`
+              urlEdit: `/manage/dishes/${row.original.id}/edit`
             }}
             deleteOption={{
               description: {

@@ -1,7 +1,7 @@
 'use client';
 import { useGuestOrderListQuery, useGuestOrderMutation } from '@/app/queries/useGuest';
 import { useAppStore } from '@/components/app-provider';
-import Tabs, { TabsKeyType } from '@/components/tabs';
+import { TabsKeyType } from '@/components/tabs';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DishCategory } from '@/constants/enum';
 import { formatCurrency, handleErrorApi } from '@/lib/utils';
 import clsx from 'clsx';
@@ -68,7 +69,7 @@ export default function Cart() {
         </div>
       </DialogTrigger>
       <DialogContent className='w-full h-full p-0 bg-white text-black flex flex-col' isHiddenClose>
-        <DialogHeader className='p-4 pb-2 shadow-md z-10'>
+        <DialogHeader className='p-4 pb-2 z-10'>
           <DialogTitle className='flex-auto relative text-center'>
             Gọi món của bạn
             <DialogClose className='absolute top-[50%] translate-y-[-50%] left-0'>
@@ -76,61 +77,84 @@ export default function Cart() {
             </DialogClose>
           </DialogTitle>
           <DialogDescription />
-          <Tabs tabs={tabs} onChangeActive={setActiveTab} value={activeTab} />
         </DialogHeader>
-        {/* #region Cart */}
-        {/* Tab Cart */}
-        {dishes.length > 0 && activeTab === 'cart' && (
-          <div className='flex-auto bg-[#e6e6e6] overflow-y-auto'>
-            <div className='p-3 grid gap-3'>
-              {dishes.map((dish) => (
-                <div className='bg-white h-[140px] rounded-md flex p-2 relative text-black' key={dish.id}>
-                  <div className='relative h-full aspect-square'>
-                    <Image src={dish.image} alt={dish.name} fill className='rounded-md' sizes='' />
-                  </div>
-                  <div className='flex-auto flex flex-col justify-between pl-2'>
-                    <div>
-                      <p>{dish.name}</p>
-                    </div>
-                    <div className='flex items-center justify-between'>
-                      <div className='flex items-center rounded-2xl gap-3 border px-2 py-1'>
-                        <Minus size={20} onClick={() => changeQuantity(dish.id, dish.quantity - 1)} />
-                        <p>{dish.quantity}</p>
-                        <Plus size={20} onClick={() => changeQuantity(dish.id, dish.quantity + 1)} />
+
+        <Tabs
+          value={activeTab}
+          className='w-full'
+          onValueChange={(value) => setActiveTab(value as TabsKeyType<typeof tabs>)}
+        >
+          <TabsList className='w-full bg-primary p-0'>
+            <TabsTrigger
+              value='cart'
+              className='relative text-base flex-1 data-[state=active]:bg-primary data-[state=active]:text-red-700 data-[state=active]:shadow-none data-[state=active]:before:contents-[""] data-[state=active]:before:absolute data-[state=active]:before:bottom-0 data-[state=active]:before:right-0 data-[state=active]:before:left-0 data-[state=active]:before:border-b-[2px] data-[state=active]:before:border-red-500'
+            >
+              Account
+            </TabsTrigger>
+            <TabsTrigger
+              value='ordered'
+              className='relative text-base flex-1 data-[state=active]:bg-primary data-[state=active]:text-red-700 data-[state=active]:shadow-none data-[state=active]:before:contents-[""] data-[state=active]:before:absolute data-[state=active]:before:bottom-0 data-[state=active]:before:right-0 data-[state=active]:before:left-0 data-[state=active]:before:border-b-[2px] data-[state=active]:before:border-red-500'
+            >
+              Password
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value='cart'>
+            {dishes.length > 0 && (
+              <div className='flex-auto bg-[#e6e6e6] overflow-y-auto'>
+                <div className='p-3 grid gap-3'>
+                  {dishes.map((dish) => (
+                    <div className='bg-white h-[140px] rounded-md flex p-2 relative text-black' key={dish.id}>
+                      <div className='relative h-full aspect-square'>
+                        <Image src={dish.image} alt={dish.name} fill className='rounded-md' sizes='' />
                       </div>
-                      <p className='text-red-950 font-medium'>
-                        {dish.category === DishCategory.Buffet ? 'Buffet' : formatCurrency(dish.price * dish.quantity)}
-                      </p>
+                      <div className='flex-auto flex flex-col justify-between pl-2'>
+                        <div>
+                          <p>{dish.name}</p>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                          <div className='flex items-center rounded-2xl gap-3 border px-2 py-1'>
+                            <Minus size={20} onClick={() => changeQuantity(dish.id, dish.quantity - 1)} />
+                            <p>{dish.quantity}</p>
+                            <Plus size={20} onClick={() => changeQuantity(dish.id, dish.quantity + 1)} />
+                          </div>
+                          <p className='text-red-950 font-medium'>
+                            {dish.category === DishCategory.Buffet
+                              ? 'Buffet'
+                              : formatCurrency(dish.price * dish.quantity)}
+                          </p>
+                        </div>
+                      </div>
+                      <X className='h-6 w-6 absolute top-3 right-3' onClick={() => removeDishFromCart(dish.id)} />
                     </div>
-                  </div>
-                  <X className='h-6 w-6 absolute top-3 right-3' onClick={() => removeDishFromCart(dish.id)} />
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'ordered' && orders.length > 0 && (
-          <div className='flex-auto overflow-y-auto'>
-            {orders.map((order) => (
-              <div
-                className='flex p-4 relative text-black border-b-[1px] border-b-[#e3e3e3] gap-4 items-center'
-                key={order.id}
-              >
-                <span className='bg-[#f2f2f2] text-lg font-medium h-8 w-8 rounded-md flex items-center justify-center'>
-                  {order.quantity}x
-                </span>
-                <span className='text-lg font-medium flex-auto'>{order.dishSnapshot.name}</span>
-                <span>{tOrderStatus(order.status)}</span>
-                <span className='text-red-950 font-medium'>
-                  {formatCurrency(order.dishSnapshot.price * order.quantity)}
-                </span>
               </div>
-            ))}
-          </div>
-        )}
+            )}
+          </TabsContent>
+          <TabsContent value='ordered'>
+            {activeTab === 'ordered' && orders.length > 0 && (
+              <div className='flex-auto overflow-y-auto'>
+                {orders.map((order) => (
+                  <div
+                    className='flex p-4 relative text-black border-b-[1px] border-b-[#e3e3e3] gap-4 items-center'
+                    key={order.id}
+                  >
+                    <span className='bg-[#f2f2f2] text-lg font-medium h-8 w-8 rounded-md flex items-center justify-center'>
+                      {order.quantity}x
+                    </span>
+                    <span className='text-lg font-medium flex-auto'>{order.dishSnapshot.name}</span>
+                    <span>{tOrderStatus(order.status)}</span>
+                    <span className='text-red-950 font-medium'>
+                      {formatCurrency(order.dishSnapshot.price * order.quantity)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
 
-        {/* Empty */}
         {((dishes.length === 0 && activeTab == 'cart') || (orders.length == 0 && activeTab == 'ordered')) && (
           <div className='flex-auto bg-white flex flex-col items-center justify-center'>
             <Image src='/empty-cart.jpg' alt='empty-cart' width={200} height={200} />
@@ -167,7 +191,7 @@ export default function Cart() {
               </div>
             )}
             {dishes.length === 0 && (
-              <DialogClose>
+              <DialogClose asChild>
                 <Button className='text-white bg-black w-full h-[50px] text-base' variant={'ghost'}>
                   Chọn món ngay
                 </Button>

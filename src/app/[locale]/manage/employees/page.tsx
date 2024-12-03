@@ -1,11 +1,10 @@
-import OrderTable from '@/app/[locale]/manage/orders/order-table';
-
+import EmployeeTable from '@/app/[locale]/manage/employees/employee-table';
 import { Suspense } from 'react';
 
 export default function EmployeesPage() {
   return (
     <Suspense>
-      <OrderTable />
+      <EmployeeTable />
     </Suspense>
   );
 }
