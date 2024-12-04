@@ -1,9 +1,12 @@
+import { useDishListQuery } from '@/app/queries/useDish';
+import AutoPagination from '@/components/auto-pagination';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import AutoPagination from '@/components/auto-pagination';
-import { DishListResType } from '@/schemaValidations/dish.schema';
-import { useEffect, useState } from 'react';
+import { DishStatus } from '@/constants/enum';
+import { formatCurrency, simpleMatchText } from '@/lib/utils';
+import { DishesRes } from '@/schemaValidations/dish.schema';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -16,14 +19,11 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { formatCurrency, simpleMatchText } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
-import Image from 'next/image';
-import { useDishListQuery } from '@/app/queries/useDish';
 import { useTranslations } from 'next-intl';
-import { DishStatus } from '@/constants/enum';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
-type DishItem = DishListResType['data'][0];
+type DishItem = DishesRes['data'][0];
 
 const PAGE_SIZE = 10;
 export function DishesDialog({ onChoose }: { onChoose: (_dish: DishItem) => void }) {

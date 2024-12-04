@@ -1,54 +1,39 @@
 'use client';
-import AddDishGroup from '@/app/[locale]/manage/dishes/create/add-dish-group';
+import AddDishGroup from '@/app/[locale]/manage/dishes/add-dish-group';
 import revalidateApiRequest from '@/app/apiRequests/revalidate';
 import { useCreateDishMutation, useDishGroupQuery } from '@/app/queries/useDish';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
+import TButton from '@/components/t-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { DishCategory, DishStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
+import { useRouter } from '@/i18n/routing';
 import { getEnumValues, handleErrorApi } from '@/lib/utils';
-import { CreateDishBody, CreateDishBodyType } from '@/schemaValidations/dish.schema';
+import { CreateDish, createDishSchema } from '@/schemaValidations/dish.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PlusCircle, Upload } from 'lucide-react';
+import { Banknote, Loader, Salad, Tags, Upload } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-export default function AddDish() {
+export default function AddDishForm() {
   const [file, setFile] = useState<File | null>(null);
-  const [open, setOpen] = useState(false);
   const [openFormAdd, setOpenFormAdd] = useState(false);
-  const [isShowPrice, setIsShowPrice] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
-  const form = useForm<CreateDishBodyType>({
-    resolver: zodResolver(CreateDishBody),
-    defaultValues: {
-      name: '',
-      description: '',
-      price: 0,
-      image: '',
-      category: DishCategory.Buffet,
-      options: '',
-      groupId: '',
-      status: DishStatus.Available
-    }
+  const router = useRouter();
+  const dishGroupQuery = useDishGroupQuery();
+  const dishGroups = dishGroupQuery.data?.payload.data ?? [];
+
+  const form = useForm<CreateDish>({
+    resolver: zodResolver(createDishSchema)
   });
+
   const image = form.watch('image');
   const name = form.watch('name');
   const previewAvatarFromFile = useMemo(() => {
@@ -65,10 +50,14 @@ export default function AddDish() {
 
   const createDishMutation = useCreateDishMutation();
   const uploadMediaMutation = useUploadMediaMutation();
-  const dishGroupQuery = useDishGroupQuery();
-  const tDishStatus = useTranslations('dish-status');
 
-  const onSubmit = async (body: CreateDishBodyType) => {
+  const tDishStatus = useTranslations('dish-status');
+  const tButton = useTranslations('t-button');
+  const tForm = useTranslations('t-form');
+  const tDishCategory = useTranslations('dish-category');
+  const tManageDish = useTranslations('manage.dishes');
+
+  const onSubmit = async (body: CreateDish) => {
     if (createDishMutation.isPending) return;
     try {
       if (file) {
@@ -88,248 +77,239 @@ export default function AddDish() {
       });
 
       reset();
-      setOpen(false);
+      router.push('/manage/dishes');
     } catch (error) {
       handleErrorApi({ error, setError: form.setError });
     }
   };
 
   return (
-    <Dialog
-      onOpenChange={(value) => {
-        if (!value) {
-          reset();
-        }
-        setOpen(value);
-      }}
-      open={open}
-    >
-      <DialogTrigger asChild>
-        <Button size='sm' className='h-7 gap-1'>
-          <PlusCircle className='h-3.5 w-3.5' />
-          <span className='text-xs'>Thêm món ăn</span>
-        </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[750px] max-h-screen overflow-auto'>
-        <DialogHeader>
-          <DialogTitle>Thêm món ăn</DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
-        <Form {...form}>
-          <form
-            noValidate
-            className='grid auto-rows-max items-start gap-4 md:gap-8'
-            id='add-dish-form'
-            onSubmit={form.handleSubmit(onSubmit, console.log)}
-          >
-            <div className='grid gap-4 py-4'>
-              <FormField
-                control={form.control}
-                name='image'
-                render={({ field }) => (
-                  <FormItem>
-                    <div className='flex gap-2 items-start justify-start'>
-                      <Avatar className='aspect-square w-[100px] h-[100px] rounded-md object-cover'>
-                        <AvatarImage src={previewAvatarFromFile} />
-                        <AvatarFallback className='rounded-none text-center text-sm'>
-                          {name || 'Ảnh chụp'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <input
-                        type='file'
-                        accept='image/*'
-                        ref={imageInputRef}
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setFile(file);
-                            field.onChange('http://localhost:3000/' + file.name);
-                          }
-                        }}
-                        className='hidden'
-                      />
-                      <button
-                        className='flex aspect-square w-[100px] items-center justify-center rounded-md border border-dashed'
-                        type='button'
-                        onClick={() => imageInputRef.current?.click()}
-                      >
-                        <Upload className='h-4 w-4 text-muted-foreground' />
-                        <span className='sr-only'>Upload</span>
-                      </button>
-                    </div>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='name'
-                render={({ field }) => (
-                  <FormItem>
-                    <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
-                      <Label htmlFor='name'>Tên món ăn</Label>
-                      <div className='col-span-3 w-full space-y-2'>
-                        <Input id='name' className='w-full' {...field} />
-                        <FormMessage />
-                      </div>
-                    </div>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='category'
-                render={({ field, formState }) => (
-                  <FormItem>
-                    <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
-                      <FormLabel>Thuộc loại</FormLabel>
-                      <RadioGroup
-                        defaultValue={field.value}
-                        className='flex col-span-3 w-full gap-10'
-                        onValueChange={(e) => {
-                          field.onChange(e);
-                          setIsShowPrice(e === DishCategory.Paid);
-                        }}
-                      >
-                        <div className='flex items-center space-x-2'>
-                          <RadioGroupItem value='Buffet' id='Buffet' />
-                          <Label htmlFor='Buffet'>Buffet</Label>
-                        </div>
-                        <div className='flex items-center space-x-2'>
-                          <RadioGroupItem value='Paid' id='Paid' />
-                          <Label htmlFor='Paid'>Tính tiền</Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='groupId'
-                render={({ field }) => (
-                  <FormItem>
-                    <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
-                      <Label htmlFor='description'>Thuộc nhóm</Label>
-                      <div className='col-span-3 w-full flex gap-4'>
-                        <div className='space-y-2 flex-auto'>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder='Chọn nhóm cho món ăn' />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {dishGroupQuery.data?.payload.data.map((status) => (
-                                <SelectItem key={status.id} value={status.id}>
-                                  {status.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </div>
-                        <Button
-                          className='col-span-1 m-0'
-                          type='button'
-                          onClick={() => {
-                            setOpenFormAdd(true);
-                          }}
-                        >
-                          Tạo nhóm
-                        </Button>
-                      </div>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              {isShowPrice && (
-                <FormField
-                  control={form.control}
-                  name='price'
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
-                        <Label htmlFor='price'>Giá</Label>
-                        <div className='col-span-3 w-full space-y-2'>
-                          <Input id='price' className='w-full' {...field} type='number' min={0} />
-                          <FormMessage />
-                        </div>
-                      </div>
-                    </FormItem>
-                  )}
-                />
+    <>
+      <Form {...form}>
+        <form
+          noValidate
+          className='p-4 h-full flex flex-col justify-between'
+          onSubmit={form.handleSubmit(onSubmit, console.log)}
+        >
+          <div className='grid grid-cols-3 gap-4'>
+            <FormField
+              control={form.control}
+              name='image'
+              render={({ field }) => (
+                <FormItem className='flex items-center gap-4 space-y-0 col-span-3 mb-4'>
+                  <FormDescription>
+                    <Avatar className='aspect-square w-[100px] h-[100px] rounded-md object-cover'>
+                      <AvatarImage src={previewAvatarFromFile} />
+                      <AvatarFallback className='rounded-none'>{name || 'Avatar'}</AvatarFallback>
+                    </Avatar>
+                  </FormDescription>
+                  <FormControl>
+                    <input
+                      type='file'
+                      accept='image/*'
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setFile(file);
+                          field.onChange('http://localhost:3000/' + file.name);
+                        }
+                      }}
+                      ref={imageInputRef}
+                      hidden
+                    />
+                  </FormControl>
+                  <FormLabel>
+                    <TButton
+                      type='button'
+                      variant='outline'
+                      onClick={() => imageInputRef.current?.click()}
+                      tooltip='upload-image'
+                    >
+                      <Upload />
+                      <span className='sr-only'>{tButton('upload-image')}</span>
+                    </TButton>
+                  </FormLabel>
+                </FormItem>
               )}
+            />
 
-              <FormField
-                control={form.control}
-                name='description'
-                render={({ field }) => (
-                  <FormItem>
-                    <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
-                      <Label htmlFor='description'>Mô tả sản phẩm</Label>
-                      <div className='col-span-3 w-full space-y-2'>
-                        <Textarea id='description' className='w-full' {...field} />
-                        <FormMessage />
-                      </div>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='options'
-                render={({ field }) => (
-                  <FormItem>
-                    <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
-                      <Label htmlFor='description'>Thêm tùy chọn</Label>
-                      <div className='col-span-3 w-full space-y-2'>
-                        <Textarea id='description' className='w-full' {...field} />
-                      </div>
-                    </div>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='status'
-                render={({ field }) => (
-                  <FormItem>
-                    <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
-                      <Label htmlFor='description'>Trạng thái</Label>
-                      <div className='col-span-3 w-full space-y-2'>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder='Chọn trạng thái' />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {getEnumValues(DishStatus).map((status) => (
-                              <SelectItem key={status} value={status}>
-                                {tDishStatus(status)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+            <FormField
+              control={form.control}
+              name='name'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{tForm('dish-name')}</FormLabel>
+                  <FormControl>
+                    <Input {...field} IconLeft={Salad} />
+                  </FormControl>
+                  <div className='h-5'>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
 
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
-            </div>
-          </form>
-        </Form>
-        <DialogFooter>
-          <Button type='submit' form='add-dish-form'>
-            Thêm
-          </Button>
-        </DialogFooter>
-      </DialogContent>
+            <FormField
+              control={form.control}
+              name='status'
+              render={({ field }) => (
+                <FormItem className='flex flex-col gap-y-1'>
+                  <FormLabel className='flex items-center gap-x-1'>
+                    <Loader width={16} height={16} />
+                    {tForm('dish-status')}
+                  </FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={tManageDish('choose-status')} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {getEnumValues(DishStatus).map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {tDishStatus(status)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className='h-5'>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='groupId'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{tForm('dish-group')}</FormLabel>
+                  <div className='flex items-center gap-x-4'>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder={tManageDish('choose-group')} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className='max-h-[200px]'>
+                        {dishGroups.map((status) => (
+                          <SelectItem key={status.id} value={status.id}>
+                            {status.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      className='col-span-1 m-0'
+                      type='button'
+                      onClick={() => {
+                        setOpenFormAdd(true);
+                      }}
+                    >
+                      Tạo nhóm
+                    </Button>
+                  </div>
+                  <div className='h-5'>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='category'
+              render={({ field }) => (
+                <FormItem className='flex flex-col gap-y-1'>
+                  <FormLabel className='flex items-center gap-x-1'>
+                    <Tags height={16} width={16} />
+                    {tForm('dish-category')}
+                  </FormLabel>
+                  <FormControl className='h-9'>
+                    <RadioGroup
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      className='flex items-center gap-x-4'
+                    >
+                      <FormItem className='flex items-center space-y-0 gap-x-2'>
+                        <FormControl>
+                          <RadioGroupItem value='Buffet' />
+                        </FormControl>
+                        <FormLabel>{tDishCategory('Buffet')}</FormLabel>
+                      </FormItem>
+                      <FormItem className='flex items-center space-y-0 gap-x-2'>
+                        <FormControl>
+                          <RadioGroupItem value='Paid' />
+                        </FormControl>
+                        <FormLabel>{tDishCategory('Paid')}</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <div className='h-5'>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='price'
+              disabled={form.watch('category') === DishCategory.Buffet}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Giá</FormLabel>
+                  <FormControl>
+                    <Input {...field} type='number' IconLeft={Banknote} min={0} pattern='([0-9]{1,3}).([0-9]{1,3})' />
+                  </FormControl>
+                  <div className='h-5'>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='description'
+              render={({ field }) => (
+                <FormItem className='col-start-1'>
+                  <FormLabel>Mô tả sản phẩm</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <div className='h-5'>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='options'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Thêm tùy chọn</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <div className='h-5'>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className='flex items-center justify-center gap-x-4 mt-auto'>
+            <TButton type='button' variant='outline' asLink href='/manage/dishes'>
+              {tButton('cancel')}
+            </TButton>
+            <TButton type='submit'>{tButton('save-change')}</TButton>
+          </div>
+        </form>
+      </Form>
       <AddDishGroup open={openFormAdd} setOpen={setOpenFormAdd} />
-    </Dialog>
+    </>
   );
 }

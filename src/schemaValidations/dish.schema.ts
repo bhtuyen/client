@@ -1,65 +1,43 @@
 import { DishCategory, DishStatus } from '@/constants/enum';
 import z from 'zod';
-
-export const CreateDishBody = z.object({
-  name: z.string().min(1).max(255),
-  price: z.coerce.number().positive(),
-  description: z.string().max(10000),
-  category: z.nativeEnum(DishCategory),
-  groupId: z.string().uuid(),
-  options: z.string(),
-  image: z.string().url(),
-  status: z.enum([DishStatus.Available, DishStatus.Unavailable, DishStatus.Hidden])
-});
-
-export type CreateDishBodyType = z.TypeOf<typeof CreateDishBody>;
-
-export const DishSchema = z.object({
+export const dishSchema = z.object({
   id: z.string().uuid(),
-  name: z.string(),
-  price: z.coerce.number(),
-  description: z.string(),
+  name: z.string().min(1).max(255),
+  price: z.coerce.number().positive().optional(),
+  description: z.string().max(10000).optional(),
   category: z.enum([DishCategory.Buffet, DishCategory.Paid]),
   groupId: z.string().uuid(),
-  options: z.string(),
-  image: z.string(),
+  options: z.string().optional(),
+  image: z.string().optional(),
   status: z.enum([DishStatus.Available, DishStatus.Unavailable, DishStatus.Hidden]),
   createdAt: z.date(),
   updatedAt: z.date()
 });
-
-export type DishType = z.TypeOf<typeof DishSchema>;
-
-export const DishInCart = DishSchema.extend({ quantity: z.number().positive() });
-
-export type DishInCartType = z.TypeOf<typeof DishInCart>;
-
-export const DishRes = z.object({
-  data: DishSchema,
-  message: z.string()
+export const dishDtoSchema = dishSchema.omit({ createdAt: true, updatedAt: true }).extend({
+  groupName: z.string()
+});
+export const createDishSchema = dishSchema.omit({ id: true, createdAt: true, updatedAt: true });
+export const updateDishSchema = dishSchema.omit({ id: true, createdAt: true, updatedAt: true });
+export const dishResSchema = z.object({
+  data: dishDtoSchema.nullable(),
+  message: z.string().nullable()
+});
+export const dishesResSchema = z.object({
+  data: z.array(dishDtoSchema),
+  message: z.string().nullable()
 });
 
-export type Dish = z.TypeOf<typeof DishSchema>;
+export type DishDto = z.TypeOf<typeof dishDtoSchema>;
 
-export type DishResType = z.TypeOf<typeof DishRes>;
+export type CreateDish = z.TypeOf<typeof createDishSchema>;
 
-export const DishListRes = z.object({
-  data: z.array(
-    DishSchema.extend({
-      groupName: z.string().nullable().optional()
-    })
-  ),
-  message: z.string()
-});
+export type UpdateDish = z.TypeOf<typeof updateDishSchema>;
 
-export type DishListResType = z.TypeOf<typeof DishListRes>;
+export type DishRes = z.TypeOf<typeof dishResSchema>;
 
-export const UpdateDishBody = CreateDishBody;
-export type UpdateDishBodyType = CreateDishBodyType;
-export const DishParams = z.object({
-  id: z.string().uuid()
-});
-export type DishParamsType = z.TypeOf<typeof DishParams>;
+export type DishesRes = z.TypeOf<typeof dishesResSchema>;
+
+//
 
 export const DishGroupSchema = z.object({
   id: z.string().uuid(),
@@ -89,3 +67,7 @@ export const CreateDishGroupBody = z.object({
 });
 
 export type CreateDishGroupBodyType = z.TypeOf<typeof CreateDishGroupBody>;
+
+export const DishInCart = dishSchema.extend({ quantity: z.number().positive() });
+
+export type DishInCartType = z.TypeOf<typeof DishInCart>;

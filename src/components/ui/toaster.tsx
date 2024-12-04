@@ -7,7 +7,7 @@ export function Toaster() {
   const { toasts } = useToast();
 
   return (
-    <ToastProvider>
+    <ToastProvider duration={2000}>
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
           <Toast key={id} {...props}>
@@ -16,11 +16,11 @@ export function Toaster() {
               {description && <ToastDescription>{description}</ToastDescription>}
             </div>
             {action}
-            <ToastClose />
+            <ToastClose hidden />
           </Toast>
         );
       })}
-      <ToastViewport />
+      <ToastViewport className='sm:top-0 sm:left-[50%] sm:translate-x-[-50%] w-fit sm:right-auto' />
     </ToastProvider>
   );
 }

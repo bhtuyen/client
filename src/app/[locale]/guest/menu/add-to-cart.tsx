@@ -19,13 +19,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DishCategory, DishStatus } from '@/constants/enum';
 import { formatCurrency } from '@/lib/utils';
-import { Dish, DishInCartType } from '@/schemaValidations/dish.schema';
+import { DishDto, DishInCartType } from '@/schemaValidations/dish.schema';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Plus } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
-export default function AddToCart({ dish }: { dish: Dish }) {
+export default function AddToCart({ dish }: { dish: DishDto }) {
   const [quantity, setQuantity] = useState(0);
   const [option, setOption] = useState('');
 

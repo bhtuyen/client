@@ -6,7 +6,6 @@ import { Role } from '@/constants/enum';
 import { decodeJWT, getAccessTokenFromLocalStorage, removeAuthTokens } from '@/lib/utils';
 import { StoreType } from '@/types/common.type';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { create } from 'zustand';
@@ -124,7 +123,6 @@ const AppProvider = ({
       <RefreshToken />
       <ListenLogoutSocket />
       {children}
-      <ReactQueryDevtools />
     </QueryClientProvider>
   );
 };

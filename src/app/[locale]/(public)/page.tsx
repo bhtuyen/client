@@ -1,12 +1,12 @@
 import { dishApiRequets } from '@/app/apiRequests/dish';
+import { Link } from '@/i18n/routing';
 import { formatCurrency, generateSlugify } from '@/lib/utils';
-import { DishListResType } from '@/schemaValidations/dish.schema';
+import { DishesRes } from '@/schemaValidations/dish.schema';
 import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
-import { Link } from '@/i18n/routing';
 
 export default async function HomePage() {
-  let dishList: DishListResType['data'] = [];
+  let dishList: DishesRes['data'] = [];
   try {
     const dishListQuery = await dishApiRequets.getAll();
     dishList = dishListQuery.payload.data;

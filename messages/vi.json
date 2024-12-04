@@ -146,7 +146,9 @@
       "edit": {
         "title": "Chỉnh sửa món ăn",
         "description": "Chỉnh sửa thông tin món ăn"
-      }
+      },
+      "choose-group": "Chọn nhóm cho món ăn",
+      "choose-status": "Chọn trạng thái cho món ăn"
     },
 
     "orders": {

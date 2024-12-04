@@ -1,22 +1,22 @@
 'use client';
+import { DishesDialog } from '@/app/[locale]/manage/orders/dishes-dialog';
+import { useOrderQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { OrderStatus } from '@/constants/enum';
+import { toast } from '@/hooks/use-toast';
+import { getEnumValues, handleErrorApi } from '@/lib/utils';
+import { DishesRes } from '@/schemaValidations/dish.schema';
 import { UpdateOrderBody, UpdateOrderBodyType } from '@/schemaValidations/order.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { getEnumValues, handleErrorApi } from '@/lib/utils';
-import { OrderStatus } from '@/constants/enum';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DishesDialog } from '@/app/[locale]/manage/orders/dishes-dialog';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useEffect, useState } from 'react';
-import { DishListResType } from '@/schemaValidations/dish.schema';
-import { useOrderQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
-import { toast } from '@/hooks/use-toast';
 import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 export default function EditOrder({
   id,
@@ -27,7 +27,7 @@ export default function EditOrder({
   setId: (_value: string | undefined) => void;
   onSubmitSuccess?: () => void;
 }) {
-  const [selectedDish, setSelectedDish] = useState<DishListResType['data'][0] | null>(null);
+  const [selectedDish, setSelectedDish] = useState<DishesRes['data'][0] | null>(null);
   const updateOrderMutation = useUpdateOrderMutation();
   const { data } = useOrderQuery({
     orderId: id!,

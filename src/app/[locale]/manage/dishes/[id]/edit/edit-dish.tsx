@@ -1,11 +1,10 @@
 'use client';
-import AddDishGroup from '@/app/[locale]/manage/dishes/create/add-dish-group';
+import AddDishGroup from '@/app/[locale]/manage/dishes/add-dish-group';
 import revalidateApiRequest from '@/app/apiRequests/revalidate';
 import { useDishGroupQuery, useDishQuery, useUpdateDishMutation } from '@/app/queries/useDish';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
 import TButton from '@/components/t-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -13,10 +12,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { DishCategory, DishStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
+import { useRouter } from '@/i18n/routing';
 import { getEnumValues, handleErrorApi } from '@/lib/utils';
-import { UpdateDishBody, UpdateDishBodyType } from '@/schemaValidations/dish.schema';
+import { UpdateDish, updateDishSchema } from '@/schemaValidations/dish.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Salad, Upload } from 'lucide-react';
+import { Banknote, Loader, Salad, Tags, Upload } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -26,36 +26,39 @@ export default function EditDish({ id }: { id: string }) {
   const uploadMediaMutation = useUploadMediaMutation();
 
   const { data } = useDishQuery({ id: id!, enabled: Boolean(id) });
-  const dish =
-    data?.payload.data ??
-    ({
-      id: '1fef656a-3d71-440a-8660-b1abd2e26e23',
-      name: 'Salad hành paro',
-      price: 69000,
-      description: 'Salad hành paro',
-      image: 'http://localhost:4000/static/0011b20501a14cce8d451357d7fc5282.jpg',
-      status: 'Available',
-      category: 'Paid',
-      groupId: 'da5e0a32-fb59-4474-9502-942f70811065',
-      options: ''
-    } as UpdateDishBodyType);
-
   const dishGroupQuery = useDishGroupQuery();
+
+  const router = useRouter();
+
+  const dish = data?.payload.data;
+  // ({
+  //   id: '1fef656a-3d71-440a-8660-b1abd2e26e23',
+  //   name: 'Salad hành paro',
+  //   price: 69000,
+  //   description: 'Salad hành paro',
+  //   image: 'http://localhost:4000/static/0011b20501a14cce8d451357d7fc5282.jpg',
+  //   status: 'Available',
+  //   category: 'Paid',
+  //   groupId: 'da5e0a32-fb59-4474-9502-942f70811065',
+  //   options: ''
+  // } as UpdateDish);
+
   const dishGroups = dishGroupQuery.data?.payload.data ?? [];
 
   const [file, setFile] = useState<File | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const [openFormAdd, setOpenFormAdd] = useState(false);
 
-  const form = useForm<UpdateDishBodyType>({
-    resolver: zodResolver(UpdateDishBody),
-    values: dish
+  const form = useForm<UpdateDish>({
+    resolver: zodResolver(updateDishSchema),
+    values: dish!
   });
 
   const tDishStatus = useTranslations('dish-status');
   const tButton = useTranslations('t-button');
   const tForm = useTranslations('t-form');
   const tDishCategory = useTranslations('dish-category');
+  const tManageDish = useTranslations('manage.dishes');
 
   const image = form.watch('image');
   const name = form.watch('name');
@@ -71,10 +74,10 @@ export default function EditDish({ id }: { id: string }) {
     setFile(null);
   };
 
-  const onSubmit = async (body: UpdateDishBodyType) => {
+  const onSubmit = async (body: UpdateDish) => {
     if (updateDishMutation.isPending) return;
     try {
-      let _body: UpdateDishBodyType & { id: string } = {
+      let _body: UpdateDish & { id: string } = {
         id: id!,
         ...body
       };
@@ -94,6 +97,7 @@ export default function EditDish({ id }: { id: string }) {
       });
 
       reset();
+      router.push('/manage/dishes');
     } catch (error: any) {
       handleErrorApi({ error, setError: form.setError });
     }
@@ -107,7 +111,7 @@ export default function EditDish({ id }: { id: string }) {
           className='p-4 h-full flex flex-col justify-between'
           onSubmit={form.handleSubmit(onSubmit, console.log)}
         >
-          <div className='grid grid-cols-3 gap-x-4'>
+          <div className='grid grid-cols-3 gap-4'>
             <FormField
               control={form.control}
               name='image'
@@ -154,7 +158,7 @@ export default function EditDish({ id }: { id: string }) {
               name='name'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{tForm('name')}</FormLabel>
+                  <FormLabel>{tForm('dish-name')}</FormLabel>
                   <FormControl>
                     <Input {...field} IconLeft={Salad} />
                   </FormControl>
@@ -169,12 +173,15 @@ export default function EditDish({ id }: { id: string }) {
               control={form.control}
               name='status'
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Trạng thái</FormLabel>
+                <FormItem className='flex flex-col gap-y-1'>
+                  <FormLabel className='flex items-center gap-x-1'>
+                    <Loader width={16} height={16} />
+                    {tForm('dish-status')}
+                  </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder='Chọn trạng thái' />
+                        <SelectValue placeholder={tManageDish('choose-status')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -202,7 +209,7 @@ export default function EditDish({ id }: { id: string }) {
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder='Chọn nhóm cho món ăn' inputMode='decimal' />
+                          <SelectValue placeholder={tManageDish('choose-group')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className='max-h-[200px]'>
@@ -213,7 +220,7 @@ export default function EditDish({ id }: { id: string }) {
                         ))}
                       </SelectContent>
                     </Select>
-                    <Button
+                    <TButton
                       className='col-span-1 m-0'
                       type='button'
                       onClick={() => {
@@ -221,7 +228,7 @@ export default function EditDish({ id }: { id: string }) {
                       }}
                     >
                       Tạo nhóm
-                    </Button>
+                    </TButton>
                   </div>
                   <div className='h-5'>
                     <FormMessage />
@@ -234,9 +241,12 @@ export default function EditDish({ id }: { id: string }) {
               control={form.control}
               name='category'
               render={({ field }) => (
-                <FormItem className='flex items-center space-y-0 gap-x-8 mb-5 h-[68px]'>
-                  <FormLabel>{tForm('dish-category')}</FormLabel>
-                  <FormControl>
+                <FormItem className='flex flex-col gap-y-1'>
+                  <FormLabel className='flex items-center gap-x-1'>
+                    <Tags height={16} width={16} />
+                    {tForm('dish-category')}
+                  </FormLabel>
+                  <FormControl className='h-9'>
                     <RadioGroup
                       value={field.value}
                       onValueChange={field.onChange}
@@ -256,6 +266,9 @@ export default function EditDish({ id }: { id: string }) {
                       </FormItem>
                     </RadioGroup>
                   </FormControl>
+                  <div className='h-5'>
+                    <FormMessage />
+                  </div>
                 </FormItem>
               )}
             />
@@ -268,7 +281,7 @@ export default function EditDish({ id }: { id: string }) {
                 <FormItem>
                   <FormLabel>Giá</FormLabel>
                   <FormControl>
-                    <Input {...field} type='number' />
+                    <Input {...field} type='number' IconLeft={Banknote} min={0} pattern='([0-9]{1,3}).([0-9]{1,3})' />
                   </FormControl>
                   <div className='h-5'>
                     <FormMessage />
@@ -308,8 +321,11 @@ export default function EditDish({ id }: { id: string }) {
               )}
             />
           </div>
-          <div className='flex items-center justify-end mt-auto'>
-            <Button type='submit'>Lưu</Button>
+          <div className='flex items-center justify-center gap-x-4 mt-auto'>
+            <TButton type='button' variant='outline' asLink href='/manage/dishes'>
+              {tButton('cancel')}
+            </TButton>
+            <TButton type='submit'>{tButton('save-change')}</TButton>
           </div>
         </form>
       </Form>

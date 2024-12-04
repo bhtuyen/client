@@ -1,5 +1,5 @@
 {
-  "extends": ["plugin:@tanstack/eslint-plugin-query/recommended", "eslint-config-prettier", "prettier", "next"],
+  "extends": ["plugin:@tanstack/query/recommended","plugin:@tanstack/eslint-plugin-query/recommended", "eslint-config-prettier", "prettier", "next"],
   "plugins": ["@tanstack/query", "prettier"],
   "rules": {
     "@tanstack/query/exhaustive-deps": "error",

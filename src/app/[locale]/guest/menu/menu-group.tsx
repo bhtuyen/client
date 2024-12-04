@@ -3,7 +3,7 @@ import AddToCart from '@/app/[locale]/guest/menu/add-to-cart';
 import { useDishListQuery } from '@/app/queries/useDish';
 import { DishCategory } from '@/constants/enum';
 import { formatCurrency } from '@/lib/utils';
-import { DishListResType } from '@/schemaValidations/dish.schema';
+import { DishesRes } from '@/schemaValidations/dish.schema';
 import Image from 'next/image';
 
 export default function MenuGroup() {
@@ -12,7 +12,7 @@ export default function MenuGroup() {
     { key: 'ordered', label: 'Món đã gọi' }
   ];
   const dishesListQuery = useDishListQuery();
-  const dishes: DishListResType['data'] = dishesListQuery.data?.payload.data || [];
+  const dishes: DishesRes['data'] = dishesListQuery.data?.payload.data || [];
 
   return (
     <div>

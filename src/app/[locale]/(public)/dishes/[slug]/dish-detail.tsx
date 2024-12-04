@@ -1,8 +1,8 @@
 import { formatCurrency } from '@/lib/utils';
-import { DishResType } from '@/schemaValidations/dish.schema';
+import { DishRes } from '@/schemaValidations/dish.schema';
 import Image from 'next/image';
 
-export default function DishDetail({ dish }: { dish: DishResType['data'] | undefined }) {
+export default function DishDetail({ dish }: { dish: DishRes['data'] | undefined }) {
   return (
     <>
       {dish && (

@@ -146,7 +146,9 @@
       "edit": {
         "title": "Edit dish",
         "description": "Edit the information of the dish"
-      }
+      },
+      "choose-group": "Choose group for dish",
+      "choose-status": "Choose status for dish"
     },
 
     "orders": {

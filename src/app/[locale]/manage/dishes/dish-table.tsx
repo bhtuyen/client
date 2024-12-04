@@ -1,13 +1,14 @@
 'use client';
 
-import AddDish from '@/app/[locale]/manage/dishes/create/add-dish';
 import { useDeleteDishMutation, useDishListQuery } from '@/app/queries/useDish';
+import TButton from '@/components/t-button';
 import TDataTable, { TCellAction } from '@/components/t-data-table';
 import { DishCategory, DishStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { formatCurrency, handleErrorApi } from '@/lib/utils';
-import { DishType } from '@/schemaValidations/dish.schema';
+import { DishDto } from '@/schemaValidations/dish.schema';
 import { ColumnDef } from '@tanstack/react-table';
+import { PlusCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useCallback, useMemo } from 'react';
@@ -15,6 +16,22 @@ import { useCallback, useMemo } from 'react';
 export default function DishTable() {
   const dishesListQuery = useDishListQuery();
   const data = dishesListQuery.data?.payload.data ?? [];
+
+  // data.push({
+  //   id: '1fef656a-3d71-440a-8660-b1abd2e26e23',
+  //   name: 'Salad hành paro',
+  //   price: 69000,
+  //   description: 'Salad hành paro',
+  //   image: 'http://localhost:4000/static/0011b20501a14cce8d451357d7fc5282.jpg',
+  //   status: DishStatus.Available,
+  //   category: DishCategory.Paid,
+  //   groupId: 'da5e0a32-fb59-4474-9502-942f70811065',
+  //   options: '',
+  //   groupName: 'Salad',
+  //   createdAt: new Date(),
+  //   updatedAt: new Date()
+  // });
+
   const deleteDishMutation = useDeleteDishMutation();
 
   const handleDeleteAccount = useCallback(
@@ -33,8 +50,9 @@ export default function DishTable() {
   const tDishStatus = useTranslations('dish-status');
   const tDishCategory = useTranslations('dish-category');
   const tTableColumn = useTranslations('t-data-table.column');
+  const tButton = useTranslations('t-button');
 
-  const columns: ColumnDef<DishType>[] = useMemo(
+  const columns: ColumnDef<DishDto>[] = useMemo(
     () => [
       {
         accessorKey: 'image',
@@ -42,7 +60,7 @@ export default function DishTable() {
         cell: ({ row }) => (
           <div className='w-[100px]'>
             <Image
-              src={row.getValue('image')}
+              src={row.getValue('image') ?? '/restaurant.jpg'}
               alt={row.original.name}
               width={100}
               height={100}
@@ -121,5 +139,16 @@ export default function DishTable() {
     [handleDeleteAccount, tDishCategory, tDishStatus, tTableColumn]
   );
 
-  return <TDataTable data={data} columns={columns} childrenToolbar={<AddDish />} />;
+  return (
+    <TDataTable
+      data={data}
+      columns={columns}
+      childrenToolbar={
+        <TButton size='sm' className='h-7 gap-1' asLink href='/manage/dishes/create'>
+          <PlusCircle className='h-3.5 w-3.5' />
+          <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>{tButton('create-dish')}</span>
+        </TButton>
+      }
+    />
+  );
 }
