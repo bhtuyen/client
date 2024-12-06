@@ -1,32 +1,29 @@
-import { dishSchema } from '@/schemaValidations/dish.schema';
+import { buildReply } from '@/schemaValidations/common.schema';
+import { dishDtoDetail } from '@/schemaValidations/dish.schema';
 import z from 'zod';
 
-export const DashboardIndicatorQueryParams = z.object({
-  fromDate: z.coerce.date().optional(),
-  toDate: z.coerce.date().optional()
+export const dishIndicator = dishDtoDetail.extend({ successOrders: z.number() });
+
+export const revenueByDate = z.object({
+  date: z.string(),
+  revenue: z.number()
 });
 
-export type DashboardIndicatorQueryParamsType = z.TypeOf<typeof DashboardIndicatorQueryParams>;
-
-export const DashboardIndicatorRes = z.object({
-  data: z.object({
-    revenue: z.number(),
-    guestCount: z.number(),
-    orderCount: z.number(),
-    servingTableCount: z.number(),
-    dishIndicator: z.array(
-      dishSchema.extend({
-        successOrders: z.number()
-      })
-    ),
-    revenueByDate: z.array(
-      z.object({
-        date: z.string(),
-        revenue: z.number()
-      })
-    )
-  }),
-  message: z.string()
+export const dashboardIndicator = z.object({
+  revenue: z.number(),
+  guestCount: z.number(),
+  orderCount: z.number(),
+  servingTableCount: z.number(),
+  dishesIndicator: z.array(dishIndicator),
+  revenuesByDate: z.array(revenueByDate)
 });
 
-export type DashboardIndicatorResType = z.TypeOf<typeof DashboardIndicatorRes>;
+export const dashboardIndicatorRes = buildReply(dashboardIndicator);
+
+export type DishIndicator = z.TypeOf<typeof dishIndicator>;
+
+export type DashboardIndicator = z.TypeOf<typeof dashboardIndicator>;
+
+export type DashboardIndicatorRes = z.TypeOf<typeof dashboardIndicatorRes>;
+
+export type RevenueByDate = z.TypeOf<typeof revenueByDate>;

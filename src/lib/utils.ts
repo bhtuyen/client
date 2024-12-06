@@ -221,3 +221,19 @@ export function isMessageOption<T extends TNamespaceKeys = TNamespaceKeys>(
 ): value is TMessageOption<T> {
   return typeof value === 'object' && value !== null && 'key' in value;
 }
+
+export function buildSelect<TDto>(): Record<keyof TDto, any> {
+  const isObject = (value: unknown): value is object =>
+    value !== null && typeof value === 'object' && !Array.isArray(value);
+
+  return new Proxy(
+    {},
+    {
+      get: (_, key: string) => {
+        // Nếu giá trị là object, tiếp tục đệ quy
+        const nestedKeyType = {} as TDto[keyof TDto];
+        return isObject(nestedKeyType) ? buildSelect() : true;
+      }
+    }
+  ) as Record<keyof TDto, any>;
+}

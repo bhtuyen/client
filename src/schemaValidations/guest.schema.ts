@@ -1,52 +1,57 @@
-import { Role } from '@/constants/enum';
-import { OrderSchema } from '@/schemaValidations/order.schema';
+import { buildSelect } from '@/lib/utils';
+import { token } from '@/schemaValidations/auth.schema';
+import { buildReply } from '@/schemaValidations/common.schema';
+import { guestDto, orderDtoDetail } from '@/schemaValidations/order.schema';
 import z from 'zod';
 
-export const GuestLoginBody = z
-  .object({
-    name: z.string().min(2).max(50),
-    tableNumber: z.string().min(1).max(50),
+/**
+ * Guest login
+ */
+export const guestLogin = guestDto
+  .pick({ tableNumber: true })
+  .extend({
     token: z.string()
   })
   .strict();
 
-export type GuestLoginBodyType = z.TypeOf<typeof GuestLoginBody>;
-
-export const GuestLoginRes = z.object({
-  data: z.object({
-    accessToken: z.string(),
-    refreshToken: z.string(),
-    guest: z.object({
-      id: z.string().uuid(),
-      name: z.string(),
-      role: z.enum([Role.Guest]),
-      tableNumber: z.string().nullable(),
-      createdAt: z.date(),
-      updatedAt: z.date()
+export const guestLoginRes = buildReply(
+  z
+    .object({
+      guest: guestDto
     })
-  }),
-  message: z.string()
-});
+    .merge(token)
+);
+export type GuestLogin = z.TypeOf<typeof guestLogin>;
 
-export type GuestLoginResType = z.TypeOf<typeof GuestLoginRes>;
+export type GuestDto = z.TypeOf<typeof guestDto>;
 
-export const GuestCreateOrdersBody = z.array(
+export type GuestLoginRes = z.TypeOf<typeof guestLoginRes>;
+
+export const selectGuestDto = buildSelect<GuestDto>();
+
+/**
+ * Guest create order
+ */
+export const guestCreateOrder = z.array(
   z.object({
     dishId: z.string().uuid(),
-    quantity: z.number(),
-    options: z.string()
+    quantity: z.number().min(1).max(20),
+    options: z.string().nullable().default(null)
   })
 );
+export const guestCreateOrderRes = buildReply(z.array(orderDtoDetail));
 
-export type GuestCreateOrdersBodyType = z.TypeOf<typeof GuestCreateOrdersBody>;
+export type GuestCreateOrder = z.TypeOf<typeof guestCreateOrder>;
+export type GuestCreateOrderRes = z.TypeOf<typeof guestCreateOrderRes>;
 
-export const GuestCreateOrdersRes = z.object({
-  message: z.string(),
-  data: z.array(OrderSchema)
-});
+export const guestsRes = buildReply(z.array(guestDto));
 
-export type GuestCreateOrdersResType = z.TypeOf<typeof GuestCreateOrdersRes>;
+export type GuestsRes = z.TypeOf<typeof guestsRes>;
 
-export const GuestGetOrdersRes = GuestCreateOrdersRes;
+export const createGuest = guestDto.pick({ tableNumber: true });
 
-export type GuestGetOrdersResType = z.TypeOf<typeof GuestGetOrdersRes>;
+export type CreateGuest = z.TypeOf<typeof createGuest>;
+
+export const createGuestRes = buildReply(guestDto);
+
+export type CreateGuestRes = z.TypeOf<typeof createGuestRes>;

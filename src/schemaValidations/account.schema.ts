@@ -1,42 +1,49 @@
 import { Role } from '@/constants/enum';
-import { LoginRes } from '@/schemaValidations/auth.schema';
+import { buildSelect } from '@/lib/utils';
+import { buildReply, id, name, updateAndCreate } from '@/schemaValidations/common.schema';
 import z from 'zod';
 
-export const AccountSchema = z.object({
-  id: z.string().uuid(),
-  name: z.string(),
-  email: z.string().email(),
-  phone: z.string(),
-  role: z.enum([Role.Employee, Role.Owner]),
-  avatar: z.string().url().nullable(),
-  isVerified: z.boolean().nullable()
-});
-
-export type AccountType = z.TypeOf<typeof AccountSchema>;
-
-export const AccountListRes = z.object({
-  data: z.array(AccountSchema),
-  message: z.string()
-});
-
-export type AccountListResType = z.TypeOf<typeof AccountListRes>;
-
-export const AccountRes = z
+const account = z
   .object({
-    data: AccountSchema,
-    message: z.string()
-  })
-  .strict();
-
-export type AccountResType = z.TypeOf<typeof AccountRes>;
-
-export const CreateEmployeeAccountBody = z
-  .object({
-    name: z.string().trim().min(2).max(256),
     email: z.string().email(),
-    phone: z.string().min(10).max(15),
-    avatar: z.string().url().optional(),
     password: z.string().min(6).max(100),
+    avatar: z.string().url().nullable().optional(),
+    role: z.nativeEnum(Role),
+    phone: z.string().min(10).max(15),
+    isVerified: z.boolean().default(false),
+    ownerId: z.string().uuid().nullable().optional()
+  })
+  .merge(updateAndCreate)
+  .merge(id)
+  .merge(name);
+
+export const accountDto = account.omit({
+  createdAt: true,
+  updatedAt: true
+});
+
+export const accountsRes = buildReply(z.array(accountDto));
+
+export const accountRes = buildReply(accountDto);
+
+export type Account = z.TypeOf<typeof account>;
+export type AccountDto = z.TypeOf<typeof accountDto>;
+
+export type AccountsRes = z.TypeOf<typeof accountsRes>;
+
+export type AccountRes = z.TypeOf<typeof accountRes>;
+
+export const selectAccountDto = buildSelect<AccountDto>();
+
+export const createEmployee = account
+  .pick({
+    name: true,
+    email: true,
+    phone: true,
+    avatar: true,
+    password: true
+  })
+  .extend({
     confirmPassword: z.string().min(6).max(100)
   })
   .strict()
@@ -50,14 +57,16 @@ export const CreateEmployeeAccountBody = z
     }
   });
 
-export type CreateEmployeeAccountBodyType = z.TypeOf<typeof CreateEmployeeAccountBody>;
+export type CreateEmployee = z.TypeOf<typeof createEmployee>;
 
-export const UpdateEmployeeAccountBody = z
-  .object({
-    name: z.string().trim().min(2).max(256),
-    email: z.string().email(),
-    phone: z.string().min(10).max(15),
-    avatar: z.string().url().optional(),
+export const updateEmployee = account
+  .pick({
+    name: true,
+    email: true,
+    phone: true,
+    avatar: true
+  })
+  .extend({
     changePassword: z.boolean().optional(),
     password: z.string().min(6).max(100).optional(),
     confirmPassword: z.string().min(6).max(100).optional(),
@@ -82,18 +91,18 @@ export const UpdateEmployeeAccountBody = z
     }
   });
 
-export type UpdateEmployeeAccountBodyType = z.TypeOf<typeof UpdateEmployeeAccountBody>;
+export type UpdateEmployee = z.TypeOf<typeof updateEmployee>;
 
-export const UpdateMeBody = z
-  .object({
-    name: z.string().trim().min(2).max(256),
-    avatar: z.string().url().optional()
+export const updateMe = account
+  .pick({
+    name: true,
+    avatar: true
   })
   .strict();
 
-export type UpdateMeBodyType = z.TypeOf<typeof UpdateMeBody>;
+export type UpdateMe = z.TypeOf<typeof updateMe>;
 
-export const ChangePasswordBody = z
+export const changePassword = z
   .object({
     oldPassword: z.string().min(6).max(100),
     password: z.string().min(6).max(100),
@@ -110,63 +119,4 @@ export const ChangePasswordBody = z
     }
   });
 
-export type ChangePasswordBodyType = z.TypeOf<typeof ChangePasswordBody>;
-
-export const ChangePasswordV2Body = ChangePasswordBody;
-
-export type ChangePasswordV2BodyType = z.TypeOf<typeof ChangePasswordV2Body>;
-
-export const ChangePasswordV2Res = LoginRes;
-
-export type ChangePasswordV2ResType = z.TypeOf<typeof ChangePasswordV2Res>;
-
-export const AccountIdParam = z.object({
-  id: z.string().uuid()
-});
-
-export type AccountIdParamType = z.TypeOf<typeof AccountIdParam>;
-
-export const GetListGuestsRes = z.object({
-  data: z.array(
-    z.object({
-      id: z.string().uuid(),
-      name: z.string(),
-      tableNumber: z.string().nullable(),
-      createdAt: z.date(),
-      updatedAt: z.date()
-    })
-  ),
-  message: z.string()
-});
-
-export type GetListGuestsResType = z.TypeOf<typeof GetListGuestsRes>;
-
-export const GetGuestListQueryParams = z.object({
-  fromDate: z.coerce.date().optional(),
-  toDate: z.coerce.date().optional()
-});
-
-export type GetGuestListQueryParamsType = z.TypeOf<typeof GetGuestListQueryParams>;
-
-export const CreateGuestBody = z
-  .object({
-    name: z.string().trim().min(2).max(255),
-    tableNumber: z.string().min(1).max(50)
-  })
-  .strict();
-
-export type CreateGuestBodyType = z.TypeOf<typeof CreateGuestBody>;
-
-export const CreateGuestRes = z.object({
-  message: z.string(),
-  data: z.object({
-    id: z.string().uuid(),
-    name: z.string().nullable(),
-    role: z.nativeEnum(Role),
-    tableNumber: z.string().min(1).max(50),
-    createdAt: z.date(),
-    updatedAt: z.date()
-  })
-});
-
-export type CreateGuestResType = z.TypeOf<typeof CreateGuestRes>;
+export type ChangePassword = z.TypeOf<typeof changePassword>;
