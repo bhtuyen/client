@@ -1,11 +1,11 @@
 import http from '@/lib/http';
-import {
+import type {
   CreateDish,
-  CreateDishGroupBodyType,
-  DishesRes,
-  DishGroupListResType,
-  DishGroupResType,
+  CreateDishGroup,
+  DishGroupRes,
+  DishGroupsRes,
   DishRes,
+  DishesRes,
   UpdateDish
 } from '@/schemaValidations/dish.schema';
 
@@ -17,8 +17,8 @@ export const dishApiRequets = {
   getAll: () => http.get<DishesRes>(`${prefix}`, { next: { tags: ['dishes'] } }),
   getById: (id: string) => http.get<DishRes>(`${prefix}/${id}`),
   create: (body: CreateDish) => http.post<DishRes>(`${prefix}`, body),
-  update: (id: string, body: UpdateDish) => http.put<DishRes>(`${prefix}/${id}`, body),
+  update: ({ id, ...body }: UpdateDish) => http.put<DishRes>(`${prefix}/${id}`, body),
   delete: (id: string) => http.delete<DishRes>(`${prefix}/${id}`),
-  getGroups: () => http.get<DishGroupListResType>(`${prefix}/groups`, { next: { tags: ['dish-groups'] } }),
-  createGroup: (body: CreateDishGroupBodyType) => http.post<DishGroupResType>(`${prefix}/group`, body)
+  getGroups: () => http.get<DishGroupsRes>(`${prefix}/groups`, { next: { tags: ['dish-groups'] } }),
+  createGroup: (body: CreateDishGroup) => http.post<DishGroupRes>(`${prefix}/group`, body)
 };

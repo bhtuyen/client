@@ -1,10 +1,10 @@
 'use client';
 import AddToCart from '@/app/[locale]/guest/menu/add-to-cart';
 import { useDishListQuery } from '@/app/queries/useDish';
+import TImage from '@/components/t-image';
 import { DishCategory } from '@/constants/enum';
 import { formatCurrency } from '@/lib/utils';
-import { DishesRes } from '@/schemaValidations/dish.schema';
-import Image from 'next/image';
+import type { DishesRes } from '@/schemaValidations/dish.schema';
 
 export default function MenuGroup() {
   const tabs = [
@@ -21,7 +21,7 @@ export default function MenuGroup() {
         {dishes.map((dish) => (
           <div className='grid grid-rows-11 h-[300px] bg-white shadow-sm rounded-md p-3' key={dish.id}>
             <div className='row-span-6 relative'>
-              <Image
+              <TImage
                 src={dish.image}
                 alt={dish.name}
                 fill

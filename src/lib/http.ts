@@ -7,7 +7,7 @@ import {
   setAccessTokenToLocalStorage,
   setRefreshTokenToLocalStorage
 } from '@/lib/utils';
-import { LoginResType, OauthLoginType } from '@/schemaValidations/auth.schema';
+import type { LoginRes, Token } from '@/schemaValidations/auth.schema';
 
 /**
  * customOptions: Tùy chỉnh options cho fetch
@@ -175,11 +175,11 @@ const request = async <Response>(
   if (isClient) {
     const normalizedUrl = normalizePath(url);
     if (['api/auth/login', 'api/guest/auth/login'].includes(normalizedUrl)) {
-      const { accessToken, refreshToken } = (payload as LoginResType).data;
+      const { accessToken, refreshToken } = (payload as LoginRes).data;
       setAccessTokenToLocalStorage(accessToken);
       setRefreshTokenToLocalStorage(refreshToken);
     } else if ('api/auth/set-cookie-oauth' === normalizedUrl) {
-      const { accessToken, refreshToken } = payload as OauthLoginType;
+      const { accessToken, refreshToken } = payload as Token;
       setAccessTokenToLocalStorage(accessToken);
       setRefreshTokenToLocalStorage(refreshToken);
     } else if (['api/auth/logout', 'api/guest/auth/logout'].includes(normalizedUrl)) {

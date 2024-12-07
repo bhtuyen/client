@@ -9,6 +9,8 @@ export const token = z
   })
   .strict();
 
+export type Token = z.TypeOf<typeof token>;
+
 export const login = accountDto
   .pick({
     email: true,

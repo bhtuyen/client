@@ -1,5 +1,5 @@
 import { dishApiRequets } from '@/app/apiRequests/dish';
-import { getIdFromSlugifyString, generateSlugify, wrapperServerApi } from '@/lib/utils';
+import { generateSlugify, getIdFromSlugifyString, wrapperServerApi } from '@/lib/utils';
 import React from 'react';
 import DishDetail from '@/app/[locale]/(public)/dishes/[slug]/dish-detail';
 import { unstable_setRequestLocale } from 'next-intl/server';

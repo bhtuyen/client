@@ -7,16 +7,16 @@ import TButton from '@/components/t-button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { toast } from '@/hooks/use-toast';
 import { handleErrorApi } from '@/lib/utils';
-import { ChangePasswordBody, ChangePasswordBodyType } from '@/schemaValidations/account.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { KeyRound } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
+import { changePassword, ChangePassword } from '@/schemaValidations/account.schema';
 
 export default function ChangePasswordForm() {
   const changePasswordMutation = useChangePasswordMutation();
-  const form = useForm<ChangePasswordBodyType>({
-    resolver: zodResolver(ChangePasswordBody),
+  const form = useForm<ChangePassword>({
+    resolver: zodResolver(changePassword),
     defaultValues: {
       oldPassword: '',
       password: '',
@@ -28,7 +28,7 @@ export default function ChangePasswordForm() {
   const tForm = useTranslations('t-form');
   const tManageSetting = useTranslations('manage.setting');
 
-  const onSubmit = async (data: ChangePasswordBodyType) => {
+  const onSubmit = async (data: ChangePassword) => {
     if (changePasswordMutation.isPending) return;
     try {
       const res = await changePasswordMutation.mutateAsync(data);

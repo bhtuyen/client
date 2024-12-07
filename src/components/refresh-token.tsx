@@ -2,8 +2,9 @@
 
 import { useAppStore } from '@/components/app-provider';
 import { usePathname, useRouter } from '@/i18n/routing';
-import { checkAndRefreshToken, ParamType } from '@/lib/utils';
-import { AccountType } from '@/schemaValidations/account.schema';
+import type { ParamType } from '@/lib/utils';
+import { checkAndRefreshToken } from '@/lib/utils';
+import { AccountDto } from '@/schemaValidations/account.schema';
 import { useEffect } from 'react';
 
 const UNAUTHENTICATED_PATHS = ['/login', '/logout', '/refresh-token'];
@@ -32,7 +33,7 @@ export default function RefreshToken() {
 
     interval = setInterval(() => checkAndRefreshToken(param), TIMEOUT);
 
-    function onRefreshToken(data: AccountType) {
+    function onRefreshToken(data: AccountDto) {
       const newParam: ParamType = {
         ...param,
         onSuccess: () => {

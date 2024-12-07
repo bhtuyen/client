@@ -1,13 +1,13 @@
+import { useGetGuestsQuery } from '@/app/queries/useGuest';
+import AutoPagination from '@/components/auto-pagination';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import AutoPagination from '@/components/auto-pagination';
-import { useEffect, useState } from 'react';
+import { formatDateTimeToLocaleString, simpleMatchText } from '@/lib/utils';
+import { GuestDto } from '@/schemaValidations/guest.schema';
+import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from '@tanstack/react-table';
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -15,15 +15,10 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { formatDateTimeToLocaleString, simpleMatchText } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
-import { GetListGuestsResType } from '@/schemaValidations/account.schema';
 import { endOfDay, format, startOfDay } from 'date-fns';
-import { useGetGuestsQuery } from '@/app/queries/useAccount';
+import { useEffect, useState } from 'react';
 
-type GuestItem = GetListGuestsResType['data'][0];
-
-export const columns: ColumnDef<GuestItem>[] = [
+export const columns: ColumnDef<GuestDto>[] = [
   {
     accessorKey: 'name',
     header: 'Tên',
@@ -34,7 +29,7 @@ export const columns: ColumnDef<GuestItem>[] = [
     ),
     filterFn: (row, columnId, filterValue: string) => {
       if (filterValue === undefined) return true;
-      return simpleMatchText(row.original.name + String(row.original.id), String(filterValue));
+      return simpleMatchText(String(row.original.id), String(filterValue));
     }
   },
   {
@@ -61,7 +56,7 @@ const PAGE_SIZE = 10;
 const initFromDate = startOfDay(new Date());
 const initToDate = endOfDay(new Date());
 
-export default function GuestsDialog({ onChoose }: { onChoose: (_guest: GuestItem) => void }) {
+export default function GuestsDialog({ onChoose }: { onChoose: (_guest: GuestDto) => void }) {
   const [open, setOpen] = useState(false);
   const [fromDate, setFromDate] = useState(initFromDate);
   const [toDate, setToDate] = useState(initToDate);
@@ -105,7 +100,7 @@ export default function GuestsDialog({ onChoose }: { onChoose: (_guest: GuestIte
     });
   }, [table]);
 
-  const choose = (guest: GuestItem) => {
+  const choose = (guest: GuestDto) => {
     onChoose(guest);
     setOpen(false);
   };

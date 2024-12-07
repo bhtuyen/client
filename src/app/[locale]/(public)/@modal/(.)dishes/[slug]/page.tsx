@@ -1,9 +1,8 @@
 import Modal from '@/app/[locale]/(public)/@modal/(.)dishes/[slug]/modal';
 import { dishApiRequets } from '@/app/apiRequests/dish';
-import { formatCurrency, generateSlugify, getIdFromSlugifyString, wrapperServerApi } from '@/lib/utils';
-import React from 'react';
-import Image from 'next/image';
+import TImage from '@/components/t-image';
 import { routing } from '@/i18n/routing';
+import { generateSlugify, getIdFromSlugifyString, wrapperServerApi } from '@/lib/utils';
 import { unstable_setRequestLocale } from 'next-intl/server';
 interface PostPageProps {
   params: {
@@ -44,8 +43,8 @@ export default async function page({
       {dish && (
         <div className='space-y-4'>
           <h1 className='text-2xl lg:text-3xl font-semibold'>{dish.name}</h1>
-          <div className='font-semibold'>Giá: {formatCurrency(dish.price)}</div>
-          <Image
+          <div className='font-semibold'></div>
+          <TImage
             src={dish.image}
             className='object-cover w-full h-full max-w-[1080px] max-h-[1080px] rounded-md'
             quality={100}

@@ -32,17 +32,17 @@ export const selectGuestDto = buildSelect<GuestDto>();
 /**
  * Guest create order
  */
-export const guestCreateOrder = z.array(
+export const guestCreateOrders = z.array(
   z.object({
     dishId: z.string().uuid(),
     quantity: z.number().min(1).max(20),
-    options: z.string().nullable().default(null)
+    options: z.string().optional()
   })
 );
-export const guestCreateOrderRes = buildReply(z.array(orderDtoDetail));
+export const guestCreateOrdersRes = buildReply(z.array(orderDtoDetail));
 
-export type GuestCreateOrder = z.TypeOf<typeof guestCreateOrder>;
-export type GuestCreateOrderRes = z.TypeOf<typeof guestCreateOrderRes>;
+export type GuestCreateOrders = z.TypeOf<typeof guestCreateOrders>;
+export type GuestCreateOrdersRes = z.TypeOf<typeof guestCreateOrdersRes>;
 
 export const guestsRes = buildReply(z.array(guestDto));
 

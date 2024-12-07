@@ -8,7 +8,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { handleErrorApi } from '@/lib/utils';
-import { UpdateMeBody, UpdateMeBodyType } from '@/schemaValidations/account.schema';
+import { UpdateMe, updateMe } from '@/schemaValidations/account.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Upload, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -18,8 +18,8 @@ import { useForm } from 'react-hook-form';
 export default function UpdateProfileForm() {
   const [file, setFile] = useState<File | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
-  const form = useForm<UpdateMeBodyType>({
-    resolver: zodResolver(UpdateMeBody),
+  const form = useForm<UpdateMe>({
+    resolver: zodResolver(updateMe),
     defaultValues: {
       name: '',
       avatar: undefined
@@ -54,7 +54,7 @@ export default function UpdateProfileForm() {
     setFile(null);
   };
 
-  const onSubmit = async (me: UpdateMeBodyType) => {
+  const onSubmit = async (me: UpdateMe) => {
     if (updateMeMutation.isPending) return;
     try {
       let body = me;

@@ -1,12 +1,13 @@
 'use client';
-import { Button, ButtonProps } from '@/components/ui/button';
+import type { ButtonProps } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Link } from '@/i18n/routing';
 import { getArguments } from '@/lib/utils';
-import { TMessKey } from '@/types/message.type';
+import type { TMessKey } from '@/types/message.type';
 import { useTranslations } from 'next-intl';
 import React from 'react';
-import { UrlObject } from 'url';
+import type { UrlObject } from 'url';
 
 interface TButtonProps extends ButtonProps {
   tooltip?: TMessKey<'t-button'>;

@@ -1,9 +1,13 @@
-import { OrderObjectByGuestID, ServingGuestByTableNumber, Statics } from '@/app/[locale]/manage/orders/order-table';
+import type {
+  OrderObjectByGuestID,
+  ServingGuestByTableNumber,
+  Statics
+} from '@/app/[locale]/manage/orders/order-table';
 import { OrderStatus } from '@/constants/enum';
-import { GetOrdersResType } from '@/schemaValidations/order.schema';
+import type { OrderDtoDetail } from '@/schemaValidations/order.schema';
 import { useMemo } from 'react';
 
-export const useOrderService = (orderList: GetOrdersResType['data']) => {
+export const useOrderService = (orderList: OrderDtoDetail[]) => {
   const result = useMemo(() => {
     const statics: Statics = {
       status: {
@@ -15,7 +19,9 @@ export const useOrderService = (orderList: GetOrdersResType['data']) => {
       },
       table: {}
     };
+
     const orderObjectByGuestId: OrderObjectByGuestID = {};
+
     const guestByTableNumber: ServingGuestByTableNumber = {};
     orderList.forEach((order) => {
       statics.status[order.status] = statics.status[order.status] + 1;
@@ -56,7 +62,7 @@ export const useOrderService = (orderList: GetOrdersResType['data']) => {
       for (const guestId in guestObject) {
         const guestOrders = guestObject[guestId];
         const isServingGuest = guestOrders.some((order) =>
-          [OrderStatus.Pending, OrderStatus.Processing, OrderStatus.Delivered].includes(order.status as any)
+          [OrderStatus.Pending, OrderStatus.Processing, OrderStatus.Delivered].includes(order.status)
         );
         if (isServingGuest) {
           servingGuestObject[guestId] = guestOrders;

@@ -7,7 +7,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { handleErrorApi } from '@/lib/utils';
-import { CreateEmployeeAccountBody, CreateEmployeeAccountBodyType } from '@/schemaValidations/account.schema';
+import { createEmployee, CreateEmployee } from '@/schemaValidations/account.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { KeyRound, Mail, Phone, Upload, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -17,16 +17,8 @@ export default function AddEmployee() {
   const [file, setFile] = useState<File | null>(null);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
 
-  const form = useForm<CreateEmployeeAccountBodyType>({
-    resolver: zodResolver(CreateEmployeeAccountBody),
-    defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
-      avatar: undefined,
-      password: '',
-      confirmPassword: ''
-    }
+  const form = useForm<CreateEmployee>({
+    resolver: zodResolver(createEmployee)
   });
 
   const adddEmployeeMutation = useAddEmployeeMutation();
@@ -49,19 +41,18 @@ export default function AddEmployee() {
     setFile(null);
   };
 
-  const onSubmit = async (me: CreateEmployeeAccountBodyType) => {
+  const onSubmit = async (employee: CreateEmployee) => {
     if (adddEmployeeMutation.isPending) return;
     try {
-      let body = me;
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
         const uploadImageRes = await uploadMediaMutation.mutateAsync(formData);
         const imageUrl = uploadImageRes.payload.data;
-        body = { ...body, avatar: imageUrl };
+        employee = { ...employee, avatar: imageUrl };
       }
 
-      const result = await adddEmployeeMutation.mutateAsync(body);
+      const result = await adddEmployeeMutation.mutateAsync(employee);
 
       toast({
         description: result.payload.message

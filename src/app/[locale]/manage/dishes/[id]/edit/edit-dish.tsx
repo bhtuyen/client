@@ -14,7 +14,7 @@ import { DishCategory, DishStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from '@/i18n/routing';
 import { getEnumValues, handleErrorApi } from '@/lib/utils';
-import { UpdateDish, updateDishSchema } from '@/schemaValidations/dish.schema';
+import { updateDish, type UpdateDish } from '@/schemaValidations/dish.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Banknote, Loader, Salad, Tags, Upload } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -25,23 +25,12 @@ export default function EditDish({ id }: { id: string }) {
   const updateDishMutation = useUpdateDishMutation();
   const uploadMediaMutation = useUploadMediaMutation();
 
-  const { data } = useDishQuery({ id: id!, enabled: Boolean(id) });
+  const { data } = useDishQuery(id);
   const dishGroupQuery = useDishGroupQuery();
 
   const router = useRouter();
 
   const dish = data?.payload.data;
-  // ({
-  //   id: '1fef656a-3d71-440a-8660-b1abd2e26e23',
-  //   name: 'Salad hành paro',
-  //   price: 69000,
-  //   description: 'Salad hành paro',
-  //   image: 'http://localhost:4000/static/0011b20501a14cce8d451357d7fc5282.jpg',
-  //   status: 'Available',
-  //   category: 'Paid',
-  //   groupId: 'da5e0a32-fb59-4474-9502-942f70811065',
-  //   options: ''
-  // } as UpdateDish);
 
   const dishGroups = dishGroupQuery.data?.payload.data ?? [];
 
@@ -50,8 +39,8 @@ export default function EditDish({ id }: { id: string }) {
   const [openFormAdd, setOpenFormAdd] = useState(false);
 
   const form = useForm<UpdateDish>({
-    resolver: zodResolver(updateDishSchema),
-    values: dish!
+    resolver: zodResolver(updateDish),
+    values: dish
   });
 
   const tDishStatus = useTranslations('dish-status');
@@ -77,19 +66,15 @@ export default function EditDish({ id }: { id: string }) {
   const onSubmit = async (body: UpdateDish) => {
     if (updateDishMutation.isPending) return;
     try {
-      let _body: UpdateDish & { id: string } = {
-        id: id!,
-        ...body
-      };
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
         const uploadImageRes = await uploadMediaMutation.mutateAsync(formData);
         const imageUrl = uploadImageRes.payload.data;
-        _body = { ..._body, image: imageUrl };
+        body = { ...body, image: imageUrl };
       }
 
-      const result = await updateDishMutation.mutateAsync(_body);
+      const result = await updateDishMutation.mutateAsync(body);
       await revalidateApiRequest.revalidateTag('dishes');
 
       toast({
@@ -281,7 +266,7 @@ export default function EditDish({ id }: { id: string }) {
                 <FormItem>
                   <FormLabel>Giá</FormLabel>
                   <FormControl>
-                    <Input {...field} type='number' IconLeft={Banknote} min={0} pattern='([0-9]{1,3}).([0-9]{1,3})' />
+                    <Input {...field} type='number' IconLeft={Banknote} min={0} />
                   </FormControl>
                   <div className='h-5'>
                     <FormMessage />

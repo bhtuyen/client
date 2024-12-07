@@ -1,6 +1,5 @@
-import { formatCurrency } from '@/lib/utils';
-import { DishRes } from '@/schemaValidations/dish.schema';
-import Image from 'next/image';
+import TImage from '@/components/t-image';
+import type { DishRes } from '@/schemaValidations/dish.schema';
 
 export default function DishDetail({ dish }: { dish: DishRes['data'] | undefined }) {
   return (
@@ -8,8 +7,8 @@ export default function DishDetail({ dish }: { dish: DishRes['data'] | undefined
       {dish && (
         <div className='space-y-4'>
           <h1 className='text-2xl lg:text-3xl font-semibold'>{dish.name}</h1>
-          <div className='font-semibold'>Giá: {formatCurrency(dish.price)}</div>
-          <Image
+          <div className='font-semibold'></div>
+          <TImage
             src={dish.image}
             className='object-cover w-full h-full max-w-[1080px] max-h-[1080px] rounded-md'
             quality={100}

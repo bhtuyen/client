@@ -2,11 +2,11 @@
 
 import { Link } from '@/i18n/routing';
 
-import { Menu, Package2 } from 'lucide-react';
+import NavItems from '@/app/[locale]/(public)/nav-items';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Menu, Package2 } from 'lucide-react';
 import { useState } from 'react';
-import NavItems from '@/app/[locale]/(public)/nav-items';
 export default function NavigationMenu() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 

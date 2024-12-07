@@ -2,7 +2,7 @@ import { buildReply } from '@/schemaValidations/common.schema';
 import { dishDtoDetail } from '@/schemaValidations/dish.schema';
 import z from 'zod';
 
-export const dishIndicator = dishDtoDetail.extend({ successOrders: z.number() });
+export const dishIndicator = dishDtoDetail.and(z.object({ successOrders: z.number() }));
 
 export const revenueByDate = z.object({
   date: z.string(),

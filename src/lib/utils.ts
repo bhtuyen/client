@@ -1,16 +1,18 @@
 import authApiRequest from '@/app/apiRequests/auth';
 import guestApiRequest from '@/app/apiRequests/guest';
 import envConfig from '@/config';
-import { OrderStatus, Role } from '@/constants/enum';
+import { DishCategory, OrderStatus, Role } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { EntityError } from '@/lib/http';
-import { TokenPayload } from '@/types/jwt.types';
-import { TMessageOption, TMessKey, TNamespaceKeys, TranslationFunctionParams } from '@/types/message.type';
+import { Period } from '@/schemaValidations/common.schema';
+import { DishDto, DishSnapshotDto } from '@/schemaValidations/dish.schema';
+import type { TokenPayload } from '@/types/jwt.types';
+import type { TMessKey, TMessageOption, TNamespaceKeys, TranslationFunctionParams } from '@/types/message.type';
 import { type ClassValue, clsx } from 'clsx';
-import { format } from 'date-fns';
+import { endOfDay, format, startOfDay } from 'date-fns';
 import { decode } from 'jsonwebtoken';
 import { BookX, CookingPot, HandCoins, Loader, Truck } from 'lucide-react';
-import { UseFormSetError } from 'react-hook-form';
+import type { UseFormSetError } from 'react-hook-form';
 import slugify from 'slugify';
 import { twMerge } from 'tailwind-merge';
 
@@ -121,6 +123,10 @@ export const formatCurrency = (number: number) => {
     style: 'currency',
     currency: 'VND'
   }).format(number);
+};
+
+export const getPrice = (dish: DishSnapshotDto | DishDto) => {
+  return dish.category === DishCategory.Paid ? formatCurrency(dish.price) : DishCategory.Buffet;
 };
 
 export const getTableLink = ({
@@ -237,3 +243,8 @@ export function buildSelect<TDto>(): Record<keyof TDto, any> {
     }
   ) as Record<keyof TDto, any>;
 }
+
+export const periodDefault: Period = {
+  fromDate: startOfDay(new Date()),
+  toDate: endOfDay(new Date())
+};

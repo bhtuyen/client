@@ -2,13 +2,13 @@
 
 import { useDishListQuery } from '@/app/queries/useDish';
 import { useGuestOrderMutation } from '@/app/queries/useGuest';
+import TImage from '@/components/t-image';
 import TQuantity from '@/components/t-quantity';
 import { Button } from '@/components/ui/button';
 import { DishStatus } from '@/constants/enum';
 import { useRouter } from '@/i18n/routing';
-import { cn, formatCurrency, handleErrorApi } from '@/lib/utils';
-import { GuestCreateOrdersBodyType } from '@/schemaValidations/guest.schema';
-import Image from 'next/image';
+import { cn, formatCurrency, getPrice, handleErrorApi } from '@/lib/utils';
+import type { GuestCreateOrders } from '@/schemaValidations/guest.schema';
 import { useMemo, useState } from 'react';
 
 export default function MenuOrder() {
@@ -21,7 +21,7 @@ export default function MenuOrder() {
     return data?.payload.data || [];
   }, [data]);
 
-  const [orders, setOrders] = useState<GuestCreateOrdersBodyType>([]);
+  const [orders, setOrders] = useState<GuestCreateOrders>([]);
 
   const handleQuantityChange = (dishId: string, quantity: number) => {
     // setOrders((prevOrder) => {
@@ -69,7 +69,7 @@ export default function MenuOrder() {
               {dish.status === DishStatus.Unavailable && (
                 <span className='absolute inset-0 flex justify-center items-center'>Hết hàng</span>
               )}
-              <Image
+              <TImage
                 src={dish.image}
                 alt={dish.name}
                 height={100}
@@ -81,7 +81,7 @@ export default function MenuOrder() {
             <div className='space-y-1'>
               <h3 className='text-sm'>{dish.name}</h3>
               <p className='text-xs'>{dish.description}</p>
-              <p className='text-xs font-semibold'>{formatCurrency(dish.price)}</p>
+              <p className='text-xs font-semibold'>{getPrice(dish)}</p>
             </div>
             <div className='flex-shrink-0 ml-auto flex justify-center items-center'>
               <TQuantity

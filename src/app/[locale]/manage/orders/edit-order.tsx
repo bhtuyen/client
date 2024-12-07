@@ -11,8 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { OrderStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { getEnumValues, handleErrorApi } from '@/lib/utils';
-import { DishesRes } from '@/schemaValidations/dish.schema';
-import { UpdateOrderBody, UpdateOrderBodyType } from '@/schemaValidations/order.schema';
+import type { DishDto } from '@/schemaValidations/dish.schema';
+import { updateOrder, UpdateOrder } from '@/schemaValidations/order.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
@@ -27,15 +27,12 @@ export default function EditOrder({
   setId: (_value: string | undefined) => void;
   onSubmitSuccess?: () => void;
 }) {
-  const [selectedDish, setSelectedDish] = useState<DishesRes['data'][0] | null>(null);
+  const [selectedDish, setSelectedDish] = useState<DishDto | null>(null);
   const updateOrderMutation = useUpdateOrderMutation();
-  const { data } = useOrderQuery({
-    orderId: id!,
-    enabled: Boolean(id)
-  });
+  const { data } = useOrderQuery(id!);
 
-  const form = useForm<UpdateOrderBodyType>({
-    resolver: zodResolver(UpdateOrderBody),
+  const form = useForm<UpdateOrder>({
+    resolver: zodResolver(updateOrder),
     defaultValues: {
       status: OrderStatus.Pending,
       dishId: undefined,
@@ -63,15 +60,10 @@ export default function EditOrder({
     }
   }, [data, form]);
 
-  const onSubmit = async (values: UpdateOrderBodyType) => {
+  const onSubmit = async (body: UpdateOrder) => {
     if (updateOrderMutation.isPending) return;
 
     try {
-      let body: UpdateOrderBodyType & { orderId: string } = {
-        orderId: id!,
-        ...values
-      };
-
       const result = await updateOrderMutation.mutateAsync(body);
       toast({
         description: result.payload.message

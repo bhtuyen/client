@@ -1,26 +1,19 @@
 import http from '@/lib/http';
-import {
-  LoginBodyType,
-  LoginResType,
-  LogoutBodyType,
-  OauthLoginType,
-  RefreshTokenBodyType,
-  RefreshTokenResType
-} from '@/schemaValidations/auth.schema';
-import { MessageResType } from '@/schemaValidations/common.schema';
+import { Login, LoginRes, RefreshToken, RefreshTokenRes, Token } from '@/schemaValidations/auth.schema';
+import { MessageRes } from '@/schemaValidations/common.schema';
 
 const authApiRequest = {
   refreshTokenRequest: null as Promise<{
     status: number;
-    payload: RefreshTokenResType;
+    payload: RefreshTokenRes;
   }> | null,
-  sLogin: (body: LoginBodyType) => http.post<LoginResType>('/auth/login', body),
-  login: (body: LoginBodyType) =>
-    http.post<LoginResType>('/api/auth/login', body, {
+  sLogin: (body: Login) => http.post<LoginRes>('/auth/login', body),
+  login: (body: Login) =>
+    http.post<LoginRes>('/api/auth/login', body, {
       baseUrl: ''
     }),
-  sLogout: (body: LogoutBodyType & { accessToken: string }) =>
-    http.post<MessageResType>(
+  sLogout: (body: Token) =>
+    http.post<MessageRes>(
       '/auth/logout',
       {
         refreshToken: body.refreshToken
@@ -35,13 +28,13 @@ const authApiRequest = {
     http.post('/api/auth/logout', null, {
       baseUrl: ''
     }),
-  sRefreshToken: (body: RefreshTokenBodyType) => http.post<RefreshTokenResType>('/auth/refresh-token', body),
+  sRefreshToken: (body: RefreshToken) => http.post<RefreshTokenRes>('/auth/refresh-token', body),
   async refreshToken() {
     if (this.refreshTokenRequest) {
       return this.refreshTokenRequest;
     }
 
-    this.refreshTokenRequest = http.post<RefreshTokenResType>('/api/auth/refresh-token', null, {
+    this.refreshTokenRequest = http.post<RefreshTokenRes>('/api/auth/refresh-token', null, {
       baseUrl: ''
     });
 
@@ -49,7 +42,7 @@ const authApiRequest = {
     this.refreshTokenRequest = null;
     return result;
   },
-  setCookieOauth: (body: OauthLoginType) => http.post('/api/auth/set-cookie-oauth', body, { baseUrl: '' })
+  setCookieOauth: (body: Token) => http.post('/api/auth/set-cookie-oauth', body, { baseUrl: '' })
 };
 
 export default authApiRequest;

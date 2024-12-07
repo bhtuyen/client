@@ -3,11 +3,12 @@
 import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { DashboardIndicatorResType } from '@/schemaValidations/indicator.schema';
-import { useMemo } from 'react';
+import type { ChartConfig } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { DashboardIndicatorRes } from '@/schemaValidations/indicator.schema';
 import { TrendingUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
 
 const colors = [
   'var(--color-chrome)',
@@ -46,7 +47,7 @@ const chartConfig = {
 export function DishBarChart({
   chartData
 }: {
-  chartData: Pick<DashboardIndicatorResType['data']['dishIndicator'][0], 'name' | 'successOrders'>[];
+  chartData: Pick<DashboardIndicatorRes['data']['dishesIndicator'][0], 'name' | 'successOrders'>[];
 }) {
   const chartDataColors = useMemo(
     () =>

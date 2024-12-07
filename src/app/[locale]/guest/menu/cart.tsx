@@ -1,7 +1,8 @@
 'use client';
-import { useGuestOrderListQuery, useGuestOrderMutation } from '@/app/queries/useGuest';
+import { useGuestOrderMutation, useGuestOrdersQuery } from '@/app/queries/useGuest';
 import { useAppStore } from '@/components/app-provider';
-import { TabsKeyType } from '@/components/tabs';
+import TImage from '@/components/t-image';
+import type { TabsKeyType } from '@/components/tabs';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -15,7 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DishCategory } from '@/constants/enum';
-import { formatCurrency, handleErrorApi } from '@/lib/utils';
+import { formatCurrency, getPrice, handleErrorApi } from '@/lib/utils';
 import clsx from 'clsx';
 import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -29,9 +30,9 @@ const tabs = [
 
 export default function Cart() {
   const [activeTab, setActiveTab] = useState<TabsKeyType<typeof tabs>>('cart');
-  const { cart: dishes, changeQuantity, removeDishFromCart, removeAllCart } = useAppStore();
+  const { cart, changeQuantity, removeDishesFromCart: removeDishFromCart, removeAllCart } = useAppStore();
 
-  const sumPrice = dishes.reduce(
+  const sumPrice = cart.reduce(
     (sum, dish) => sum + (dish.category === DishCategory.Buffet ? 0 : dish.price * dish.quantity),
     0
   );
@@ -39,12 +40,12 @@ export default function Cart() {
   const tOrderStatus = useTranslations('order-status');
 
   const guestOrderMutation = useGuestOrderMutation();
-  const { data, refetch } = useGuestOrderListQuery();
+  const { data, refetch } = useGuestOrdersQuery();
 
   const handleGuestOrder = async () => {
     try {
       await guestOrderMutation.mutateAsync(
-        dishes.map((dish) => ({ dishId: dish.id, quantity: dish.quantity, options: dish.options }))
+        cart.map((dish) => ({ dishId: dish.id, quantity: dish.quantity, options: dish.options }))
       );
       setActiveTab('ordered');
       removeAllCart();
@@ -56,7 +57,15 @@ export default function Cart() {
 
   const orders = useMemo(() => data?.payload.data || [], [data]);
 
-  const sumOrder = orders.reduce((sum, order) => sum + order.dishSnapshot.price * order.quantity, 0);
+  const sumOrder = orders.reduce(
+    (sum, order) => {
+      const dishSnapshot = order.dishSnapshot;
+      if (dishSnapshot.category === DishCategory.Buffet) return sum;
+      return sum + dishSnapshot.price * order.quantity;
+    },
+
+    0
+  );
 
   return (
     <Dialog modal={false}>
@@ -64,7 +73,7 @@ export default function Cart() {
         <div className='rounded-full bg-[#f2f2f2] h-[60%] aspect-square flex items-center justify-center relative'>
           <ShoppingCart color='#000000' />
           <span className='text-white absolute top-[-4px] right-[-4px] rounded-full flex justify-center items-center bg-red-500 h-[45%] aspect-square text-[12px]'>
-            {dishes.length}
+            {cart.length}
           </span>
         </div>
       </DialogTrigger>
@@ -100,13 +109,13 @@ export default function Cart() {
           </TabsList>
 
           <TabsContent value='cart'>
-            {dishes.length > 0 && (
+            {cart.length > 0 && (
               <div className='flex-auto bg-[#e6e6e6] overflow-y-auto'>
                 <div className='p-3 grid gap-3'>
-                  {dishes.map((dish) => (
+                  {cart.map((dish) => (
                     <div className='bg-white h-[140px] rounded-md flex p-2 relative text-black' key={dish.id}>
                       <div className='relative h-full aspect-square'>
-                        <Image src={dish.image} alt={dish.name} fill className='rounded-md' sizes='' />
+                        <TImage src={dish.image} alt={dish.name} fill className='rounded-md' sizes='' />
                       </div>
                       <div className='flex-auto flex flex-col justify-between pl-2'>
                         <div>
@@ -125,7 +134,7 @@ export default function Cart() {
                           </p>
                         </div>
                       </div>
-                      <X className='h-6 w-6 absolute top-3 right-3' onClick={() => removeDishFromCart(dish.id)} />
+                      <X className='h-6 w-6 absolute top-3 right-3' onClick={() => removeDishFromCart([dish.id])} />
                     </div>
                   ))}
                 </div>
@@ -135,19 +144,17 @@ export default function Cart() {
           <TabsContent value='ordered'>
             {activeTab === 'ordered' && orders.length > 0 && (
               <div className='flex-auto overflow-y-auto'>
-                {orders.map((order) => (
+                {orders.map(({ id, quantity, status, dishSnapshot }) => (
                   <div
                     className='flex p-4 relative text-black border-b-[1px] border-b-[#e3e3e3] gap-4 items-center'
-                    key={order.id}
+                    key={id}
                   >
                     <span className='bg-[#f2f2f2] text-lg font-medium h-8 w-8 rounded-md flex items-center justify-center'>
-                      {order.quantity}x
+                      {quantity}x
                     </span>
-                    <span className='text-lg font-medium flex-auto'>{order.dishSnapshot.name}</span>
-                    <span>{tOrderStatus(order.status)}</span>
-                    <span className='text-red-950 font-medium'>
-                      {formatCurrency(order.dishSnapshot.price * order.quantity)}
-                    </span>
+                    <span className='text-lg font-medium flex-auto'>{dishSnapshot.name}</span>
+                    <span>{tOrderStatus(status)}</span>
+                    <span className='text-red-950 font-medium'>{getPrice(dishSnapshot)}</span>
                   </div>
                 ))}
               </div>
@@ -155,7 +162,7 @@ export default function Cart() {
           </TabsContent>
         </Tabs>
 
-        {((dishes.length === 0 && activeTab == 'cart') || (orders.length == 0 && activeTab == 'ordered')) && (
+        {((cart.length === 0 && activeTab == 'cart') || (orders.length == 0 && activeTab == 'ordered')) && (
           <div className='flex-auto bg-white flex flex-col items-center justify-center'>
             <Image src='/empty-cart.jpg' alt='empty-cart' width={200} height={200} />
             <p>{`Bạn chưa ${activeTab == 'cart' ? 'chọn' : 'gọi'} món nào`}</p>
@@ -166,11 +173,11 @@ export default function Cart() {
         {activeTab === 'cart' && (
           <DialogFooter
             className={clsx({
-              'shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_-2px_4px_-2px_rgba(0,0,0,0.1)] z-10 p-4': dishes.length > 0,
-              'p-4': dishes.length === 0
+              'shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_-2px_4px_-2px_rgba(0,0,0,0.1)] z-10 p-4': cart.length > 0,
+              'p-4': cart.length === 0
             })}
           >
-            {dishes.length > 0 && (
+            {cart.length > 0 && (
               <div className='w-full'>
                 <div className='flex items-center justify-between pb-4 text-lg'>
                   <p>Tạm tính</p>
@@ -190,7 +197,7 @@ export default function Cart() {
                 </div>
               </div>
             )}
-            {dishes.length === 0 && (
+            {cart.length === 0 && (
               <DialogClose asChild>
                 <Button className='text-white bg-black w-full h-[50px] text-base' variant={'ghost'}>
                   Chọn món ngay
@@ -203,8 +210,8 @@ export default function Cart() {
         {activeTab === 'ordered' && (
           <DialogFooter
             className={clsx({
-              'shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_-2px_4px_-2px_rgba(0,0,0,0.1)] z-10 p-4': dishes.length > 0,
-              'p-4': dishes.length === 0
+              'shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_-2px_4px_-2px_rgba(0,0,0,0.1)] z-10 p-4': cart.length > 0,
+              'p-4': cart.length === 0
             })}
           >
             {orders.length > 0 && (

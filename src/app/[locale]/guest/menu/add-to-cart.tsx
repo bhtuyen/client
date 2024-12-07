@@ -13,16 +13,16 @@ import {
 } from '@/components/ui/dialog';
 
 import { useAppStore } from '@/components/app-provider';
+import TImage from '@/components/t-image';
 import TQuantity from '@/components/t-quantity';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DishCategory, DishStatus } from '@/constants/enum';
 import { formatCurrency } from '@/lib/utils';
-import { DishDto, DishInCartType } from '@/schemaValidations/dish.schema';
+import type { DishDto, DishInCart } from '@/schemaValidations/dish.schema';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Plus } from 'lucide-react';
-import Image from 'next/image';
 import { useState } from 'react';
 
 export default function AddToCart({ dish }: { dish: DishDto }) {
@@ -31,7 +31,7 @@ export default function AddToCart({ dish }: { dish: DishDto }) {
 
   const { pushToCart } = useAppStore();
 
-  const getOptions = (options: string | null) => {
+  const getOptions = (options: string | undefined) => {
     if (!options) return [];
     return options.split(',').map((option) => {
       const str = option.trim();
@@ -40,12 +40,12 @@ export default function AddToCart({ dish }: { dish: DishDto }) {
   };
 
   const handleAddToCart = () => {
-    const dishInCart: DishInCartType = {
+    const dishInCart: DishInCart = {
       ...dish,
       quantity,
       options: option && dish.options ? `${dish.options}, ${option}` : option
     };
-    pushToCart(dishInCart);
+    pushToCart([dishInCart]);
     setQuantity(0);
     setOption('');
   };
@@ -66,7 +66,7 @@ export default function AddToCart({ dish }: { dish: DishDto }) {
           <DialogDescription hidden />
         </DialogHeader>
         <div className='flex-auto'>
-          <Image src={dish.image} alt={dish.name} className='w-full aspect-auto' width={200} height={200} />
+          <TImage src={dish.image} alt={dish.name} className='w-full aspect-auto' width={200} height={200} />
           <div className='p-4 rounded-tl-[2rem] rounded-tr-[2rem] bg-white flex flex-col'>
             <h2 className='text-2xl font-bold'>{dish.name}</h2>
             <span className='text-red-500'>

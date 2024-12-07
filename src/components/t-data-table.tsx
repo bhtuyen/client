@@ -14,11 +14,11 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { convertToKebabCase } from '@/lib/utils';
-import { DeleteOption, EditOption } from '@/types/common.type';
-import { TMessageKeys, TMessageOption } from '@/types/message.type';
+import type { DeleteOption, EditOption } from '@/types/common.type';
+import type { TMessageKeys, TMessageOption } from '@/types/message.type';
+import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from '@tanstack/react-table';
 import {
-  ColumnDef,
-  ColumnFiltersState,
+  type Table as TableType,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -26,10 +26,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
-  useReactTable,
-  VisibilityState,
-  type Table as TableType
+  useReactTable
 } from '@tanstack/react-table';
 import {
   ChevronLeft,
@@ -42,7 +39,8 @@ import {
   TrashIcon
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { ReactNode, useState } from 'react';
+import type { ReactNode } from 'react';
+import { useState } from 'react';
 
 interface TCellActionsProps {
   editOption: EditOption;

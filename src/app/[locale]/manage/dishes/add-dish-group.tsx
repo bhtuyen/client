@@ -1,3 +1,4 @@
+import { useCreateDishGroupMutation } from '@/app/queries/useDish';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -7,27 +8,25 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { CreateDishGroupBody, CreateDishGroupBodyType } from '@/schemaValidations/dish.schema';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreateDishGroupMutation } from '@/app/queries/useDish';
-import { handleErrorApi } from '@/lib/utils';
-import { toast } from '@/hooks/use-toast';
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from '@/hooks/use-toast';
+import { handleErrorApi } from '@/lib/utils';
+import { CreateDishGroup, createDishGroup } from '@/schemaValidations/dish.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 
 export default function AddDishGroup({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) {
-  const form = useForm<CreateDishGroupBodyType>({
-    resolver: zodResolver(CreateDishGroupBody),
+  const form = useForm<CreateDishGroup>({
+    resolver: zodResolver(createDishGroup),
     defaultValues: {
-      name: '',
-      code: ''
+      name: ''
     }
   });
 
   const createDishCatetory = useCreateDishGroupMutation();
-  const onSubmit = async (body: CreateDishGroupBodyType) => {
+  const onSubmit = async (body: CreateDishGroup) => {
     if (createDishCatetory.isPending) return;
 
     try {
@@ -76,25 +75,6 @@ export default function AddDishGroup({ open, setOpen }: { open: boolean; setOpen
                       </Label>
                       <div className='col-span-3 w-full space-y-2'>
                         <Input id='name' className='w-full' {...field} />
-                        <FormMessage />
-                      </div>
-                    </div>
-                  </FormItem>
-                </div>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='code'
-              render={({ field }) => (
-                <div className='grid gap-4 py-4'>
-                  <FormItem>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                      <Label htmlFor='code' className='text-left'>
-                        Mã nhóm
-                      </Label>
-                      <div className='col-span-3 w-full space-y-2'>
-                        <Input id='code' className='w-full' {...field} />
                         <FormMessage />
                       </div>
                     </div>

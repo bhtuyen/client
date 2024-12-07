@@ -4,29 +4,33 @@ import { addDays, format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
 import * as React from 'react';
-import { DateRange } from 'react-day-picker';
+import type { DateRange } from 'react-day-picker';
 
 import TButton from '@/components/t-button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { Dispatch, HTMLAttributes, SetStateAction } from 'react';
+import { Period } from '@/schemaValidations/common.schema';
+import type { Dispatch, HTMLAttributes, SetStateAction } from 'react';
 
 interface TDateRangeProps extends HTMLAttributes<HTMLDivElement> {
-  dateRange?: DateRange;
-  setDateRange?: Dispatch<SetStateAction<DateRange>>;
+  dateRange?: Period;
+  setDateRange?: Dispatch<SetStateAction<Period>>;
 }
 
 export function TDateRange({ className, dateRange, setDateRange }: TDateRangeProps) {
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: dateRange?.from ?? new Date(),
-    to: dateRange?.to ?? addDays(new Date(), 20)
+    from: dateRange?.fromDate ?? new Date(),
+    to: dateRange?.toDate ?? addDays(new Date(), 20)
   });
 
   const onSelect = (date: DateRange | undefined) => {
     setDate(date);
     if (date) {
-      setDateRange?.(date);
+      setDateRange?.({
+        fromDate: date.from ?? new Date(),
+        toDate: date.to ?? new Date()
+      });
     }
   };
 

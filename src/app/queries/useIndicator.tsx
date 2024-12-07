@@ -1,8 +1,8 @@
 import { indicatorApiRequest } from '@/app/apiRequests/indicator';
-import { DashboardIndicatorQueryParamsType } from '@/schemaValidations/indicator.schema';
+import { Period } from '@/schemaValidations/common.schema';
 import { useQuery } from '@tanstack/react-query';
 
-export const useIndicatorQuery = (queryParam: DashboardIndicatorQueryParamsType) =>
+export const useIndicatorQuery = (queryParam: Period) =>
   useQuery({
     queryKey: ['indicators', queryParam],
     queryFn: () => indicatorApiRequest.getDashboardIndicators(queryParam)

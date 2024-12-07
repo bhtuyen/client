@@ -6,40 +6,28 @@ import TButton from '@/components/t-button';
 import { TDateRange } from '@/components/t-date-range';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { formatCurrency } from '@/lib/utils';
-import { endOfDay, startOfDay } from 'date-fns';
+import { formatCurrency, periodDefault } from '@/lib/utils';
+import { Period } from '@/schemaValidations/common.schema';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { DateRange } from 'react-day-picker';
 
-const initFromDate = startOfDay(new Date());
-const initToDate = endOfDay(new Date());
 export default function DashboardMain() {
-  const [dateRange, setDateRange] = useState<DateRange>({
-    from: initFromDate,
-    to: initToDate
-  });
-  const { data } = useIndicatorQuery({
-    fromDate: dateRange?.from,
-    toDate: dateRange.to
-  });
+  const [dateRange, setDateRange] = useState<Period>(periodDefault);
+  const { data } = useIndicatorQuery(dateRange);
 
   const tDashboard = useTranslations('manage.dashboard');
   const tButton = useTranslations('t-button');
 
   const resetDateFilter = () => {
-    setDateRange({
-      from: initFromDate,
-      to: initToDate
-    });
+    setDateRange(periodDefault);
   };
 
   const revenue = data?.payload.data.revenue ?? 0;
   const guestCount = data?.payload.data.guestCount ?? 0;
   const orderCount = data?.payload.data.orderCount ?? 0;
   const servingTableCount = data?.payload.data.servingTableCount ?? 0;
-  const reveenueByDate = data?.payload.data.revenueByDate ?? [];
-  const dishIndicator = data?.payload.data.dishIndicator ?? [];
+  const revenuesByDate = data?.payload.data.revenuesByDate ?? [];
+  const dishesIndicator = data?.payload.data.dishesIndicator ?? [];
 
   return (
     <ScrollArea>
@@ -139,10 +127,10 @@ export default function DashboardMain() {
         </div>
         <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-8'>
           <div className='lg:col-span-4'>
-            <RevenueLineChart chartData={reveenueByDate} />
+            <RevenueLineChart chartData={revenuesByDate} />
           </div>
           <div className='lg:col-span-4'>
-            <DishBarChart chartData={dishIndicator} />
+            <DishBarChart chartData={dishesIndicator} />
           </div>
         </div>
       </div>

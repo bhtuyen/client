@@ -1,18 +1,18 @@
 'use client';
 
-import { useGuestOrderListQuery } from '@/app/queries/useGuest';
+import { useGuestOrdersQuery } from '@/app/queries/useGuest';
 import { useAppStore } from '@/components/app-provider';
+import TImage from '@/components/t-image';
 import { Badge } from '@/components/ui/badge';
+import { DishCategory, OrderStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
-import { OrderStatus } from '@/constants/enum';
-import { formatCurrency } from '@/lib/utils';
-import { PayGuestOrdersResType, UpdateOrderResType } from '@/schemaValidations/order.schema';
+import { formatCurrency, getPrice } from '@/lib/utils';
+import { OrderDtoDetail } from '@/schemaValidations/order.schema';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { useEffect, useMemo } from 'react';
 
 export default function OrderCart() {
-  const { data, refetch } = useGuestOrderListQuery();
+  const { data, refetch } = useGuestOrdersQuery();
 
   const tOrderStatus = useTranslations('order-status');
 
@@ -23,27 +23,26 @@ export default function OrderCart() {
   const { waitingForPaying, paid } = useMemo(
     () =>
       orders.reduce(
-        (result, order) => {
+        (result, { quantity, status, dishSnapshot }) => {
           if (
-            order.status === OrderStatus.Delivered ||
-            order.status === OrderStatus.Processing ||
-            order.status === OrderStatus.Pending
+            (status === OrderStatus.Delivered || status === OrderStatus.Processing || status === OrderStatus.Pending) &&
+            dishSnapshot.category === DishCategory.Paid
           ) {
             return {
               ...result,
               waitingForPaying: {
-                price: result.waitingForPaying.price + order.dishSnapshot.price * order.quantity,
-                quantity: result.waitingForPaying.quantity + order.quantity
+                price: result.paid.price + dishSnapshot.price * quantity,
+                quantity: result.waitingForPaying.quantity + quantity
               }
             };
           }
 
-          if (order.status === OrderStatus.Paid) {
+          if (status === OrderStatus.Paid && dishSnapshot.category === DishCategory.Paid) {
             return {
               ...result,
               paid: {
-                price: result.paid.price + order.dishSnapshot.price * order.quantity,
-                quantity: result.paid.quantity + order.quantity
+                price: result.paid.price + dishSnapshot.price * quantity,
+                quantity: result.paid.quantity + quantity
               }
             };
           }
@@ -65,7 +64,7 @@ export default function OrderCart() {
   );
 
   useEffect(() => {
-    function onUpadteOrder(data: UpdateOrderResType['data']) {
+    function onUpadteOrder(data: OrderDtoDetail) {
       const {
         dishSnapshot: { name },
         quantity,
@@ -77,7 +76,7 @@ export default function OrderCart() {
       });
       refetch();
     }
-    function onPayment(data: PayGuestOrdersResType['data']) {
+    function onPayment(data: OrderDtoDetail[]) {
       toast({
         description: `Bạn đã thanh toán thành công ${data.length} đơn`
       });
@@ -98,7 +97,7 @@ export default function OrderCart() {
       {orders.map((order) => (
         <div key={order.id} className='flex gap-4'>
           <div className='flex-shrink-0 relative'>
-            <Image
+            <TImage
               src={order.dishSnapshot.image}
               alt={order.dishSnapshot.name}
               height={100}
@@ -109,9 +108,7 @@ export default function OrderCart() {
           </div>
           <div className='space-y-1'>
             <h3 className='text-sm'>{order.dishSnapshot.name}</h3>
-            <p className='text-xs font-semibold'>
-              {formatCurrency(order.dishSnapshot.price)} x {order.quantity}
-            </p>
+            <p className='text-xs font-semibold'>{getPrice(order.dishSnapshot)}</p>
           </div>
           <div className='flex-shrink-0 ml-auto flex justify-center items-center'>
             <Badge variant='outline'>{tOrderStatus(order.status)}</Badge>

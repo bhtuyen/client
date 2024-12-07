@@ -1,7 +1,7 @@
-import { Role } from '@/constants/enum';
-import { DishInCartType } from '@/schemaValidations/dish.schema';
-import { TMessKey } from '@/types/message.type';
-import { Socket } from 'socket.io-client';
+import type { Role } from '@/constants/enum';
+import type { DishInCart } from '@/schemaValidations/dish.schema';
+import type { TMessKey } from '@/types/message.type';
+import type { Socket } from 'socket.io-client';
 export interface ShowAlertDialogOption {
   onAction: () => void;
   onCancel?: () => void;
@@ -23,9 +23,9 @@ export type StoreType = {
   socket: Socket | null;
   createConnectSocket: (accessToken: string) => void;
   disconnectSocket: () => void;
-  cart: DishInCartType[];
-  pushToCart: (dish: DishInCartType) => void;
-  removeDishFromCart: (dishId: string) => void;
+  cart: DishInCart[];
+  pushToCart: (dishes: DishInCart[]) => void;
+  removeDishesFromCart: (dishIds: string[]) => void;
   changeQuantity: (dishId: string, quantity: number) => void;
   removeAllCart: () => void;
   isShowAlertDialog: boolean;

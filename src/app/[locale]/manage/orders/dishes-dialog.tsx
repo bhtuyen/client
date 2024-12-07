@@ -1,17 +1,15 @@
 import { useDishListQuery } from '@/app/queries/useDish';
 import AutoPagination from '@/components/auto-pagination';
+import TImage from '@/components/t-image';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { DishStatus } from '@/constants/enum';
+import type { DishStatus } from '@/constants/enum';
 import { formatCurrency, simpleMatchText } from '@/lib/utils';
-import { DishesRes } from '@/schemaValidations/dish.schema';
+import type { DishesRes } from '@/schemaValidations/dish.schema';
+import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from '@tanstack/react-table';
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -20,7 +18,6 @@ import {
   useReactTable
 } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 type DishItem = DishesRes['data'][0];
@@ -47,7 +44,7 @@ export function DishesDialog({ onChoose }: { onChoose: (_dish: DishItem) => void
       header: 'Món ăn',
       cell: ({ row }) => (
         <div className='flex items-center space-x-4'>
-          <Image
+          <TImage
             src={row.original.image}
             alt={row.original.name}
             width={50}

@@ -7,11 +7,11 @@ const account = z
   .object({
     email: z.string().email(),
     password: z.string().min(6).max(100),
-    avatar: z.string().url().nullable().optional(),
+    avatar: z.string().url().optional(),
     role: z.nativeEnum(Role),
     phone: z.string().min(10).max(15),
-    isVerified: z.boolean().default(false),
-    ownerId: z.string().uuid().nullable().optional()
+    isVerified: z.boolean().optional(),
+    ownerId: z.string().uuid().optional()
   })
   .merge(updateAndCreate)
   .merge(id)
@@ -26,7 +26,6 @@ export const accountsRes = buildReply(z.array(accountDto));
 
 export const accountRes = buildReply(accountDto);
 
-export type Account = z.TypeOf<typeof account>;
 export type AccountDto = z.TypeOf<typeof accountDto>;
 
 export type AccountsRes = z.TypeOf<typeof accountsRes>;
@@ -35,7 +34,7 @@ export type AccountRes = z.TypeOf<typeof accountRes>;
 
 export const selectAccountDto = buildSelect<AccountDto>();
 
-export const createEmployee = account
+export const createEmployee = accountDto
   .pick({
     name: true,
     email: true,
@@ -59,18 +58,19 @@ export const createEmployee = account
 
 export type CreateEmployee = z.TypeOf<typeof createEmployee>;
 
-export const updateEmployee = account
+export const updateEmployee = accountDto
   .pick({
     name: true,
     email: true,
     phone: true,
-    avatar: true
+    avatar: true,
+    id: true,
+    role: true
   })
   .extend({
     changePassword: z.boolean().optional(),
     password: z.string().min(6).max(100).optional(),
-    confirmPassword: z.string().min(6).max(100).optional(),
-    role: z.enum([Role.Employee, Role.Owner]).optional().default(Role.Employee)
+    confirmPassword: z.string().min(6).max(100).optional()
   })
   .strict()
   .superRefine(({ confirmPassword, password, changePassword }, ctx) => {
@@ -93,7 +93,7 @@ export const updateEmployee = account
 
 export type UpdateEmployee = z.TypeOf<typeof updateEmployee>;
 
-export const updateMe = account
+export const updateMe = accountDto
   .pick({
     name: true,
     avatar: true

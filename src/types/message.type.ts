@@ -1,5 +1,5 @@
-import { MessageKeys, NamespaceKeys, NestedKeyOf, NestedValueOf, TranslationValues } from 'next-intl';
-import en from '~/en.json';
+import type { MessageKeys, NamespaceKeys, NestedKeyOf, NestedValueOf, TranslationValues } from 'next-intl';
+import type en from '~/en.json';
 
 export type MessageType = typeof en;
 export type TNamespaceKeys = NamespaceKeys<IntlMessages, NestedKeyOf<IntlMessages>>;
@@ -25,7 +25,10 @@ export type TMessageOption<NestedKey extends TNamespaceKeys = TNamespaceKeys> = 
   values?: TranslationValues;
 };
 
-export type TranslationFunctionParams<NestedKey extends TNamespaceKeys = TNamespaceKeys> = [TMessageKeys<NestedKey>, TranslationValues?];
+export type TranslationFunctionParams<NestedKey extends TNamespaceKeys = TNamespaceKeys> = [
+  TMessageKeys<NestedKey>,
+  TranslationValues?
+];
 
 export type TMessKey<NestedKey extends TNamespaceKeys = TNamespaceKeys> =
   | TMessageOption<NestedKey>

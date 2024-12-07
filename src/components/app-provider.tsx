@@ -2,9 +2,9 @@
 import ListenLogoutSocket from '@/components/listen-logout-socket';
 import RefreshToken from '@/components/refresh-token';
 import envConfig from '@/config';
-import { Role } from '@/constants/enum';
+import type { Role } from '@/constants/enum';
 import { decodeJWT, getAccessTokenFromLocalStorage, removeAuthTokens } from '@/lib/utils';
-import { StoreType } from '@/types/common.type';
+import type { StoreType } from '@/types/common.type';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
@@ -52,14 +52,16 @@ export const useStore = create<StoreType>((set) => ({
     });
   },
   cart: [],
-  pushToCart: (dish) => {
+  pushToCart: (dishes) => {
     set((state) => {
-      return { cart: [...state.cart, dish] };
+      return {
+        cart: [...state.cart, ...dishes]
+      };
     });
   },
-  removeDishFromCart: (dishId) => {
+  removeDishesFromCart: (dishIds) => {
     set((state) => {
-      return { cart: state.cart.filter((dish) => dish.id !== dishId) };
+      return { cart: state.cart.filter((dish) => !dishIds.includes(dish.id)) };
     });
   },
   changeQuantity: (dishId, quantity) => {

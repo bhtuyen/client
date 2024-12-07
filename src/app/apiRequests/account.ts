@@ -1,35 +1,24 @@
 import http from '@/lib/http';
 import {
-  AccountListResType,
-  AccountResType,
-  ChangePasswordBodyType,
-  CreateEmployeeAccountBodyType,
-  CreateGuestBodyType,
-  CreateGuestResType,
-  GetGuestListQueryParamsType,
-  GetListGuestsResType,
-  UpdateEmployeeAccountBodyType,
-  UpdateMeBodyType
+  AccountRes,
+  AccountsRes,
+  ChangePassword,
+  CreateEmployee,
+  UpdateEmployee,
+  UpdateMe
 } from '@/schemaValidations/account.schema';
-import { stringify } from 'querystring';
 
 const prefix = '/accounts';
 
 const accountApiRequest = {
-  getMe: () => http.get<AccountResType>(`${prefix}/me`),
-  updateMe: (body: UpdateMeBodyType) => http.put<AccountResType>(`${prefix}/me`, body),
-  changePassword: (body: ChangePasswordBodyType) => http.put<AccountResType>(`${prefix}/change-password`, body),
-  list: () => http.get<AccountListResType>(`${prefix}`),
-  addEmployee: (body: CreateEmployeeAccountBodyType) => http.post<AccountResType>(`${prefix}`, body),
-  updateEmployee: (id: string, body: UpdateEmployeeAccountBodyType) =>
-    http.put<AccountResType>(`${prefix}/detail/${id}`, body),
-  getEmployee: (id: string) => http.get<AccountResType>(`${prefix}/detail/${id}`),
-  deleteEmployee: (id: string) => http.delete<AccountResType>(`${prefix}/detail/${id}`),
-  createGuest: (body: CreateGuestBodyType) => http.post<CreateGuestResType>(`${prefix}/guests`, body),
-  getGuests: ({ fromDate, toDate }: GetGuestListQueryParamsType) =>
-    http.get<GetListGuestsResType>(
-      `${prefix}/guests?${stringify({ fromDate: fromDate?.toISOString(), toDate: toDate?.toISOString() })}`
-    )
+  getMe: () => http.get<AccountRes>(`${prefix}/me`),
+  updateMe: (body: UpdateMe) => http.put<AccountRes>(`${prefix}/me`, body),
+  changePassword: (body: ChangePassword) => http.put<AccountRes>(`${prefix}/change-password`, body),
+  list: () => http.get<AccountsRes>(`${prefix}`),
+  addEmployee: (body: CreateEmployee) => http.post<AccountRes>(`${prefix}`, body),
+  updateEmployee: ({ id, ...body }: UpdateEmployee) => http.put<AccountRes>(`${prefix}/detail/${id}`, body),
+  getEmployee: (id: string) => http.get<AccountRes>(`${prefix}/detail/${id}`),
+  deleteEmployee: (id: string) => http.delete<AccountRes>(`${prefix}/detail/${id}`)
 };
 
 export default accountApiRequest;

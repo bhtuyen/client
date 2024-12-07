@@ -1,15 +1,17 @@
 'use client';
 
+import { useGuestLoginMutation } from '@/app/queries/useGuest';
+import { useAppStore } from '@/components/app-provider';
 import { Button } from '@/components/ui/button';
-import { Locale, locales } from '@/config';
+import type { Locale } from '@/config';
+import { locales } from '@/config';
+import { Role } from '@/constants/enum';
+import { usePathname, useRouter } from '@/i18n/routing';
 import clsx from 'clsx';
 import { Check } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import Image from 'next/image';
-import { useRouter, usePathname } from '@/i18n/routing';
 import { useParams, useSearchParams } from 'next/navigation';
-import { useGuestLoginMutation } from '@/app/queries/useGuest';
-import { useAppStore } from '@/components/app-provider';
 
 export default function ChooseLanguage() {
   const locale = useLocale();
@@ -28,19 +30,12 @@ export default function ChooseLanguage() {
     if (guestLoginMutation.isPending) return;
     try {
       const result = await guestLoginMutation.mutateAsync({
-        name: `Bàn số ${tableNumber}`,
         token: token ?? '',
         tableNumber
       });
       console.log(result);
-      const {
-        payload: {
-          data: {
-            guest: { role }
-          }
-        }
-      } = result;
-      setRole(role);
+
+      setRole(Role.Guest);
       router.push(`/guest/menu`);
     } catch (error) {
       console.log(error);

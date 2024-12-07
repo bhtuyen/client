@@ -1,29 +1,29 @@
 import { usePayOrderMutation } from '@/app/queries/useOrder';
+import TImage from '@/components/t-image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { OrderStatus } from '@/constants/enum';
+import { DishCategory, OrderStatus } from '@/constants/enum';
 import {
   OrderStatusIcon,
   formatCurrency,
   formatDateTimeToLocaleString,
   formatDateTimeToTimeString,
+  getPrice,
   handleErrorApi
 } from '@/lib/utils';
-import { GetOrdersResType, PayGuestOrdersResType } from '@/schemaValidations/order.schema';
+import { GuestDto } from '@/schemaValidations/guest.schema';
+import { OrderDtoDetail, OrdersDtoDetailRes } from '@/schemaValidations/order.schema';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { Fragment } from 'react';
 
-type Guest = GetOrdersResType['data'][0]['guest'];
-type Orders = GetOrdersResType['data'];
 export default async function OrderGuestDetail({
   guest,
   orders,
   onPaySuccess
 }: {
-  guest: Guest;
-  orders: Orders;
-  onPaySuccess?: (_data: PayGuestOrdersResType) => void;
+  guest: GuestDto;
+  orders: OrderDtoDetail[];
+  onPaySuccess?: (_data: OrdersDtoDetailRes) => void;
 }) {
   const ordersFilterToPurchase = guest
     ? orders.filter((order) => order.status !== OrderStatus.Paid && order.status !== OrderStatus.Rejected)
@@ -50,7 +50,6 @@ export default async function OrderGuestDetail({
         <Fragment>
           <div className='space-x-1'>
             <span className='font-semibold'>Tên:</span>
-            <span>{guest.name}</span>
             <span className='font-semibold'>(#{guest.id})</span>
             <span>|</span>
             <span className='font-semibold'>Bàn:</span>
@@ -76,7 +75,7 @@ export default async function OrderGuestDetail({
                 {order.status === OrderStatus.Delivered && <OrderStatusIcon.Delivered className='w-4 h-4' />}
                 {order.status === OrderStatus.Paid && <OrderStatusIcon.Paid className='w-4 h-4 text-yellow-400' />}
               </span>
-              <Image
+              <TImage
                 src={order.dishSnapshot.image}
                 alt={order.dishSnapshot.name}
                 title={order.dishSnapshot.name}
@@ -90,7 +89,7 @@ export default async function OrderGuestDetail({
               <span className='font-semibold' title={`Tổng: ${order.quantity}`}>
                 x{order.quantity}
               </span>
-              <span className='italic'>{formatCurrency(order.quantity * order.dishSnapshot.price)}</span>
+              <span className='italic'>{getPrice(order.dishSnapshot)}</span>
               <span
                 className='hidden sm:inline'
                 title={`Tạo: ${formatDateTimeToLocaleString(
@@ -119,8 +118,11 @@ export default async function OrderGuestDetail({
         <Badge>
           <span>
             {formatCurrency(
-              ordersFilterToPurchase.reduce((acc, order) => {
-                return acc + order.quantity * order.dishSnapshot.price;
+              ordersFilterToPurchase.reduce((acc, { quantity, dishSnapshot }) => {
+                if (dishSnapshot.category === DishCategory.Paid) {
+                  return acc + quantity * dishSnapshot.price;
+                }
+                return acc;
               }, 0)
             )}
           </span>
@@ -131,8 +133,11 @@ export default async function OrderGuestDetail({
         <Badge variant={'outline'}>
           <span>
             {formatCurrency(
-              purchasedOrderFilter.reduce((acc, order) => {
-                return acc + order.quantity * order.dishSnapshot.price;
+              purchasedOrderFilter.reduce((acc, { quantity, dishSnapshot }) => {
+                if (dishSnapshot.category === DishCategory.Paid) {
+                  return acc + quantity * dishSnapshot.price;
+                }
+                return acc;
               }, 0)
             )}
           </span>

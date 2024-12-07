@@ -18,7 +18,7 @@ import { Link } from '@/i18n/routing';
 import { cn, handleErrorApi } from '@/lib/utils';
 
 import { useRouter } from '@/i18n/routing';
-import { TMessageKeys } from '@/types/message.type';
+import type { TMessageKeys } from '@/types/message.type';
 import { useTranslations } from 'next-intl';
 
 const menuItems: {

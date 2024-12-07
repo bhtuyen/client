@@ -1,37 +1,40 @@
 import http from '@/lib/http';
-import { LogoutBodyType, RefreshTokenBodyType, RefreshTokenResType } from '@/schemaValidations/auth.schema';
-import { MessageResType } from '@/schemaValidations/common.schema';
-import {
-  GuestCreateOrdersBodyType,
-  GuestCreateOrdersResType,
-  GuestGetOrdersResType,
-  GuestLoginBodyType,
-  GuestLoginResType
+import type { Logout, RefreshToken, RefreshTokenRes } from '@/schemaValidations/auth.schema';
+import type { MessageRes, Period } from '@/schemaValidations/common.schema';
+import type {
+  CreateGuest,
+  CreateGuestRes,
+  GuestCreateOrders,
+  GuestCreateOrdersRes,
+  GuestLogin,
+  GuestLoginRes,
+  GuestsRes
 } from '@/schemaValidations/guest.schema';
+import { stringify } from 'querystring';
 
 const prefix = 'guest';
 
 const guestApiRequest = {
   refreshTokenRequest: null as Promise<{
     status: number;
-    payload: RefreshTokenResType;
+    payload: RefreshTokenRes;
   }> | null,
-  login: (body: GuestLoginBodyType) => http.post<GuestLoginResType>(`/api/${prefix}/auth/login`, body, { baseUrl: '' }),
-  sLogin: (body: GuestLoginBodyType) => http.post<GuestLoginResType>(`/${prefix}/auth/login`, body),
-  logout: (body: LogoutBodyType) => http.post<MessageResType>(`/api/${prefix}/auth/logout`, body, { baseUrl: '' }),
-  sLogout: (body: LogoutBodyType & { accessToken: string }) =>
-    http.post<MessageResType>(
+  login: (body: GuestLogin) => http.post<GuestLoginRes>(`/api/${prefix}/auth/login`, body, { baseUrl: '' }),
+  sLogin: (body: GuestLogin) => http.post<GuestLoginRes>(`/${prefix}/auth/login`, body),
+  logout: (body: Logout) => http.post<MessageRes>(`/api/${prefix}/auth/logout`, body, { baseUrl: '' }),
+  sLogout: (body: Logout & { accessToken: string }) =>
+    http.post<MessageRes>(
       `/${prefix}/auth/logout`,
       { refreshToken: body.refreshToken },
       { headers: { Authorization: `Bearer ${body.accessToken}` } }
     ),
-  sRefreshToken: (body: RefreshTokenBodyType) => http.post<RefreshTokenResType>(`/${prefix}/auth/refresh-token`, body),
+  sRefreshToken: (body: RefreshToken) => http.post<RefreshTokenRes>(`/${prefix}/auth/refresh-token`, body),
   async refreshToken() {
     if (this.refreshTokenRequest) {
       return this.refreshTokenRequest;
     }
 
-    this.refreshTokenRequest = http.post<RefreshTokenResType>(`/api/${prefix}/auth/refresh-token`, null, {
+    this.refreshTokenRequest = http.post<RefreshTokenRes>(`/api/${prefix}/auth/refresh-token`, null, {
       baseUrl: ''
     });
 
@@ -39,8 +42,11 @@ const guestApiRequest = {
     this.refreshTokenRequest = null;
     return result;
   },
-  orders: (body: GuestCreateOrdersBodyType) => http.post<GuestCreateOrdersResType>(`/${prefix}/orders`, body),
-  getOrders: () => http.get<GuestGetOrdersResType>(`/${prefix}/orders`)
+  orders: (body: GuestCreateOrders) => http.post<GuestCreateOrdersRes>(`/${prefix}/orders`, body),
+  getOrders: () => http.get<GuestCreateOrdersRes>(`/${prefix}/orders`),
+  createGuest: (body: CreateGuest) => http.post<CreateGuestRes>(`${prefix}`, body),
+  getGuests: ({ fromDate, toDate }: Period) =>
+    http.get<GuestsRes>(`${prefix}/?${stringify({ fromDate: fromDate?.toISOString(), toDate: toDate?.toISOString() })}`)
 };
 
 export default guestApiRequest;

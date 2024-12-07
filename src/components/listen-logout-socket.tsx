@@ -2,7 +2,7 @@
 
 import { useLogoutMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
-import { useRouter, usePathname } from '@/i18n/routing';
+import { usePathname, useRouter } from '@/i18n/routing';
 import { handleErrorApi } from '@/lib/utils';
 import { useEffect } from 'react';
 

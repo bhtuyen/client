@@ -1,21 +1,21 @@
 'use client';
 import AddOrder from '@/app/[locale]/manage/orders/add-order';
 import orderTableColumns from '@/app/[locale]/manage/orders/order-table-columns';
-import { OrderStatus } from '@/constants/enum';
-import { handleErrorApi } from '@/lib/utils';
-import { GetOrdersResType, PayGuestOrdersResType, UpdateOrderResType } from '@/schemaValidations/order.schema';
+import type { OrderStatus } from '@/constants/enum';
+import { handleErrorApi, periodDefault } from '@/lib/utils';
 import { createContext, useEffect, useState } from 'react';
 
+import { useOrderService } from '@/app/[locale]/manage/orders/order.service';
 import { useOrderListQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
+import { useTableListQuery } from '@/app/queries/useTable';
 import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
 import TDataTable from '@/components/t-data-table';
 import { TDateRange } from '@/components/t-date-range';
 import { toast } from '@/hooks/use-toast';
-import { GuestCreateOrdersResType } from '@/schemaValidations/guest.schema';
-import { endOfDay, startOfDay } from 'date-fns';
+import { Period } from '@/schemaValidations/common.schema';
+import { OrderDtoDetail, UpdateOrder } from '@/schemaValidations/order.schema';
 import { useTranslations } from 'next-intl';
-import { DateRange } from 'react-day-picker';
 
 export const OrderTableContext = createContext({
   setOrderIdEdit: (_value: string | undefined) => {},
@@ -29,28 +29,21 @@ export type Statics = {
   status: StatusCountObject;
   table: Record<string, Record<string, StatusCountObject>>;
 };
-export type OrderObjectByGuestID = Record<string, GetOrdersResType['data']>;
+export type OrderObjectByGuestID = Record<string, OrderDtoDetail[]>;
 export type ServingGuestByTableNumber = Record<string, OrderObjectByGuestID>;
 
-const initFromDate = startOfDay(new Date());
-const initToDate = endOfDay(new Date());
 export default function OrderTable() {
-  const [dateRange, setDateRange] = useState<DateRange>({
-    from: initFromDate,
-    to: initToDate
-  });
+  const [dateRange, setDateRange] = useState<Period>(periodDefault);
 
-  const orderListQuery = useOrderListQuery({
-    fromDate: dateRange.from,
-    toDate: dateRange.to
-  });
+  const orderListQuery = useOrderListQuery(dateRange);
   const refreshOrderListQuery = orderListQuery.refetch;
   const orderList = orderListQuery.data?.payload.data ?? [];
-  // const dataListQuery = useTableListQuery();
-  // const tableList = dataListQuery.data?.payload.data ?? [];
-  // const tableListSortedByNumber = tableList.sort();
+  const dataListQuery = useTableListQuery();
+  const tableList = dataListQuery.data?.payload.data ?? [];
 
-  // const { statics, orderObjectByGuestId, servingGuestByTableNumber } = useOrderService(orderList);
+  const tableListSortedByNumber = tableList.sort();
+
+  const { statics, orderObjectByGuestId, servingGuestByTableNumber } = useOrderService(orderList);
 
   const tOrderStatus = useTranslations('order-status');
   const tButton = useTranslations('t-button');
@@ -62,12 +55,12 @@ export default function OrderTable() {
   useEffect(() => {
     function refetch() {
       const now = new Date();
-      if (now >= dateRange?.from! && now <= dateRange?.to!) {
+      if (now >= dateRange.fromDate && now <= dateRange.toDate) {
         refreshOrderListQuery();
       }
     }
 
-    function onUpadteOrder(data: UpdateOrderResType['data']) {
+    function onUpadteOrder(data: OrderDtoDetail) {
       refreshOrderListQuery();
       const {
         dishSnapshot: { name },
@@ -80,19 +73,19 @@ export default function OrderTable() {
       });
     }
 
-    function onNewOrder(data: GuestCreateOrdersResType['data']) {
+    function onNewOrder(data: OrderDtoDetail[]) {
       const { guest } = data[0];
 
       toast({
-        description: `Khách hàng ${guest?.name} tại bàn ${guest?.tableNumber} vừa đặt ${data.length} đơn`
+        description: `Khách hàng tại bàn ${guest?.tableNumber} vừa đặt ${data.length} đơn`
       });
       refetch();
     }
 
-    function onPayment(data: PayGuestOrdersResType['data']) {
+    function onPayment(data: OrderDtoDetail[]) {
       const { guest } = data[0];
       toast({
-        description: `Khách hàng ${guest?.name} tại bàn ${guest?.tableNumber} đã thanh toán thành công ${data.length} đơn`
+        description: `Khách hàng tại bàn ${guest?.tableNumber} đã thanh toán thành công ${data.length} đơn`
       });
       refetch();
     }
@@ -106,17 +99,14 @@ export default function OrderTable() {
       socket?.off('new-order', onNewOrder);
       socket?.off('payment', onPayment);
     };
-  }, [dateRange.from, dateRange.to, refreshOrderListQuery, socket, tOrderStatus]);
+  }, [refreshOrderListQuery, socket, tOrderStatus, dateRange]);
 
   // Function
   function resetDateFilter() {
-    setDateRange({
-      from: initFromDate,
-      to: initToDate
-    });
+    setDateRange(periodDefault);
   }
 
-  async function changeStatus(body: { orderId: string; dishId: string; status: OrderStatus; quantity: number }) {
+  async function changeStatus(body: UpdateOrder) {
     try {
       await updateOrderMutation.mutateAsync(body);
     } catch (error) {

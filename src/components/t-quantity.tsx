@@ -28,7 +28,7 @@ export default function TQuantity({ onChange, value, disabled = false, classIcon
         className={`h-6 p-1 w-8 text-center ${classInput}`}
         value={value}
         onChange={(e) => {
-          let value = e.target.value;
+          const value = e.target.value;
           const numberValue = Number(value);
           if (isNaN(numberValue)) {
             return;

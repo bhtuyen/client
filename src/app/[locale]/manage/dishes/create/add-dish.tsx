@@ -15,7 +15,8 @@ import { DishCategory, DishStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from '@/i18n/routing';
 import { getEnumValues, handleErrorApi } from '@/lib/utils';
-import { CreateDish, createDishSchema } from '@/schemaValidations/dish.schema';
+import type { CreateDish } from '@/schemaValidations/dish.schema';
+import { createDish } from '@/schemaValidations/dish.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Banknote, Loader, Salad, Tags, Upload } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -31,7 +32,7 @@ export default function AddDishForm() {
   const dishGroups = dishGroupQuery.data?.payload.data ?? [];
 
   const form = useForm<CreateDish>({
-    resolver: zodResolver(createDishSchema)
+    resolver: zodResolver(createDish)
   });
 
   const image = form.watch('image');

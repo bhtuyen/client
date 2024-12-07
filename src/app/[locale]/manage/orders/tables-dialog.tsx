@@ -1,14 +1,15 @@
 'use client';
+import { useTableListQuery } from '@/app/queries/useTable';
+import AutoPagination from '@/components/auto-pagination';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import AutoPagination from '@/components/auto-pagination';
-import { useEffect, useState } from 'react';
+import { TableStatus } from '@/constants/enum';
+import { cn, simpleMatchText } from '@/lib/utils';
+import { TableDto } from '@/schemaValidations/table.schema';
+import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from '@tanstack/react-table';
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -16,18 +17,12 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import { cn, simpleMatchText } from '@/lib/utils';
-import { Input } from '@/components/ui/input';
-import { TableListResType } from '@/schemaValidations/table.schema';
-import { TableStatus } from '@/constants/enum';
-import { useTableListQuery } from '@/app/queries/useTable';
 import { useTranslations } from 'next-intl';
-
-type TableItem = TableListResType['data'][0];
+import { useEffect, useState } from 'react';
 
 const PAGE_SIZE = 10;
 
-export function TablesDialog({ onChoose }: { onChoose: (_table: TableItem) => void }) {
+export function TablesDialog({ onChoose }: { onChoose: (_table: TableDto) => void }) {
   const [open, setOpen] = useState(false);
   const tableListQuery = useTableListQuery();
   const data = tableListQuery.data?.payload.data ?? [];
@@ -42,7 +37,7 @@ export function TablesDialog({ onChoose }: { onChoose: (_table: TableItem) => vo
 
   const tTableStatus = useTranslations('table-status');
 
-  const columns: ColumnDef<TableItem>[] = [
+  const columns: ColumnDef<TableDto>[] = [
     {
       accessorKey: 'number',
       header: 'Số bàn',
@@ -93,7 +88,7 @@ export function TablesDialog({ onChoose }: { onChoose: (_table: TableItem) => vo
     });
   }, [table]);
 
-  const choose = (table: TableItem) => {
+  const choose = (table: TableDto) => {
     onChoose(table);
     setOpen(false);
   };

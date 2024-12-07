@@ -1,7 +1,7 @@
 'use client';
 
 import { type ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
-import { memo, Suspense, useEffect, useState } from 'react';
+import { Suspense, memo, useEffect, useState } from 'react';
 
 type SearchParamsLoaderProps = {
   onParamsReceived: (_params: ReadonlyURLSearchParams) => void;

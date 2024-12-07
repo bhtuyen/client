@@ -3,11 +3,11 @@
 import { useDeleteDishMutation, useDishListQuery } from '@/app/queries/useDish';
 import TButton from '@/components/t-button';
 import TDataTable, { TCellAction } from '@/components/t-data-table';
-import { DishCategory, DishStatus } from '@/constants/enum';
+import type { DishCategory, DishStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { formatCurrency, handleErrorApi } from '@/lib/utils';
-import { DishDto } from '@/schemaValidations/dish.schema';
-import { ColumnDef } from '@tanstack/react-table';
+import type { DishDto } from '@/schemaValidations/dish.schema';
+import type { ColumnDef } from '@tanstack/react-table';
 import { PlusCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';

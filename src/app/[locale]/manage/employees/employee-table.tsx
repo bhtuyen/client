@@ -4,9 +4,9 @@ import { useAccountListQuery } from '@/app/queries/useAccount';
 import TButton from '@/components/t-button';
 import TDataTable, { TCellAction } from '@/components/t-data-table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Role } from '@/constants/enum';
-import { AccountType } from '@/schemaValidations/account.schema';
-import { ColumnDef } from '@tanstack/react-table';
+import type { Role } from '@/constants/enum';
+import { AccountDto } from '@/schemaValidations/account.schema';
+import type { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, PlusCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -16,7 +16,7 @@ export default function EmployeeTable() {
   const tTableColumn = useTranslations('t-data-table.column');
   const tButton = useTranslations('t-button');
   const tRole = useTranslations('role');
-  const columns: ColumnDef<AccountType>[] = [
+  const columns: ColumnDef<AccountDto>[] = [
     {
       accessorKey: 'avatar',
       header: () => <div className=''>{tTableColumn('employee')}</div>,

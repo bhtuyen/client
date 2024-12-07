@@ -1,12 +1,13 @@
 'use client';
 
-import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import type { ChartConfig } from '@/components/ui/chart';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { DashboardIndicatorRes } from '@/schemaValidations/indicator.schema';
 import { format, parse } from 'date-fns';
-import { DashboardIndicatorResType } from '@/schemaValidations/indicator.schema';
-import { useTranslations } from 'next-intl';
 import { TrendingUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 const chartConfig = {
   desktop: {
     label: 'Desktop',
@@ -14,7 +15,7 @@ const chartConfig = {
   }
 } satisfies ChartConfig;
 
-export function RevenueLineChart({ chartData }: { chartData: DashboardIndicatorResType['data']['revenueByDate'] }) {
+export function RevenueLineChart({ chartData }: { chartData: DashboardIndicatorRes['data']['revenuesByDate'] }) {
   const tDashboard = useTranslations('manage.dashboard');
   return (
     <Card>

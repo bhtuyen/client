@@ -1,14 +1,14 @@
 'use client';
 
-import AddTable from '@/app/[locale]/manage/tables/add-table';
+import AddTable from '@/app/[locale]/manage/tables/create/add-table';
 import { useDeleteTableMutation, useTableListQuery } from '@/app/queries/useTable';
 import QRCodeTable from '@/components/qrcode-table';
 import TDataTable, { TCellAction } from '@/components/t-data-table';
-import { TableStatus } from '@/constants/enum';
+import type { TableStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { handleErrorApi } from '@/lib/utils';
-import { TableType } from '@/schemaValidations/table.schema';
-import { ColumnDef } from '@tanstack/react-table';
+import { TableDto } from '@/schemaValidations/table.schema';
+import type { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
 
@@ -34,7 +34,7 @@ export default function TableTable() {
     [deleteTableMutation]
   );
 
-  const columns: ColumnDef<TableType>[] = useMemo(
+  const columns: ColumnDef<TableDto>[] = useMemo(
     () => [
       {
         accessorKey: 'number',

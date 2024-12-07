@@ -1,13 +1,13 @@
 import authApiRequest from '@/app/apiRequests/auth';
 import { HttpError } from '@/lib/http';
 import { decodeJWT } from '@/lib/utils';
-import { LoginBodyType } from '@/schemaValidations/auth.schema';
-import { JwtPayload } from 'jsonwebtoken';
-import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
+import type { Login } from '@/schemaValidations/auth.schema';
+import type { JwtPayload } from 'jsonwebtoken';
+import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as LoginBodyType;
+  const body = (await request.json()) as Login;
 
   const cookieStore = cookies();
 

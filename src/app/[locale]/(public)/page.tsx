@@ -1,7 +1,8 @@
 import { dishApiRequets } from '@/app/apiRequests/dish';
+import TImage from '@/components/t-image';
 import { Link } from '@/i18n/routing';
-import { formatCurrency, generateSlugify } from '@/lib/utils';
-import { DishesRes } from '@/schemaValidations/dish.schema';
+import { generateSlugify } from '@/lib/utils';
+import type { DishesRes } from '@/schemaValidations/dish.schema';
 import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 
@@ -44,7 +45,7 @@ export default async function HomePage() {
               key={dish.id}
             >
               <div className='flex-shrink-0'>
-                <Image
+                <TImage
                   src={dish.image}
                   className='object-cover w-[150px] h-[150px] rounded-md'
                   width={150}
@@ -56,7 +57,7 @@ export default async function HomePage() {
               <div className='space-y-1'>
                 <h3 className='text-xl font-semibold'>{dish.name}</h3>
                 <p className=''>{dish.description}</p>
-                <p className='font-semibold'>{formatCurrency(dish.price)}</p>
+                <p className='font-semibold'></p>
               </div>
             </Link>
           ))}

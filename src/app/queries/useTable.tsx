@@ -1,5 +1,5 @@
 import { tableApiRequets } from '@/app/apiRequests/table';
-import { UpdateTableBodyType } from '@/schemaValidations/table.schema';
+import { UpdateTable } from '@/schemaValidations/table.schema';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useTableListQuery = () => {
@@ -9,11 +9,10 @@ export const useTableListQuery = () => {
   });
 };
 
-export const useTableQuery = ({ id, enabled }: { id: string; enabled: boolean }) => {
+export const useTableQuery = (number: string) => {
   return useQuery({
-    queryKey: ['table', id],
-    queryFn: () => tableApiRequets.getById(id),
-    enabled
+    queryKey: ['table', number],
+    queryFn: () => tableApiRequets.getById(number)
   });
 };
 
@@ -32,7 +31,7 @@ export const useCreateTableMutation = () => {
 export const useUpdateTableMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...body }: UpdateTableBodyType & { id: string }) => tableApiRequets.update(id, body),
+    mutationFn: (body: UpdateTable) => tableApiRequets.update(body),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['tables']

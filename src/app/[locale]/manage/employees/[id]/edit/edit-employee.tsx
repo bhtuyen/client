@@ -11,53 +11,31 @@ import { Role } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from '@/i18n/routing';
 import { getEnumValues, handleErrorApi } from '@/lib/utils';
-import { UpdateEmployeeAccountBody, UpdateEmployeeAccountBodyType } from '@/schemaValidations/account.schema';
+import { updateEmployee, UpdateEmployee } from '@/schemaValidations/account.schema';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { KeyRound, Mail, Phone, Upload, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 export default function EditEmployee({ id }: { id: string }) {
   const [file, setFile] = useState<File | null>(null);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
-  const form = useForm<UpdateEmployeeAccountBodyType>({
-    resolver: zodResolver(UpdateEmployeeAccountBody),
-    defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
-      avatar: undefined,
-      password: undefined,
-      confirmPassword: undefined,
-      changePassword: false,
-      role: Role.Employee
-    }
-  });
+
   const router = useRouter();
 
   const { data } = useAccountQuery(id);
   const account = data?.payload.data;
 
+  const form = useForm<UpdateEmployee>({
+    resolver: zodResolver(updateEmployee),
+    values: account
+  });
+
   const tRole = useTranslations('role');
   const tButton = useTranslations('t-button');
   const tForm = useTranslations('t-form');
-
-  useEffect(() => {
-    if (account) {
-      const { name, email, avatar, role, phone } = account;
-      form.reset({
-        name,
-        email,
-        avatar: avatar ?? undefined,
-        phone,
-        changePassword: form.getValues('changePassword'),
-        password: form.getValues('password'),
-        confirmPassword: form.getValues('confirmPassword'),
-        role
-      });
-    }
-  }, [account, form]);
 
   const avatar = form.watch('avatar');
   const name = form.watch('name');
@@ -76,22 +54,18 @@ export default function EditEmployee({ id }: { id: string }) {
     setFile(null);
   };
 
-  const onSubmit = async (me: UpdateEmployeeAccountBodyType) => {
+  const onSubmit = async (employee: UpdateEmployee) => {
     if (updateEmployeeMutation.isPending) return;
     try {
-      let body: UpdateEmployeeAccountBodyType & { id: string } = {
-        id: account!.id,
-        ...me
-      };
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
         const uploadImageRes = await uploadMediaMutation.mutateAsync(formData);
         const imageUrl = uploadImageRes.payload.data;
-        body = { ...body, avatar: imageUrl };
+        employee = { ...employee, avatar: imageUrl };
       }
 
-      const result = await updateEmployeeMutation.mutateAsync(body);
+      const result = await updateEmployeeMutation.mutateAsync(employee);
 
       toast({
         description: result.payload.message

@@ -9,8 +9,8 @@ import z from 'zod';
 const table = z
   .object({
     number: z.string().trim().min(1).max(50),
-    capacity: z.coerce.number().positive().default(1),
-    status: z.nativeEnum(TableStatus).default(TableStatus.Available),
+    capacity: z.coerce.number().positive().min(1).max(20),
+    status: z.nativeEnum(TableStatus),
     token: z.string()
   })
   .merge(updateAndCreate);
@@ -22,9 +22,7 @@ export const createTable = tableDto.omit({ token: true });
 export const tableRes = buildReply(tableDto);
 export const tablesRes = buildReply(z.array(tableDto));
 export const tableParam = tableDto.pick({ number: true });
-export const updateTable = tableDto
-  .omit({ token: true, number: true })
-  .extend({ changeToken: z.boolean().default(false) });
+export const updateTable = tableDto.omit({ token: true }).extend({ changeToken: z.boolean().default(false) });
 
 export const selectTableDto = buildSelect<TableDto>();
 

@@ -8,7 +8,8 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Locale, locales } from '@/config';
+import type { Locale } from '@/config';
+import { locales } from '@/config';
 import { usePathname, useRouter } from '@/i18n/routing';
 import { useLocale, useTranslations } from 'next-intl';
 

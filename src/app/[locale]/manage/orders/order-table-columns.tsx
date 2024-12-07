@@ -1,9 +1,10 @@
 'use client';
 
-import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { ColumnDef } from '@tanstack/react-table';
+import OrderGuestDetail from '@/app/[locale]/manage/orders/order-guest-detail';
+import { OrderTableContext } from '@/app/[locale]/manage/orders/order-table';
+import TImage from '@/components/t-image';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,20 +13,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { GetOrdersResType } from '@/schemaValidations/order.schema';
-import { useContext } from 'react';
-import { formatCurrency, formatDateTimeToLocaleString, getEnumValues, simpleMatchText } from '@/lib/utils';
-import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
-import { OrderStatus } from '@/constants/enum';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { OrderTableContext } from '@/app/[locale]/manage/orders/order-table';
-import OrderGuestDetail from '@/app/[locale]/manage/orders/order-guest-detail';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { OrderStatus } from '@/constants/enum';
+import { formatDateTimeToLocaleString, getEnumValues, getPrice, simpleMatchText } from '@/lib/utils';
+import { OrderDtoDetail } from '@/schemaValidations/order.schema';
+import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { PopoverClose } from '@radix-ui/react-popover';
+import type { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
+import { useContext } from 'react';
 
-type OrderItem = GetOrdersResType['data'][0];
-const orderTableColumns: ColumnDef<OrderItem>[] = [
+const orderTableColumns: ColumnDef<OrderDtoDetail>[] = [
   {
     accessorKey: 'tableNumber',
     header: 'Bàn',
@@ -52,7 +51,6 @@ const orderTableColumns: ColumnDef<OrderItem>[] = [
             <Popover>
               <PopoverTrigger>
                 <div>
-                  <span>{guest.name}</span>
                   <span className='font-semibold'>(#{guest.id})</span>
                 </div>
               </PopoverTrigger>
@@ -67,7 +65,7 @@ const orderTableColumns: ColumnDef<OrderItem>[] = [
     },
     filterFn: (row, columnId, filterValue: string) => {
       if (filterValue === undefined) return true;
-      return simpleMatchText(row.original.guest?.name ?? 'Đã bị xóa', String(filterValue));
+      return simpleMatchText(row.original.guest.tableNumber ?? 'Đã bị xóa', String(filterValue));
     }
   },
   {
@@ -77,7 +75,7 @@ const orderTableColumns: ColumnDef<OrderItem>[] = [
       <div className='flex items-center gap-2'>
         <Popover>
           <PopoverTrigger asChild>
-            <Image
+            <TImage
               src={row.original.dishSnapshot.image}
               alt={row.original.dishSnapshot.name}
               width={50}
@@ -87,7 +85,7 @@ const orderTableColumns: ColumnDef<OrderItem>[] = [
           </PopoverTrigger>
           <PopoverContent>
             <div className='flex flex-wrap gap-2'>
-              <Image
+              <TImage
                 src={row.original.dishSnapshot.image}
                 alt={row.original.dishSnapshot.name}
                 width={100}
@@ -96,7 +94,7 @@ const orderTableColumns: ColumnDef<OrderItem>[] = [
               />
               <div className='space-y-1 text-sm'>
                 <h3 className='font-semibold'>{row.original.dishSnapshot.name}</h3>
-                <div className='italic'>{formatCurrency(row.original.dishSnapshot.price)}</div>
+                <div className='italic'>{getPrice(row.original.dishSnapshot)}</div>
                 <div>{row.original.dishSnapshot.description}</div>
               </div>
             </div>
@@ -110,7 +108,7 @@ const orderTableColumns: ColumnDef<OrderItem>[] = [
               x{row.original.quantity}
             </Badge>
           </div>
-          <span className='italic'>{formatCurrency(row.original.dishSnapshot.price * row.original.quantity)}</span>
+          <span className='italic'>{getPrice(row.original.dishSnapshot)}</span>
         </div>
       </div>
     )

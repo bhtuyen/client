@@ -1,8 +1,8 @@
 'use client';
 import GuestsDialog from '@/app/[locale]/manage/orders/guests-dialog';
 import { TablesDialog } from '@/app/[locale]/manage/orders/tables-dialog';
-import { useCreateGuestMutation } from '@/app/queries/useAccount';
 import { useDishListQuery } from '@/app/queries/useDish';
+import { useCreateGuestMutation } from '@/app/queries/useGuest';
 import { useCreateOrderMutation } from '@/app/queries/useOrder';
 import TQuantity from '@/components/t-quantity';
 import { Button } from '@/components/ui/button';
@@ -15,16 +15,14 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
-import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Form, FormField, FormItem } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { DishStatus } from '@/constants/enum';
+import { DishCategory, DishStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { cn, formatCurrency, handleErrorApi } from '@/lib/utils';
-import { GetListGuestsResType } from '@/schemaValidations/account.schema';
-import { GuestLoginBody, GuestLoginBodyType } from '@/schemaValidations/guest.schema';
-import { CreateOrdersBodyType } from '@/schemaValidations/order.schema';
+import { GuestDto, guestLogin, GuestLogin } from '@/schemaValidations/guest.schema';
+import { CreateOrder } from '@/schemaValidations/order.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircle } from 'lucide-react';
 import Image from 'next/image';
@@ -33,9 +31,9 @@ import { useForm } from 'react-hook-form';
 
 export default function AddOrder() {
   const [open, setOpen] = useState(false);
-  const [selectedGuest, setSelectedGuest] = useState<GetListGuestsResType['data'][0] | null>(null);
+  const [selectedGuest, setSelectedGuest] = useState<GuestDto | null>(null);
   const [isNewGuest, setIsNewGuest] = useState(true);
-  const [orders, setOrders] = useState<CreateOrdersBodyType['orders']>([]);
+  const [createOrders, setCreateOrders] = useState<CreateOrder[]>([]);
   const { data } = useDishListQuery();
   const dishes = useMemo(() => data?.payload.data ?? [], [data?.payload.data]);
 
@@ -44,34 +42,35 @@ export default function AddOrder() {
 
   const totalPrice = useMemo(() => {
     return dishes.reduce((result, dish) => {
-      const order = orders.find((order) => order.dishId === dish.id);
+      const order = createOrders.find((order) => order.dishId === dish.id);
       if (!order) return result;
-      return result + order.quantity * dish.price;
+      if (dish.category === DishCategory.Paid) {
+        return result + dish.price * order.quantity;
+      }
+      return result;
     }, 0);
-  }, [dishes, orders]);
+  }, [dishes, createOrders]);
 
-  const form = useForm<GuestLoginBodyType>({
-    resolver: zodResolver(GuestLoginBody),
+  const form = useForm<GuestLogin>({
+    resolver: zodResolver(guestLogin),
     defaultValues: {
-      name: '',
       tableNumber: undefined
     }
   });
-  const name = form.watch('name');
   const tableNumber = form.watch('tableNumber');
 
-  const handleQuantityChange = (dishId: string, quantity: number) => {
-    setOrders((prevOrders) => {
+  const handleQuantityChange = ({ dishId, quantity, options }: CreateOrder) => {
+    setCreateOrders((prevOrders) => {
       if (quantity === 0) {
         return prevOrders.filter((order) => order.dishId !== dishId);
       }
       const index = prevOrders.findIndex((order) => order.dishId === dishId);
       if (index === -1) {
-        return [...prevOrders, { dishId, quantity }];
+        return [...prevOrders, { dishId, options, quantity }];
       }
       const newOrders = [...prevOrders];
       newOrders[index] = { ...newOrders[index], quantity };
-      return newOrders;
+      return prevOrders;
     });
   };
 
@@ -80,7 +79,6 @@ export default function AddOrder() {
       let guestId = selectedGuest?.id;
       if (isNewGuest) {
         const guestRes = await createGuestMutation.mutateAsync({
-          name,
           tableNumber
         });
 
@@ -92,7 +90,7 @@ export default function AddOrder() {
       }
       await createOrderMutation.mutateAsync({
         guestId: guestId!,
-        orders
+        orders: createOrders
       });
       reset();
     } catch (error) {
@@ -104,7 +102,7 @@ export default function AddOrder() {
     form.reset();
     setIsNewGuest(true);
     setSelectedGuest(null);
-    setOrders([]);
+    setCreateOrders([]);
     setOpen(false);
   };
 
@@ -141,21 +139,6 @@ export default function AddOrder() {
               <div className='grid gap-4 py-4'>
                 <FormField
                   control={form.control}
-                  name='name'
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
-                        <Label htmlFor='name'>Tên khách hàng</Label>
-                        <div className='col-span-3 w-full space-y-2'>
-                          <Input id='name' className='w-full' {...field} />
-                          <FormMessage />
-                        </div>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
                   name='tableNumber'
                   render={({ field }) => (
                     <FormItem>
@@ -190,9 +173,7 @@ export default function AddOrder() {
           <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
             <Label htmlFor='selectedGuest'>Khách đã chọn</Label>
             <div className='col-span-3 w-full gap-4 flex items-center'>
-              <div>
-                {selectedGuest.name} (#{selectedGuest.id})
-              </div>
+              <div>(#{selectedGuest.id})</div>
               <div>Bàn: {selectedGuest.tableNumber}</div>
             </div>
           </div>
@@ -211,7 +192,7 @@ export default function AddOrder() {
                   <span className='absolute inset-0 flex items-center justify-center text-sm'>Hết hàng</span>
                 )}
                 <Image
-                  src={dish.image}
+                  src={dish.image ?? '/60000155_kem_sua_chua_1.jpg'}
                   alt={dish.name}
                   height={100}
                   width={100}
@@ -222,19 +203,23 @@ export default function AddOrder() {
               <div className='space-y-1'>
                 <h3 className='text-sm'>{dish.name}</h3>
                 <p className='text-xs'>{dish.description}</p>
-                <p className='text-xs font-semibold'>{formatCurrency(dish.price)}</p>
+                <p className='text-xs font-semibold'>
+                  {dish.category == DishCategory.Paid ? formatCurrency(dish.price) : DishCategory.Buffet}
+                </p>
               </div>
               <div className='flex-shrink-0 ml-auto flex justify-center items-center'>
                 <TQuantity
-                  onChange={(value) => handleQuantityChange(dish.id, value)}
-                  value={orders.find((order) => order.dishId === dish.id)?.quantity ?? 0}
+                  onChange={(value) =>
+                    handleQuantityChange({ dishId: dish.id, options: dish.options, quantity: value })
+                  }
+                  value={createOrders.find((order) => order.dishId === dish.id)?.quantity ?? 0}
                 />
               </div>
             </div>
           ))}
         <DialogFooter>
-          <Button className='w-full justify-between' onClick={handleOrder} disabled={orders.length === 0}>
-            <span>Đặt hàng · {orders.length} món</span>
+          <Button className='w-full justify-between' onClick={handleOrder} disabled={createOrders.length === 0}>
+            <span>Đặt hàng · {createOrders.length} món</span>
             <span>{formatCurrency(totalPrice)}</span>
           </Button>
         </DialogFooter>

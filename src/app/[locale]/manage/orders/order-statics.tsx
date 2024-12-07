@@ -1,22 +1,22 @@
-import { Fragment, useState } from 'react';
-import { Users } from 'lucide-react';
+import OrderGuestDetail from '@/app/[locale]/manage/orders/order-guest-detail';
+import type { ServingGuestByTableNumber, Statics, StatusCountObject } from '@/app/[locale]/manage/orders/order-table';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { OrderStatusIcon, cn, getEnumValues } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { OrderStatus } from '@/constants/enum';
-import { TableListResType } from '@/schemaValidations/table.schema';
-import { Badge } from '@/components/ui/badge';
-import { ServingGuestByTableNumber, Statics, StatusCountObject } from '@/app/[locale]/manage/orders/order-table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import OrderGuestDetail from '@/app/[locale]/manage/orders/order-guest-detail';
+import { OrderStatusIcon, cn, getEnumValues } from '@/lib/utils';
+import { TableDto } from '@/schemaValidations/table.schema';
+import { Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { Fragment, useState } from 'react';
 export default function OrderStatics({
   statics,
   tableList,
   servingGuestByTableNumber
 }: {
   statics: Statics;
-  tableList: TableListResType['data'];
+  tableList: TableDto[];
   servingGuestByTableNumber: ServingGuestByTableNumber;
 }) {
   const [selectedTableNumber, setSelectedTableNumber] = useState<string>('');

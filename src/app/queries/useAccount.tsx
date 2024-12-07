@@ -1,5 +1,4 @@
 import accountApiRequest from '@/app/apiRequests/account';
-import { GetGuestListQueryParamsType, UpdateEmployeeAccountBodyType } from '@/schemaValidations/account.schema';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useAccountMeQuery = () =>
@@ -46,7 +45,7 @@ export const useAddEmployeeMutation = () => {
 export const useDeleteEmployeeMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => accountApiRequest.deleteEmployee(id),
+    mutationFn: accountApiRequest.deleteEmployee,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['accounts']
@@ -58,26 +57,12 @@ export const useDeleteEmployeeMutation = () => {
 export const useUpdateEmployeeMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...body }: UpdateEmployeeAccountBodyType & { id: string }) =>
-      accountApiRequest.updateEmployee(id, body),
+    mutationFn: accountApiRequest.updateEmployee,
     // Invalidate and refetch the data after the mutation
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['accounts']
       });
     }
-  });
-};
-
-export const useCreateGuestMutation = () => {
-  return useMutation({
-    mutationFn: accountApiRequest.createGuest
-  });
-};
-
-export const useGetGuestsQuery = (queryParam: GetGuestListQueryParamsType) => {
-  return useQuery({
-    queryKey: ['guests', queryParam],
-    queryFn: () => accountApiRequest.getGuests(queryParam)
   });
 };

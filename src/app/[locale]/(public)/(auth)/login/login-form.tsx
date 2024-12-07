@@ -10,8 +10,8 @@ import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { Link, useRouter } from '@/i18n/routing';
 import { getOauthGoogleUrl, handleErrorApi } from '@/lib/utils';
-import { LoginBody, LoginBodyType } from '@/schemaValidations/auth.schema';
-import { TMessageKeys } from '@/types/message.type';
+import { Login, login } from '@/schemaValidations/auth.schema';
+import type { TMessageKeys } from '@/types/message.type';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
@@ -22,8 +22,8 @@ export default function LoginForm() {
   const loginMutation = useLoginMutation();
   const googleOauthUrl = getOauthGoogleUrl();
 
-  const form = useForm<LoginBodyType>({
-    resolver: zodResolver(LoginBody),
+  const form = useForm<Login>({
+    resolver: zodResolver(login),
     defaultValues: {
       email: '',
       password: ''
@@ -48,7 +48,7 @@ export default function LoginForm() {
     }
   }, [clearTokens, setRole, disconnectSocket]);
 
-  const onSubmit = async (data: LoginBodyType) => {
+  const onSubmit = async (data: Login) => {
     if (loginMutation.isPending) return;
 
     try {

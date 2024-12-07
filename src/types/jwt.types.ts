@@ -1,5 +1,5 @@
-import { Role, Token } from '@/constants/enum';
-import { JwtPayload } from 'jsonwebtoken';
+import type { Role, Token } from '@/constants/enum';
+import type { JwtPayload } from 'jsonwebtoken';
 
 export interface TokenPayload extends JwtPayload {
   userId: number;
