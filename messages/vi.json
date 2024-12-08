@@ -42,7 +42,8 @@
     "create-dish": "Tạo món ăn",
     "create-order": "Tạo đơn hàng",
     "create-table": "Tạo bàn ăn",
-    "create-dish-group": "Tạo nhóm"
+    "create-dish-group": "Tạo nhóm",
+    "update": "Cập nhật"
   },
   "t-alert-dialog": {
     "title": {

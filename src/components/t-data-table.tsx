@@ -229,7 +229,7 @@ export function TToolbar<TData>({ table, children, filter }: TToolbarProps<TData
   );
 }
 
-export function TCellAction({ editOption, deleteOption }: TCellActionsProps) {
+export function TCellActions({ editOption, deleteOption }: TCellActionsProps) {
   const { showAlertDialog } = useAppStore();
   const { urlEdit } = editOption;
 

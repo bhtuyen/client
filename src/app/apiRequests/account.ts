@@ -16,7 +16,7 @@ const accountApiRequest = {
   changePassword: (body: ChangePassword) => http.put<AccountRes>(`${prefix}/change-password`, body),
   list: () => http.get<AccountsRes>(`${prefix}`),
   addEmployee: (body: CreateEmployee) => http.post<AccountRes>(`${prefix}`, body),
-  updateEmployee: ({ id, ...body }: UpdateEmployee) => http.put<AccountRes>(`${prefix}/detail/${id}`, body),
+  updateEmployee: (body: UpdateEmployee) => http.put<AccountRes>(`${prefix}/detail/${body.id}`, body),
   getEmployee: (id: string) => http.get<AccountRes>(`${prefix}/detail/${id}`),
   deleteEmployee: (id: string) => http.delete<AccountRes>(`${prefix}/detail/${id}`)
 };

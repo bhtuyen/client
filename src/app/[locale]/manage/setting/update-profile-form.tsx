@@ -17,21 +17,20 @@ import { useForm } from 'react-hook-form';
 
 export default function UpdateProfileForm() {
   const [file, setFile] = useState<File | null>(null);
+  const [disabled, setDisabled] = useState(true);
+
   const avatarInputRef = useRef<HTMLInputElement>(null);
+
   const form = useForm<UpdateMe>({
     resolver: zodResolver(updateMe),
     defaultValues: {
       name: '',
       avatar: undefined
-    }
+    },
+    disabled
   });
-  const { data: profile, refetch } = useAccountMeQuery();
-  const updateMeMutation = useUpdateMeMutation();
-  const uploadMediaMutation = useUploadMediaMutation();
 
-  const tButton = useTranslations('t-button');
-  const tForm = useTranslations('t-form');
-  const tManageSetting = useTranslations('manage.setting');
+  const { data: profile, refetch } = useAccountMeQuery();
 
   useEffect(() => {
     if (profile) {
@@ -39,6 +38,13 @@ export default function UpdateProfileForm() {
       form.reset({ name, avatar: avatar ?? undefined });
     }
   }, [profile, form]);
+
+  const updateMeMutation = useUpdateMeMutation();
+  const uploadMediaMutation = useUploadMediaMutation();
+
+  const tButton = useTranslations('t-button');
+  const tForm = useTranslations('t-form');
+  const tManageSetting = useTranslations('manage.setting');
 
   const avatar = form.watch('avatar');
   const name = form.watch('name');
@@ -52,6 +58,7 @@ export default function UpdateProfileForm() {
   const onReset = () => {
     form.reset();
     setFile(null);
+    setDisabled(true);
   };
 
   const onSubmit = async (me: UpdateMe) => {
@@ -94,8 +101,8 @@ export default function UpdateProfileForm() {
             <FormField
               control={form.control}
               name='avatar'
-              render={({ field }) => (
-                <FormItem className='flex items-center gap-4 space-y-0 col-span-2 mb-4'>
+              render={({ field, formState: { disabled } }) => (
+                <FormItem className='col-span-3 mb-4 flex-row items-center gap-x-2'>
                   <FormDescription>
                     <Avatar className='w-[100px] h-[100px] rounded-full object-cover'>
                       <AvatarImage src={previewAvatar} />
@@ -115,6 +122,7 @@ export default function UpdateProfileForm() {
                       }}
                       ref={avatarInputRef}
                       hidden
+                      disabled={disabled}
                     />
                   </FormControl>
                   <FormLabel>
@@ -123,6 +131,7 @@ export default function UpdateProfileForm() {
                       variant='outline'
                       onClick={() => avatarInputRef.current?.click()}
                       tooltip='upload-image'
+                      disabled={disabled}
                     >
                       <Upload />
                       <span className='sr-only'>{tButton('upload-image')}</span>
@@ -149,11 +158,14 @@ export default function UpdateProfileForm() {
             />
 
             <div className='items-center gap-4 md:ml-auto flex'>
-              <TButton variant='outline' size='sm' type='reset'>
+              <TButton variant='outline' size='sm' type='reset' hidden={form.formState.disabled}>
                 {tButton('cancel')}
               </TButton>
-              <TButton size='sm' type='submit'>
+              <TButton size='sm' type='submit' hidden={form.formState.disabled} disabled={!form.formState.isDirty}>
                 {tButton('save-change')}
+              </TButton>
+              <TButton size='sm' type='button' hidden={!form.formState.disabled} onClick={() => setDisabled(false)}>
+                {tButton('update')}
               </TButton>
             </div>
           </form>

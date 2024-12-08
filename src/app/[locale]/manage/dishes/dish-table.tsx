@@ -2,11 +2,11 @@
 
 import { useDeleteDishMutation, useDishListQuery } from '@/app/queries/useDish';
 import TButton from '@/components/t-button';
-import TDataTable, { TCellAction } from '@/components/t-data-table';
+import TDataTable, { TCellActions } from '@/components/t-data-table';
 import type { DishCategory, DishStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { formatCurrency, handleErrorApi } from '@/lib/utils';
-import type { DishDto } from '@/schemaValidations/dish.schema';
+import type { DishDtoDetail, DishGroupDto } from '@/schemaValidations/dish.schema';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PlusCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -52,7 +52,7 @@ export default function DishTable() {
   const tTableColumn = useTranslations('t-data-table.column');
   const tButton = useTranslations('t-button');
 
-  const columns: ColumnDef<DishDto>[] = useMemo(
+  const columns: ColumnDef<DishDtoDetail>[] = useMemo(
     () => [
       {
         accessorKey: 'image',
@@ -101,9 +101,9 @@ export default function DishTable() {
         )
       },
       {
-        accessorKey: 'groupName',
+        accessorKey: 'group',
         header: () => <div className='text-center w-[100px]'>{tTableColumn('group-name')}</div>,
-        cell: ({ row }) => <div className='text-center w-[100px]'>{row.getValue('groupName')}</div>
+        cell: ({ row }) => <div className='text-center w-[100px]'>{row.getValue<DishGroupDto>('group').name}</div>
       },
       {
         accessorKey: 'status',
@@ -116,7 +116,7 @@ export default function DishTable() {
         id: 'actions',
         enableHiding: false,
         cell: ({ row }) => (
-          <TCellAction
+          <TCellActions
             editOption={{
               urlEdit: `/manage/dishes/${row.original.id}/edit`
             }}

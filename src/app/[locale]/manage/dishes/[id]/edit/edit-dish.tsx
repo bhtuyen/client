@@ -22,6 +22,12 @@ import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 export default function EditDish({ id }: { id: string }) {
+  const tDishStatus = useTranslations('dish-status');
+  const tButton = useTranslations('t-button');
+  const tForm = useTranslations('t-form');
+  const tDishCategory = useTranslations('dish-category');
+  const tManageDish = useTranslations('manage.dishes');
+
   const updateDishMutation = useUpdateDishMutation();
   const uploadMediaMutation = useUploadMediaMutation();
 
@@ -42,12 +48,6 @@ export default function EditDish({ id }: { id: string }) {
     resolver: zodResolver(updateDish),
     values: dish
   });
-
-  const tDishStatus = useTranslations('dish-status');
-  const tButton = useTranslations('t-button');
-  const tForm = useTranslations('t-form');
-  const tDishCategory = useTranslations('dish-category');
-  const tManageDish = useTranslations('manage.dishes');
 
   const image = form.watch('image');
   const name = form.watch('name');
@@ -101,7 +101,7 @@ export default function EditDish({ id }: { id: string }) {
               control={form.control}
               name='image'
               render={({ field }) => (
-                <FormItem className='flex items-center gap-4 space-y-0 col-span-3 mb-4'>
+                <FormItem className='col-span-3 mb-4 flex-row items-center gap-x-2'>
                   <FormDescription>
                     <Avatar className='aspect-square w-[100px] h-[100px] rounded-md object-cover'>
                       <AvatarImage src={previewAvatarFromFile} />
@@ -158,9 +158,9 @@ export default function EditDish({ id }: { id: string }) {
               control={form.control}
               name='status'
               render={({ field }) => (
-                <FormItem className='flex flex-col gap-y-1'>
+                <FormItem>
                   <FormLabel className='flex items-center gap-x-1'>
-                    <Loader width={16} height={16} />
+                    <Loader width={14} height={14} />
                     {tForm('dish-status')}
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
@@ -226,7 +226,7 @@ export default function EditDish({ id }: { id: string }) {
               control={form.control}
               name='category'
               render={({ field }) => (
-                <FormItem className='flex flex-col gap-y-1'>
+                <FormItem>
                   <FormLabel className='flex items-center gap-x-1'>
                     <Tags height={16} width={16} />
                     {tForm('dish-category')}
@@ -237,17 +237,17 @@ export default function EditDish({ id }: { id: string }) {
                       onValueChange={field.onChange}
                       className='flex items-center gap-x-4'
                     >
-                      <FormItem className='flex items-center space-y-0 gap-x-2'>
+                      <FormItem className='items-center flex-row gap-x-2'>
                         <FormControl>
                           <RadioGroupItem value='Buffet' />
                         </FormControl>
-                        <FormLabel>{tDishCategory('Buffet')}</FormLabel>
+                        <FormLabel className='cursor-pointer'>{tDishCategory('Buffet')}</FormLabel>
                       </FormItem>
-                      <FormItem className='flex items-center space-y-0 gap-x-2'>
+                      <FormItem className='items-center flex-row gap-x-2'>
                         <FormControl>
                           <RadioGroupItem value='Paid' />
                         </FormControl>
-                        <FormLabel>{tDishCategory('Paid')}</FormLabel>
+                        <FormLabel className='cursor-pointer'>{tDishCategory('Paid')}</FormLabel>
                       </FormItem>
                     </RadioGroup>
                   </FormControl>

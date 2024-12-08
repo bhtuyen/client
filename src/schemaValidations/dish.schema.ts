@@ -21,11 +21,11 @@ const baseDish = z
 const baseDishCategory = z.discriminatedUnion('category', [
   z.object({
     category: z.literal(DishCategory.Paid),
-    price: z.number().positive()
+    price: z.coerce.number().positive()
   }),
   z.object({
     category: z.literal(DishCategory.Buffet),
-    price: z.number().optional()
+    price: z.coerce.number().optional()
   })
 ]);
 

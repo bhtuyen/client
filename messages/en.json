@@ -42,7 +42,8 @@
     "create-dish": "Create dish",
     "create-order": "Create order",
     "create-table": "Create table",
-    "create-dish-group": "Create group"
+    "create-dish-group": "Create group",
+    "update": "Update"
   },
   "t-alert-dialog": {
     "title": {

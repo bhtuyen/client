@@ -2,7 +2,7 @@
 
 import { useAccountListQuery } from '@/app/queries/useAccount';
 import TButton from '@/components/t-button';
-import TDataTable, { TCellAction } from '@/components/t-data-table';
+import TDataTable, { TCellActions } from '@/components/t-data-table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { Role } from '@/constants/enum';
 import { AccountDto } from '@/schemaValidations/account.schema';
@@ -63,7 +63,7 @@ export default function EmployeeTable() {
       enableHiding: false,
       cell: function Actions({ row }) {
         return (
-          <TCellAction
+          <TCellActions
             editOption={{
               urlEdit: `/manage/employees/${row.original.id}/edit`
             }}

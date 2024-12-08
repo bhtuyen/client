@@ -19,7 +19,7 @@ const orderApiRequest = {
     ),
   getOrderDetail: (orderId: string) => http.get<OrderDtoDetailRes>(`/${prefix}/${orderId}`),
   createOrder: (body: CreateOrders) => http.post<OrdersDtoDetailRes>(`/${prefix}`, body),
-  updateOrder: ({ id, ...body }: UpdateOrder) => http.put<OrderDtoDetailRes>(`/${prefix}/${id}`, body),
+  updateOrder: (body: UpdateOrder) => http.put<OrderDtoDetailRes>(`/${prefix}/${body.id}`, body),
   payOrder: (body: GuestPayOrders) => http.post<OrdersDtoDetailRes>(`/${prefix}/pay`, body)
 };
 

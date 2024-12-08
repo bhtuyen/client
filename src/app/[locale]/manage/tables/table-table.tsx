@@ -3,7 +3,7 @@
 import AddTable from '@/app/[locale]/manage/tables/create/add-table';
 import { useDeleteTableMutation, useTableListQuery } from '@/app/queries/useTable';
 import QRCodeTable from '@/components/qrcode-table';
-import TDataTable, { TCellAction } from '@/components/t-data-table';
+import TDataTable, { TCellActions } from '@/components/t-data-table';
 import type { TableStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { handleErrorApi } from '@/lib/utils';
@@ -68,7 +68,7 @@ export default function TableTable() {
         enableHiding: false,
         cell: function Actions({ row }) {
           return (
-            <TCellAction
+            <TCellActions
               editOption={{
                 urlEdit: `/manage/tables/${row.original.number}/edit`
               }}

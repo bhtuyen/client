@@ -1,8 +1,8 @@
 'use client';
 import { useAccountMeQuery } from '@/app/queries/useAccount';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useLogoutMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Link } from '@/i18n/routing';
 import { getArguments } from '@/lib/utils';
 import type { TMessKey } from '@/types/message.type';
+import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import React from 'react';
 import type { UrlObject } from 'url';
@@ -38,7 +39,14 @@ const TButton = React.forwardRef<HTMLButtonElement, TButtonProps>(
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button {...props} asChild={isLinkButton} ref={ref}>
+            <Button
+              {...props}
+              asChild={isLinkButton}
+              ref={ref}
+              className={clsx({
+                hidden: props.hidden
+              })}
+            >
               {child}
             </Button>
           </TooltipTrigger>
