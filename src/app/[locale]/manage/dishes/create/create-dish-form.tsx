@@ -5,7 +5,6 @@ import { useCreateDishMutation, useDishGroupQuery } from '@/app/queries/useDish'
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
 import TButton from '@/components/t-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -23,7 +22,7 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-export default function AddDishForm() {
+export default function CreateDishForm() {
   const [file, setFile] = useState<File | null>(null);
   const [openFormAdd, setOpenFormAdd] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
@@ -87,11 +86,7 @@ export default function AddDishForm() {
   return (
     <>
       <Form {...form}>
-        <form
-          noValidate
-          className='p-4 h-full flex flex-col justify-between'
-          onSubmit={form.handleSubmit(onSubmit, console.log)}
-        >
+        <form noValidate className='p-4 h-full flex flex-col justify-between' onSubmit={form.handleSubmit(onSubmit, console.log)}>
           <div className='grid grid-cols-3 gap-4'>
             <FormField
               control={form.control}
@@ -120,12 +115,7 @@ export default function AddDishForm() {
                     />
                   </FormControl>
                   <FormLabel>
-                    <TButton
-                      type='button'
-                      variant='outline'
-                      onClick={() => imageInputRef.current?.click()}
-                      tooltip='upload-image'
-                    >
+                    <TButton type='button' variant='outline' onClick={() => imageInputRef.current?.click()} tooltip='upload-image'>
                       <Upload />
                       <span className='sr-only'>{tButton('upload-image')}</span>
                     </TButton>
@@ -201,7 +191,7 @@ export default function AddDishForm() {
                         ))}
                       </SelectContent>
                     </Select>
-                    <Button
+                    <TButton
                       className='col-span-1 m-0'
                       type='button'
                       onClick={() => {
@@ -209,7 +199,7 @@ export default function AddDishForm() {
                       }}
                     >
                       {tButton('create-dish-group')}
-                    </Button>
+                    </TButton>
                   </div>
                   <div className='h-5'>
                     <FormMessage />
@@ -228,11 +218,7 @@ export default function AddDishForm() {
                     {tForm('dish-category')}
                   </FormLabel>
                   <FormControl className='h-9'>
-                    <RadioGroup
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      className='flex items-center gap-x-4'
-                    >
+                    <RadioGroup value={field.value} onValueChange={field.onChange} className='flex items-center gap-x-4'>
                       <FormItem className='items-center flex-row gap-x-2'>
                         <FormControl>
                           <RadioGroupItem value='Buffet' />
@@ -262,7 +248,7 @@ export default function AddDishForm() {
                 <FormItem>
                   <FormLabel>{tForm('dish-price')}</FormLabel>
                   <FormControl>
-                    <Input {...field} type='number' IconLeft={Banknote} min={0} pattern='([0-9]{1,3}).([0-9]{1,3})' />
+                    <Input {...field} type='number' IconLeft={Banknote} min={0} />
                   </FormControl>
                   <div className='h-5'>
                     <FormMessage />

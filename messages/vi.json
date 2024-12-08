@@ -173,7 +173,10 @@
       "edit": {
         "title": "Chỉnh sửa bàn ăn",
         "description": "Chỉnh sửa thông tin bàn ăn"
-      }
+      },
+      "qr-table-info": "Bàn {number}",
+      "qr-table-description": "Quét mã QR để gọi món",
+      "choose-status": "Chọn trạng thái cho bàn ăn"
     },
     "setting": {
       "title": "Cài đặt",
@@ -204,7 +207,9 @@
     },
     "filter": {
       "input-placeholder-default": "Tìm kiếm...",
-      "input-placeholder-employee": "Tìm kiếm theo email..."
+      "input-placeholder-employee": "Tìm kiếm theo email...",
+      "input-placeholder-dish": "Tìm kiếm theo tên món...",
+      "input-placeholder-table": "Tìm kiếm theo tên bàn..."
     },
     "no-data": "Không có dữ liệu.",
     "no-result": "Không tìm thấy kết quả phù hợp.",
@@ -232,6 +237,12 @@
     "dish-description": "Mô tả",
     "dish-group": "Nhóm",
     "dish-options": "Tùy chọn",
-    "dish-status": "Trạng thái"
+    "dish-status": "Trạng thái",
+    "table-number": "Số bàn",
+    "table-capacity": "Sức chứa",
+    "table-status": "Trạng thái",
+    "change-token": "Đổi mã QR",
+    "change-token-description": "Tích chọn để đổi mã QR",
+    "qr-code": "Mã QR"
   }
 }

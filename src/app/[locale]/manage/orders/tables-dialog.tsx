@@ -1,7 +1,7 @@
 'use client';
 import { useTableListQuery } from '@/app/queries/useTable';
 import AutoPagination from '@/components/auto-pagination';
-import { Button } from '@/components/ui/button';
+import TButton from '@/components/t-button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -9,14 +9,7 @@ import { TableStatus } from '@/constants/enum';
 import { cn, simpleMatchText } from '@/lib/utils';
 import { TableDto } from '@/schemaValidations/table.schema';
 import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from '@tanstack/react-table';
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable
-} from '@tanstack/react-table';
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
@@ -96,7 +89,7 @@ export function TablesDialog({ onChoose }: { onChoose: (_table: TableDto) => voi
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant='outline'>Thay đổi</Button>
+        <TButton variant='outline'>Thay đổi</TButton>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[600px] max-h-full overflow-auto'>
         <DialogHeader>
@@ -118,13 +111,7 @@ export function TablesDialog({ onChoose }: { onChoose: (_table: TableDto) => voi
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => {
-                        return (
-                          <TableHead key={header.id}>
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(header.column.columnDef.header, header.getContext())}
-                          </TableHead>
-                        );
+                        return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>;
                       })}
                     </TableRow>
                   ))}
@@ -136,24 +123,17 @@ export function TablesDialog({ onChoose }: { onChoose: (_table: TableDto) => voi
                         key={row.id}
                         data-state={row.getIsSelected() && 'selected'}
                         onClick={() => {
-                          if (
-                            row.original.status === TableStatus.Available ||
-                            row.original.status === TableStatus.Reserved
-                          ) {
+                          if (row.original.status === TableStatus.Available || row.original.status === TableStatus.Reserved) {
                             choose(row.original);
                           }
                         }}
                         className={cn({
-                          'cursor-pointer':
-                            row.original.status === TableStatus.Available ||
-                            row.original.status === TableStatus.Reserved,
+                          'cursor-pointer': row.original.status === TableStatus.Available || row.original.status === TableStatus.Reserved,
                           'cursor-not-allowed': row.original.status === TableStatus.Hidden
                         })}
                       >
                         {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
+                          <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                         ))}
                       </TableRow>
                     ))
@@ -169,8 +149,7 @@ export function TablesDialog({ onChoose }: { onChoose: (_table: TableDto) => voi
             </div>
             <div className='flex items-center justify-end space-x-2 py-4'>
               <div className='text-xs text-muted-foreground py-4 flex-1 '>
-                Hiển thị <strong>{table.getPaginationRowModel().rows.length}</strong> trong{' '}
-                <strong>{data.length}</strong> kết quả
+                Hiển thị <strong>{table.getPaginationRowModel().rows.length}</strong> trong <strong>{data.length}</strong> kết quả
               </div>
               <div>
                 <AutoPagination

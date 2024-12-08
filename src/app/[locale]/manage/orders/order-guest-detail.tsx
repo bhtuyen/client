@@ -1,33 +1,16 @@
 import { usePayOrderMutation } from '@/app/queries/useOrder';
+import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { DishCategory, OrderStatus } from '@/constants/enum';
-import {
-  OrderStatusIcon,
-  formatCurrency,
-  formatDateTimeToLocaleString,
-  formatDateTimeToTimeString,
-  getPrice,
-  handleErrorApi
-} from '@/lib/utils';
+import { OrderStatusIcon, formatCurrency, formatDateTimeToLocaleString, formatDateTimeToTimeString, getPrice, handleErrorApi } from '@/lib/utils';
 import { GuestDto } from '@/schemaValidations/guest.schema';
 import { OrderDtoDetail, OrdersDtoDetailRes } from '@/schemaValidations/order.schema';
 import { useTranslations } from 'next-intl';
 import { Fragment } from 'react';
 
-export default async function OrderGuestDetail({
-  guest,
-  orders,
-  onPaySuccess
-}: {
-  guest: GuestDto;
-  orders: OrderDtoDetail[];
-  onPaySuccess?: (_data: OrdersDtoDetailRes) => void;
-}) {
-  const ordersFilterToPurchase = guest
-    ? orders.filter((order) => order.status !== OrderStatus.Paid && order.status !== OrderStatus.Rejected)
-    : [];
+export default async function OrderGuestDetail({ guest, orders, onPaySuccess }: { guest: GuestDto; orders: OrderDtoDetail[]; onPaySuccess?: (_data: OrdersDtoDetailRes) => void }) {
+  const ordersFilterToPurchase = guest ? orders.filter((order) => order.status !== OrderStatus.Paid && order.status !== OrderStatus.Rejected) : [];
   const purchasedOrderFilter = guest ? orders.filter((order) => order.status === OrderStatus.Paid) : [];
 
   const payMutation = usePayOrderMutation();
@@ -75,14 +58,7 @@ export default async function OrderGuestDetail({
                 {order.status === OrderStatus.Delivered && <OrderStatusIcon.Delivered className='w-4 h-4' />}
                 {order.status === OrderStatus.Paid && <OrderStatusIcon.Paid className='w-4 h-4 text-yellow-400' />}
               </span>
-              <TImage
-                src={order.dishSnapshot.image}
-                alt={order.dishSnapshot.name}
-                title={order.dishSnapshot.name}
-                width={30}
-                height={30}
-                className='h-[30px] w-[30px] rounded object-cover'
-              />
+              <TImage src={order.dishSnapshot.image} alt={order.dishSnapshot.name} title={order.dishSnapshot.name} width={30} height={30} className='h-[30px] w-[30px] rounded object-cover' />
               <span className='truncate w-[70px] sm:w-[100px]' title={order.dishSnapshot.name}>
                 {order.dishSnapshot.name}
               </span>
@@ -92,18 +68,14 @@ export default async function OrderGuestDetail({
               <span className='italic'>{getPrice(order.dishSnapshot)}</span>
               <span
                 className='hidden sm:inline'
-                title={`Tạo: ${formatDateTimeToLocaleString(
-                  order.createdAt
-                )} | Cập nhật: ${formatDateTimeToLocaleString(order.updatedAt)}
+                title={`Tạo: ${formatDateTimeToLocaleString(order.createdAt)} | Cập nhật: ${formatDateTimeToLocaleString(order.updatedAt)}
           `}
               >
                 {formatDateTimeToLocaleString(order.createdAt)}
               </span>
               <span
                 className='sm:hidden'
-                title={`Tạo: ${formatDateTimeToLocaleString(
-                  order.createdAt
-                )} | Cập nhật: ${formatDateTimeToLocaleString(order.updatedAt)}
+                title={`Tạo: ${formatDateTimeToLocaleString(order.createdAt)} | Cập nhật: ${formatDateTimeToLocaleString(order.updatedAt)}
           `}
               >
                 {formatDateTimeToTimeString(order.createdAt)}
@@ -145,15 +117,9 @@ export default async function OrderGuestDetail({
       </div>
 
       <div>
-        <Button
-          className='w-full'
-          size={'sm'}
-          variant={'secondary'}
-          disabled={ordersFilterToPurchase.length === 0}
-          onClick={pay}
-        >
+        <TButton className='w-full' size={'sm'} variant={'secondary'} disabled={ordersFilterToPurchase.length === 0} onClick={pay}>
           Thanh toán tất cả ({ordersFilterToPurchase.length} đơn)
-        </Button>
+        </TButton>
       </div>
     </div>
   );

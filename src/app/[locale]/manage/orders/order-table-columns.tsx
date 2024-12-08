@@ -2,17 +2,10 @@
 
 import OrderGuestDetail from '@/app/[locale]/manage/orders/order-guest-detail';
 import { OrderTableContext } from '@/app/[locale]/manage/orders/order-table';
+import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { OrderStatus } from '@/constants/enum';
@@ -75,23 +68,11 @@ const orderTableColumns: ColumnDef<OrderDtoDetail>[] = [
       <div className='flex items-center gap-2'>
         <Popover>
           <PopoverTrigger asChild>
-            <TImage
-              src={row.original.dishSnapshot.image}
-              alt={row.original.dishSnapshot.name}
-              width={50}
-              height={50}
-              className='rounded-md object-cover w-[50px] h-[50px] cursor-pointer'
-            />
+            <TImage src={row.original.dishSnapshot.image} alt={row.original.dishSnapshot.name} width={50} height={50} className='rounded-md object-cover w-[50px] h-[50px] cursor-pointer' />
           </PopoverTrigger>
           <PopoverContent>
             <div className='flex flex-wrap gap-2'>
-              <TImage
-                src={row.original.dishSnapshot.image}
-                alt={row.original.dishSnapshot.name}
-                width={100}
-                height={100}
-                className='rounded-md object-cover w-[100px] h-[100px]'
-              />
+              <TImage src={row.original.dishSnapshot.image} alt={row.original.dishSnapshot.name} width={100} height={100} className='rounded-md object-cover w-[100px] h-[100px]' />
               <div className='space-y-1 text-sm'>
                 <h3 className='font-semibold'>{row.original.dishSnapshot.name}</h3>
                 <div className='italic'>{getPrice(row.original.dishSnapshot)}</div>
@@ -160,9 +141,7 @@ const orderTableColumns: ColumnDef<OrderDtoDetail>[] = [
     cell: ({ row }) => (
       <div className='space-y-2 text-sm'>
         <div className='flex items-center space-x-4'>{formatDateTimeToLocaleString(row.getValue('createdAt'))}</div>
-        <div className='flex items-center space-x-4'>
-          {formatDateTimeToLocaleString(row.original.updatedAt as unknown as string)}
-        </div>
+        <div className='flex items-center space-x-4'>{formatDateTimeToLocaleString(row.original.updatedAt as unknown as string)}</div>
       </div>
     )
   },
@@ -178,10 +157,10 @@ const orderTableColumns: ColumnDef<OrderDtoDetail>[] = [
       return (
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0'>
+            <TButton variant='ghost' className='h-8 w-8 p-0'>
               <span className='sr-only'>Open menu</span>
               <DotsHorizontalIcon className='h-4 w-4' />
-            </Button>
+            </TButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>

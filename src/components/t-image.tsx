@@ -10,16 +10,5 @@ export default function TImage({
 }: Omit<ImageProps, 'src'> & {
   src: string | undefined | StaticImport;
 }) {
-  return (
-    <Image
-      width={width}
-      height={height}
-      src={src ?? '/60000155_kem_sua_chua_1.jpg'}
-      alt={alt}
-      {...rest}
-      loading='lazy'
-      placeholder='blur'
-      blurDataURL='/restaurant.jpg'
-    />
-  );
+  return <Image width={width} height={height} src={src ?? '/60000155_kem_sua_chua_1.jpg'} alt={alt} {...rest} loading='lazy' placeholder='blur' blurDataURL='/restaurant.jpg' />;
 }

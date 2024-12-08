@@ -2,6 +2,7 @@
 import { useLoginMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
 import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
+import TButton from '@/components/t-button';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
@@ -75,11 +76,7 @@ export default function LoginForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form
-            className='space-y-2 max-w-[600px] flex-shrink-0 w-full'
-            noValidate
-            onSubmit={form.handleSubmit(onSubmit, (error) => console.warn(error))}
-          >
+          <form className='space-y-2 max-w-[600px] flex-shrink-0 w-full' noValidate onSubmit={form.handleSubmit(onSubmit, (error) => console.warn(error))}>
             <div className='grid gap-4'>
               <FormField
                 control={form.control}
@@ -89,13 +86,7 @@ export default function LoginForm() {
                     <div className='grid gap-2'>
                       <Label htmlFor='email'>{tLoginForm('email')}</Label>
                       <Input id='email' type='email' placeholder='m@example.com' required {...field} />
-                      <FormMessage
-                        message={
-                          errors.email?.message
-                            ? tMessageValidation(errors.email?.message as TMessageKeys<'message-validation'>)
-                            : null
-                        }
-                      />
+                      <FormMessage message={errors.email?.message ? tMessageValidation(errors.email?.message as TMessageKeys<'message-validation'>) : null} />
                     </div>
                   </FormItem>
                 )}
@@ -115,13 +106,13 @@ export default function LoginForm() {
                   </FormItem>
                 )}
               />
-              <Button type='submit' className='w-full'>
+              <TButton type='submit' className='w-full'>
                 {tButton('login')}
-              </Button>
+              </TButton>
               <Link href={googleOauthUrl}>
-                <Button variant='outline' className='w-full' type='button'>
+                <TButton variant='outline' className='w-full' type='button'>
                   {tButton('login-with-google')}
-                </Button>
+                </TButton>
               </Link>
             </div>
           </form>

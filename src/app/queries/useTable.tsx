@@ -9,10 +9,10 @@ export const useTableListQuery = () => {
   });
 };
 
-export const useTableQuery = (number: string) => {
+export const useTableQuery = (id: string) => {
   return useQuery({
-    queryKey: ['table', number],
-    queryFn: () => tableApiRequets.getById(number)
+    queryKey: ['table', id],
+    queryFn: () => tableApiRequets.getById(id)
   });
 };
 

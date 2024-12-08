@@ -1,20 +1,13 @@
 import { useGetGuestsQuery } from '@/app/queries/useGuest';
 import AutoPagination from '@/components/auto-pagination';
-import { Button } from '@/components/ui/button';
+import TButton from '@/components/t-button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatDateTimeToLocaleString, simpleMatchText } from '@/lib/utils';
 import { GuestDto } from '@/schemaValidations/guest.schema';
 import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from '@tanstack/react-table';
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable
-} from '@tanstack/react-table';
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { endOfDay, format, startOfDay } from 'date-fns';
 import { useEffect, useState } from 'react';
 
@@ -44,11 +37,7 @@ export const columns: ColumnDef<GuestDto>[] = [
   {
     accessorKey: 'createdAt',
     header: () => <div>Tạo</div>,
-    cell: ({ row }) => (
-      <div className='flex items-center space-x-4 text-sm'>
-        {formatDateTimeToLocaleString(row.getValue('createdAt'))}
-      </div>
-    )
+    cell: ({ row }) => <div className='flex items-center space-x-4 text-sm'>{formatDateTimeToLocaleString(row.getValue('createdAt'))}</div>
   }
 ];
 
@@ -113,7 +102,7 @@ export default function GuestsDialog({ onChoose }: { onChoose: (_guest: GuestDto
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant='outline'>Chọn khách</Button>
+        <TButton variant='outline'>Chọn khách</TButton>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[700px] max-h-full overflow-auto'>
         <DialogHeader>
@@ -134,16 +123,11 @@ export default function GuestsDialog({ onChoose }: { onChoose: (_guest: GuestDto
               </div>
               <div className='flex items-center'>
                 <span className='mr-2'>Đến</span>
-                <Input
-                  type='datetime-local'
-                  placeholder='Đến ngày'
-                  value={format(toDate, 'yyyy-MM-dd HH:mm').replace(' ', 'T')}
-                  onChange={(event) => setToDate(new Date(event.target.value))}
-                />
+                <Input type='datetime-local' placeholder='Đến ngày' value={format(toDate, 'yyyy-MM-dd HH:mm').replace(' ', 'T')} onChange={(event) => setToDate(new Date(event.target.value))} />
               </div>
-              <Button className='' variant={'outline'} onClick={resetDateFilter}>
+              <TButton className='' variant={'outline'} onClick={resetDateFilter}>
                 Reset
-              </Button>
+              </TButton>
             </div>
             <div className='flex items-center py-4 gap-2'>
               <Input
@@ -165,13 +149,7 @@ export default function GuestsDialog({ onChoose }: { onChoose: (_guest: GuestDto
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => {
-                        return (
-                          <TableHead key={header.id}>
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(header.column.columnDef.header, header.getContext())}
-                          </TableHead>
-                        );
+                        return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>;
                       })}
                     </TableRow>
                   ))}
@@ -188,9 +166,7 @@ export default function GuestsDialog({ onChoose }: { onChoose: (_guest: GuestDto
                         className='cursor-pointer'
                       >
                         {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
+                          <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                         ))}
                       </TableRow>
                     ))
@@ -206,8 +182,7 @@ export default function GuestsDialog({ onChoose }: { onChoose: (_guest: GuestDto
             </div>
             <div className='flex items-center justify-end space-x-2 py-4'>
               <div className='text-xs text-muted-foreground py-4 flex-1 '>
-                Hiển thị <strong>{table.getPaginationRowModel().rows.length}</strong> trong{' '}
-                <strong>{data.length}</strong> kết quả
+                Hiển thị <strong>{table.getPaginationRowModel().rows.length}</strong> trong <strong>{data.length}</strong> kết quả
               </div>
               <div>
                 <AutoPagination

@@ -1,13 +1,5 @@
-import { Button } from '@/components/ui/button';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious
-} from '@/components/ui/pagination';
+import TButton from '@/components/t-button';
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 interface Props {
@@ -42,13 +34,7 @@ Với range = 2 áp dụng cho khoảng cách đầu, cuối và xung quanh curr
  */
 
 const RANGE = 2;
-export default function AutoPagination({
-  page,
-  pageSize,
-  pathname = '/',
-  isLink = true,
-  onClick = (_pageNumber) => {}
-}: Props) {
+export default function AutoPagination({ page, pageSize, pathname = '/', isLink = true, onClick = (_pageNumber) => {} }: Props) {
   const renderPagination = () => {
     let dotAfter = false;
     let dotBefore = false;
@@ -107,9 +93,9 @@ export default function AutoPagination({
               </PaginationLink>
             )}
             {!isLink && (
-              <Button variant={pageNumber === page ? 'outline' : 'ghost'} onClick={() => onClick(pageNumber)}>
+              <TButton variant={pageNumber === page ? 'outline' : 'ghost'} onClick={() => onClick(pageNumber)}>
                 {pageNumber}
-              </Button>
+              </TButton>
             )}
           </PaginationItem>
         );
@@ -138,7 +124,7 @@ export default function AutoPagination({
             />
           )}
           {!isLink && (
-            <Button
+            <TButton
               disabled={page === 1}
               className={cn({
                 'cursor-not-allowed': page === 1
@@ -147,7 +133,7 @@ export default function AutoPagination({
               onClick={() => onClick(page - 1)}
             >
               <ChevronLeft className='w-5 h-5 pr-1' />
-            </Button>
+            </TButton>
           )}
         </PaginationItem>
         {renderPagination()}
@@ -172,7 +158,7 @@ export default function AutoPagination({
             />
           )}
           {!isLink && (
-            <Button
+            <TButton
               disabled={page === 1}
               className={cn({
                 'cursor-not-allowed': page === 1
@@ -181,7 +167,7 @@ export default function AutoPagination({
               onClick={() => onClick(page - 1)}
             >
               <ChevronRight className='w-5 h-5 pl-1' />
-            </Button>
+            </TButton>
           )}
         </PaginationItem>
       </PaginationContent>

@@ -1,3 +1,4 @@
+import TButton from '@/components/t-button';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Minus, Plus } from 'lucide-react';
@@ -13,14 +14,9 @@ interface TQuantityProps {
 export default function TQuantity({ onChange, value, disabled = false, classIcon, classInput }: TQuantityProps) {
   return (
     <div className='flex gap-1 '>
-      <Button
-        variant={'ghost'}
-        className={`h-6 w-6 p-0 ${classIcon}`}
-        disabled={value === 0 || disabled}
-        onClick={() => onChange(value - 1)}
-      >
+      <TButton variant={'ghost'} className={`h-6 w-6 p-0 ${classIcon}`} disabled={value === 0 || disabled} onClick={() => onChange(value - 1)}>
         <Minus className='w-3 h-3' />
-      </Button>
+      </TButton>
       <Input
         type='text'
         inputMode='numeric'
@@ -36,14 +32,9 @@ export default function TQuantity({ onChange, value, disabled = false, classIcon
           onChange(numberValue);
         }}
       />
-      <Button
-        variant={'ghost'}
-        className={`h-6 w-6 p-0 ${classIcon}`}
-        onClick={() => onChange(value + 1)}
-        disabled={disabled}
-      >
+      <TButton variant={'ghost'} className={`h-6 w-6 p-0 ${classIcon}`} onClick={() => onChange(value + 1)} disabled={disabled}>
         <Plus className='w-3 h-3' />
-      </Button>
+      </TButton>
     </div>
   );
 }

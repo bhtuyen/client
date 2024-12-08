@@ -1,26 +1,16 @@
 'use client';
 import { useGuestOrderMutation, useGuestOrdersQuery } from '@/app/queries/useGuest';
 import { useAppStore } from '@/components/app-provider';
+import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import type { TabsKeyType } from '@/components/tabs';
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DishCategory } from '@/constants/enum';
 import { formatCurrency, getPrice, handleErrorApi } from '@/lib/utils';
 import clsx from 'clsx';
 import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { useMemo, useState } from 'react';
 
 const tabs = [
@@ -32,10 +22,7 @@ export default function Cart() {
   const [activeTab, setActiveTab] = useState<TabsKeyType<typeof tabs>>('cart');
   const { cart, changeQuantity, removeDishesFromCart: removeDishFromCart, removeAllCart } = useAppStore();
 
-  const sumPrice = cart.reduce(
-    (sum, dish) => sum + (dish.category === DishCategory.Buffet ? 0 : dish.price * dish.quantity),
-    0
-  );
+  const sumPrice = cart.reduce((sum, dish) => sum + (dish.category === DishCategory.Buffet ? 0 : dish.price * dish.quantity), 0);
 
   const tOrderStatus = useTranslations('order-status');
 
@@ -44,9 +31,7 @@ export default function Cart() {
 
   const handleGuestOrder = async () => {
     try {
-      await guestOrderMutation.mutateAsync(
-        cart.map((dish) => ({ dishId: dish.id, quantity: dish.quantity, options: dish.options }))
-      );
+      await guestOrderMutation.mutateAsync(cart.map((dish) => ({ dishId: dish.id, quantity: dish.quantity, options: dish.options })));
       setActiveTab('ordered');
       removeAllCart();
       refetch();
@@ -72,9 +57,7 @@ export default function Cart() {
       <DialogTrigger asChild>
         <div className='rounded-full bg-[#f2f2f2] h-[60%] aspect-square flex items-center justify-center relative'>
           <ShoppingCart color='#000000' />
-          <span className='text-white absolute top-[-4px] right-[-4px] rounded-full flex justify-center items-center bg-red-500 h-[45%] aspect-square text-[12px]'>
-            {cart.length}
-          </span>
+          <span className='text-white absolute top-[-4px] right-[-4px] rounded-full flex justify-center items-center bg-red-500 h-[45%] aspect-square text-[12px]'>{cart.length}</span>
         </div>
       </DialogTrigger>
       <DialogContent className='w-full h-full p-0 bg-white text-black flex flex-col' isHiddenClose>
@@ -88,11 +71,7 @@ export default function Cart() {
           <DialogDescription />
         </DialogHeader>
 
-        <Tabs
-          value={activeTab}
-          className='w-full'
-          onValueChange={(value) => setActiveTab(value as TabsKeyType<typeof tabs>)}
-        >
+        <Tabs value={activeTab} className='w-full' onValueChange={(value) => setActiveTab(value as TabsKeyType<typeof tabs>)}>
           <TabsList className='w-full bg-primary p-0'>
             <TabsTrigger
               value='cart'
@@ -127,11 +106,7 @@ export default function Cart() {
                             <p>{dish.quantity}</p>
                             <Plus size={20} onClick={() => changeQuantity(dish.id, dish.quantity + 1)} />
                           </div>
-                          <p className='text-red-950 font-medium'>
-                            {dish.category === DishCategory.Buffet
-                              ? 'Buffet'
-                              : formatCurrency(dish.price * dish.quantity)}
-                          </p>
+                          <p className='text-red-950 font-medium'>{dish.category === DishCategory.Buffet ? 'Buffet' : formatCurrency(dish.price * dish.quantity)}</p>
                         </div>
                       </div>
                       <X className='h-6 w-6 absolute top-3 right-3' onClick={() => removeDishFromCart([dish.id])} />
@@ -145,13 +120,8 @@ export default function Cart() {
             {activeTab === 'ordered' && orders.length > 0 && (
               <div className='flex-auto overflow-y-auto'>
                 {orders.map(({ id, quantity, status, dishSnapshot }) => (
-                  <div
-                    className='flex p-4 relative text-black border-b-[1px] border-b-[#e3e3e3] gap-4 items-center'
-                    key={id}
-                  >
-                    <span className='bg-[#f2f2f2] text-lg font-medium h-8 w-8 rounded-md flex items-center justify-center'>
-                      {quantity}x
-                    </span>
+                  <div className='flex p-4 relative text-black border-b-[1px] border-b-[#e3e3e3] gap-4 items-center' key={id}>
+                    <span className='bg-[#f2f2f2] text-lg font-medium h-8 w-8 rounded-md flex items-center justify-center'>{quantity}x</span>
                     <span className='text-lg font-medium flex-auto'>{dishSnapshot.name}</span>
                     <span>{tOrderStatus(status)}</span>
                     <span className='text-red-950 font-medium'>{getPrice(dishSnapshot)}</span>
@@ -184,24 +154,20 @@ export default function Cart() {
                   <p className='text-red-950 font-medium text-xl'>{formatCurrency(sumPrice)}</p>
                 </div>
                 <div className='flex items-center gap-4 pb-4'>
-                  <Button variant={'outline'} className='bg-white w-full h-[50px] text-base'>
+                  <TButton variant={'outline'} className='bg-white w-full h-[50px] text-base'>
                     Thanh toán
-                  </Button>
-                  <Button
-                    className='text-white bg-black w-full h-[50px] text-base'
-                    variant={'ghost'}
-                    onClick={() => handleGuestOrder()}
-                  >
+                  </TButton>
+                  <TButton className='text-white bg-black w-full h-[50px] text-base' variant={'ghost'} onClick={() => handleGuestOrder()}>
                     Gọi món ngay
-                  </Button>
+                  </TButton>
                 </div>
               </div>
             )}
             {cart.length === 0 && (
               <DialogClose asChild>
-                <Button className='text-white bg-black w-full h-[50px] text-base' variant={'ghost'}>
+                <TButton className='text-white bg-black w-full h-[50px] text-base' variant={'ghost'}>
                   Chọn món ngay
-                </Button>
+                </TButton>
               </DialogClose>
             )}
           </DialogFooter>
@@ -221,9 +187,9 @@ export default function Cart() {
               </div>
             )}
             {orders.length === 0 && (
-              <Button className='text-white bg-black w-full h-[50px] text-base' variant={'ghost'}>
+              <TButton className='text-white bg-black w-full h-[50px] text-base' variant={'ghost'}>
                 Chọn món ngay
-              </Button>
+              </TButton>
             )}
           </DialogFooter>
         )}

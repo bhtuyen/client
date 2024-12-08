@@ -1,6 +1,5 @@
 'use client';
-import type { ButtonProps } from '@/components/ui/button';
-import { Button } from '@/components/ui/button';
+import { Button, type ButtonProps } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Link } from '@/i18n/routing';
 import { getArguments } from '@/lib/utils';
@@ -17,47 +16,48 @@ interface TButtonProps extends ButtonProps {
   asLink?: boolean;
 }
 
-const TButton = React.forwardRef<HTMLButtonElement, TButtonProps>(
-  ({ tooltip, asLink = false, children, href, ...props }, ref) => {
-    const tButton = useTranslations('t-button');
-    const tooltipMess = tButton(...getArguments(tooltip != undefined ? tooltip : 'default'));
+const TButton = React.forwardRef<HTMLButtonElement, TButtonProps>(({ tooltip, asLink = false, children, href, className, ...props }, ref) => {
+  const tButton = useTranslations('t-button');
+  const tooltipMess = tButton(...getArguments(tooltip != undefined ? tooltip : 'default'));
 
-    const isLinkButton = asLink && !!href;
+  const isLinkButton = asLink && !!href;
 
-    const child = isLinkButton ? (
-      <Link href={href}>
-        <span className='sr-only'>{tooltipMess}</span>
-        {children}
-      </Link>
-    ) : (
-      <>
-        <span className='sr-only'>{tooltipMess}</span>
-        {children}
-      </>
-    );
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              {...props}
-              asChild={isLinkButton}
-              ref={ref}
-              className={clsx({
+  const child = isLinkButton ? (
+    <Link href={href}>
+      <span className='sr-only'>{tooltipMess}</span>
+      {children}
+    </Link>
+  ) : (
+    <>
+      <span className='sr-only'>{tooltipMess}</span>
+      {children}
+    </>
+  );
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            {...props}
+            asChild={isLinkButton}
+            ref={ref}
+            className={clsx(
+              {
                 hidden: props.hidden
-              })}
-            >
-              {child}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side='top' align='center' hidden={tooltip === undefined}>
-            {tooltip != undefined && tooltipMess}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-  }
-);
+              },
+              className
+            )}
+          >
+            {child}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side='top' align='center' hidden={tooltip === undefined}>
+          {tooltip != undefined && tooltipMess}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+});
 
 TButton.displayName = 'TButton';
 

@@ -1,7 +1,7 @@
 import { useDishListQuery } from '@/app/queries/useDish';
 import AutoPagination from '@/components/auto-pagination';
+import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
-import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -9,14 +9,7 @@ import type { DishStatus } from '@/constants/enum';
 import { formatCurrency, simpleMatchText } from '@/lib/utils';
 import type { DishesRes } from '@/schemaValidations/dish.schema';
 import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from '@tanstack/react-table';
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable
-} from '@tanstack/react-table';
+import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 
@@ -44,13 +37,7 @@ export function DishesDialog({ onChoose }: { onChoose: (_dish: DishItem) => void
       header: 'Món ăn',
       cell: ({ row }) => (
         <div className='flex items-center space-x-4'>
-          <TImage
-            src={row.original.image}
-            alt={row.original.name}
-            width={50}
-            height={50}
-            className='rounded-md object-cover w-[50px] h-[50px]'
-          />
+          <TImage src={row.original.image} alt={row.original.name} width={50} height={50} className='rounded-md object-cover w-[50px] h-[50px]' />
           <span>{row.original.name}</span>
         </div>
       ),
@@ -108,7 +95,7 @@ export function DishesDialog({ onChoose }: { onChoose: (_dish: DishItem) => void
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant='outline'>Thay đổi</Button>
+        <TButton variant='outline'>Thay đổi</TButton>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[600px]'>
         <DialogHeader>
@@ -130,13 +117,7 @@ export function DishesDialog({ onChoose }: { onChoose: (_dish: DishItem) => void
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => {
-                        return (
-                          <TableHead key={header.id}>
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(header.column.columnDef.header, header.getContext())}
-                          </TableHead>
-                        );
+                        return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>;
                       })}
                     </TableRow>
                   ))}
@@ -144,16 +125,9 @@ export function DishesDialog({ onChoose }: { onChoose: (_dish: DishItem) => void
                 <TableBody>
                   {table.getRowModel().rows?.length ? (
                     table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && 'selected'}
-                        onClick={() => choose(row.original)}
-                        className='cursor-pointer'
-                      >
+                      <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} onClick={() => choose(row.original)} className='cursor-pointer'>
                         {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
+                          <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                         ))}
                       </TableRow>
                     ))
@@ -169,8 +143,7 @@ export function DishesDialog({ onChoose }: { onChoose: (_dish: DishItem) => void
             </div>
             <div className='flex items-center justify-end space-x-2 py-4'>
               <div className='text-xs text-muted-foreground py-4 flex-1 '>
-                Hiển thị <strong>{table.getPaginationRowModel().rows.length}</strong> trong{' '}
-                <strong>{data.length}</strong> kết quả
+                Hiển thị <strong>{table.getPaginationRowModel().rows.length}</strong> trong <strong>{data.length}</strong> kết quả
               </div>
               <div>
                 <AutoPagination

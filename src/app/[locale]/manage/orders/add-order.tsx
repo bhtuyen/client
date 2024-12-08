@@ -4,18 +4,10 @@ import { TablesDialog } from '@/app/[locale]/manage/orders/tables-dialog';
 import { useDishListQuery } from '@/app/queries/useDish';
 import { useCreateGuestMutation } from '@/app/queries/useGuest';
 import { useCreateOrderMutation } from '@/app/queries/useOrder';
+import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import TQuantity from '@/components/t-quantity';
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormField, FormItem } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -117,10 +109,10 @@ export default function AddOrder() {
       open={open}
     >
       <DialogTrigger asChild>
-        <Button size='sm' className='h-7 gap-1'>
+        <TButton size='sm' className='h-7 gap-1'>
           <PlusCircle className='h-3.5 w-3.5' />
           <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>Tạo đơn hàng</span>
-        </Button>
+        </TButton>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[600px] max-h-screen overflow-auto'>
         <DialogHeader>
@@ -188,40 +180,27 @@ export default function AddOrder() {
               })}
             >
               <div className='flex-shrink-0 relative'>
-                {dish.status === DishStatus.Unavailable && (
-                  <span className='absolute inset-0 flex items-center justify-center text-sm'>Hết hàng</span>
-                )}
-                <TImage
-                  src={dish.image ?? '/60000155_kem_sua_chua_1.jpg'}
-                  alt={dish.name}
-                  height={100}
-                  width={100}
-                  quality={100}
-                  className='object-cover w-[80px] h-[80px] rounded-md'
-                />
+                {dish.status === DishStatus.Unavailable && <span className='absolute inset-0 flex items-center justify-center text-sm'>Hết hàng</span>}
+                <TImage src={dish.image ?? '/60000155_kem_sua_chua_1.jpg'} alt={dish.name} height={100} width={100} quality={100} className='object-cover w-[80px] h-[80px] rounded-md' />
               </div>
               <div className='space-y-1'>
                 <h3 className='text-sm'>{dish.name}</h3>
                 <p className='text-xs'>{dish.description}</p>
-                <p className='text-xs font-semibold'>
-                  {dish.category == DishCategory.Paid ? formatCurrency(dish.price) : DishCategory.Buffet}
-                </p>
+                <p className='text-xs font-semibold'>{dish.category == DishCategory.Paid ? formatCurrency(dish.price) : DishCategory.Buffet}</p>
               </div>
               <div className='flex-shrink-0 ml-auto flex justify-center items-center'>
                 <TQuantity
-                  onChange={(value) =>
-                    handleQuantityChange({ dishId: dish.id, options: dish.options, quantity: value })
-                  }
+                  onChange={(value) => handleQuantityChange({ dishId: dish.id, options: dish.options, quantity: value })}
                   value={createOrders.find((order) => order.dishId === dish.id)?.quantity ?? 0}
                 />
               </div>
             </div>
           ))}
         <DialogFooter>
-          <Button className='w-full justify-between' onClick={handleOrder} disabled={createOrders.length === 0}>
+          <TButton className='w-full justify-between' onClick={handleOrder} disabled={createOrders.length === 0}>
             <span>Đặt hàng · {createOrders.length} món</span>
             <span>{formatCurrency(totalPrice)}</span>
-          </Button>
+          </TButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

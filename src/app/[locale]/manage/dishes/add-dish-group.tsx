@@ -1,13 +1,6 @@
 import { useCreateDishGroupMutation } from '@/app/queries/useDish';
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
+import TButton from '@/components/t-button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -85,9 +78,9 @@ export default function AddDishGroup({ open, setOpen }: { open: boolean; setOpen
           </form>
         </Form>
         <DialogFooter>
-          <Button type='submit' form='add-dish-group-form'>
+          <TButton type='submit' form='add-dish-group-form'>
             Tạo
-          </Button>
+          </TButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

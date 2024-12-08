@@ -173,7 +173,10 @@
       "edit": {
         "title": "Edit table",
         "description": "Edit the information of the table"
-      }
+      },
+      "qr-table-info": "Table {number}",
+      "qr-table-description": "Scan the QR code to order",
+      "choose-status": "Choose status for table"
     },
     "setting": {
       "title": "Setting",
@@ -204,7 +207,9 @@
     },
     "filter": {
       "input-placeholder-default": "Search...",
-      "input-placeholder-employee": "Search by email..."
+      "input-placeholder-employee": "Search by email...",
+      "input-placeholder-dish": "Search by name...",
+      "input-placeholder-table": "Search by table number..."
     },
     "no-data": "No data available.",
     "no-result": "No matching records found.",
@@ -232,6 +237,12 @@
     "dish-description": "Description",
     "dish-group": "Group",
     "dish-options": "Options",
-    "dish-status": "Status"
+    "dish-status": "Status",
+    "table-number": "Table number",
+    "table-capacity": "Capacity",
+    "table-status": "Status",
+    "change-token": "Change QR code",
+    "change-token-description": "Switch to change QR code",
+    "qr-code": "QR code"
   }
 }

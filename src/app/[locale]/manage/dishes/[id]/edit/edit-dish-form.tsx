@@ -21,7 +21,7 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-export default function EditDish({ id }: { id: string }) {
+export default function EditDishForm({ id }: { id: string }) {
   const tDishStatus = useTranslations('dish-status');
   const tButton = useTranslations('t-button');
   const tForm = useTranslations('t-form');
@@ -91,11 +91,7 @@ export default function EditDish({ id }: { id: string }) {
   return (
     <>
       <Form {...form}>
-        <form
-          noValidate
-          className='p-4 h-full flex flex-col justify-between'
-          onSubmit={form.handleSubmit(onSubmit, console.log)}
-        >
+        <form noValidate className='p-4 h-full flex flex-col justify-between' onSubmit={form.handleSubmit(onSubmit, console.log)}>
           <div className='grid grid-cols-3 gap-4'>
             <FormField
               control={form.control}
@@ -124,12 +120,7 @@ export default function EditDish({ id }: { id: string }) {
                     />
                   </FormControl>
                   <FormLabel>
-                    <TButton
-                      type='button'
-                      variant='outline'
-                      onClick={() => imageInputRef.current?.click()}
-                      tooltip='upload-image'
-                    >
+                    <TButton type='button' variant='outline' onClick={() => imageInputRef.current?.click()} tooltip='upload-image'>
                       <Upload />
                       <span className='sr-only'>{tButton('upload-image')}</span>
                     </TButton>
@@ -232,11 +223,7 @@ export default function EditDish({ id }: { id: string }) {
                     {tForm('dish-category')}
                   </FormLabel>
                   <FormControl className='h-9'>
-                    <RadioGroup
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      className='flex items-center gap-x-4'
-                    >
+                    <RadioGroup value={field.value} onValueChange={field.onChange} className='flex items-center gap-x-4'>
                       <FormItem className='items-center flex-row gap-x-2'>
                         <FormControl>
                           <RadioGroupItem value='Buffet' />

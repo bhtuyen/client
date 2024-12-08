@@ -109,12 +109,7 @@ export default function EditEmployeeForm({ id }: { id: string }) {
                   />
                 </FormControl>
                 <FormLabel>
-                  <TButton
-                    type='button'
-                    variant='outline'
-                    onClick={() => avatarInputRef.current?.click()}
-                    tooltip='upload-image'
-                  >
+                  <TButton type='button' variant='outline' onClick={() => avatarInputRef.current?.click()} tooltip='upload-image'>
                     <Upload />
                     <span className='sr-only'>{tButton('upload-image')}</span>
                   </TButton>
@@ -205,10 +200,8 @@ export default function EditEmployeeForm({ id }: { id: string }) {
             name='changePassword'
             render={({ field }) => (
               <FormItem className='row-start-2 col-span-3'>
-                <div>
-                  <FormLabel>{tForm('change-password')}</FormLabel>
-                  <FormDescription>{tForm('change-password-description')}</FormDescription>
-                </div>
+                <FormLabel>{tForm('change-password')}</FormLabel>
+                <FormDescription>{tForm('change-password-description')}</FormDescription>
                 <FormControl>
                   <Switch checked={field.value} onCheckedChange={field.onChange} />
                 </FormControl>

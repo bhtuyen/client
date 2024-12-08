@@ -3,7 +3,7 @@
 import { Link } from '@/i18n/routing';
 
 import NavItems from '@/app/[locale]/(public)/nav-items';
-import { Button } from '@/components/ui/button';
+import TButton from '@/components/t-button';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Package2 } from 'lucide-react';
 import { useState } from 'react';
@@ -16,10 +16,10 @@ export default function NavigationMenu() {
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetTrigger asChild>
-        <Button variant='outline' size='icon' className='shrink-0 md:hidden'>
+        <TButton variant='outline' size='icon' className='shrink-0 md:hidden'>
           <Menu className='h-5 w-5' />
           <span className='sr-only'>Toggle navigation menu</span>
-        </Button>
+        </TButton>
       </SheetTrigger>
       <SheetTitle>
         <SheetDescription />
@@ -33,10 +33,7 @@ export default function NavigationMenu() {
             </Link>
           </SheetClose>
 
-          <NavItems
-            className='text-muted-foreground transition-colors hover:text-foreground'
-            handleNavItemClick={handleNavItemClick}
-          />
+          <NavItems className='text-muted-foreground transition-colors hover:text-foreground' handleNavItemClick={handleNavItemClick} />
         </nav>
       </SheetContent>
     </Sheet>

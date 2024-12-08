@@ -1,20 +1,12 @@
 'use client';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Link } from '@/i18n/routing';
-import { useLogoutMutation } from '@/app/queries/useAuth';
-import { handleErrorApi } from '@/lib/utils';
-import { useRouter } from '@/i18n/routing';
 import { useAccountMeQuery } from '@/app/queries/useAccount';
+import { useLogoutMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
+import TButton from '@/components/t-button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Link, useRouter } from '@/i18n/routing';
+import { handleErrorApi } from '@/lib/utils';
 
 export default function DropdownAvatar() {
   const logoutMutation = useLogoutMutation();
@@ -40,12 +32,12 @@ export default function DropdownAvatar() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='outline' size='icon' className='overflow-hidden rounded-full'>
+        <TButton variant='outline' size='icon' className='overflow-hidden rounded-full'>
           <Avatar>
             <AvatarImage src={account?.avatar ?? undefined} alt={account?.name} />
             <AvatarFallback>{account?.name.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
-        </Button>
+        </TButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
         <DropdownMenuLabel>{account?.name}</DropdownMenuLabel>

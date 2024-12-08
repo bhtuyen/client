@@ -2,8 +2,8 @@
 
 import { useGuestLoginMutation } from '@/app/queries/useGuest';
 import { useAppStore } from '@/components/app-provider';
+import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
-import { Button } from '@/components/ui/button';
 import type { Locale } from '@/config';
 import { locales } from '@/config';
 import { Role } from '@/constants/enum';
@@ -11,7 +11,6 @@ import { usePathname, useRouter } from '@/i18n/routing';
 import clsx from 'clsx';
 import { Check } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import Image from 'next/image';
 import { useParams, useSearchParams } from 'next/navigation';
 
 export default function ChooseLanguage() {
@@ -37,6 +36,8 @@ export default function ChooseLanguage() {
       console.log(result);
 
       setRole(Role.Guest);
+
+      
       router.push(`/guest/menu`);
     } catch (error) {
       console.log(error);
@@ -45,15 +46,10 @@ export default function ChooseLanguage() {
 
   return (
     <div className='absolute bottom-0 bg-white text-black min-h-[25%] right-0 left-0 rounded-[2rem] grid grid-rows-3 items-center text-[18px]'>
-      <div className='border-b-[0.05px] border-[#dddddd] h-full flex items-center justify-center'>
-        Chọn ngôn ngữ để tiếp tục
-      </div>
+      <div className='border-b-[0.05px] border-[#dddddd] h-full flex items-center justify-center'>Chọn ngôn ngữ để tiếp tục</div>
       <div className='flex justify-center gap-5 px-5'>
-        <Button
-          className={clsx(
-            'w-full flex bg-white justify-center items-center gap-2 h-[50px] text-[16px] border-[1px] border-[#dddddd] relative',
-            locale === locales[0] && 'border-black'
-          )}
+        <TButton
+          className={clsx('w-full flex bg-white justify-center items-center gap-2 h-[50px] text-[16px] border-[1px] border-[#dddddd] relative', locale === locales[0] && 'border-black')}
           onClick={() => {
             router.replace(pathname, { locale: locales[0] as Locale });
           }}
@@ -67,12 +63,9 @@ export default function ChooseLanguage() {
               </div>
             </div>
           )}
-        </Button>
-        <Button
-          className={clsx(
-            'w-full flex justify-center items-center gap-2 h-[50px] text-[16px] border-[1px] relative border-[#dddddd]',
-            locale === locales[1] && 'border-black'
-          )}
+        </TButton>
+        <TButton
+          className={clsx('w-full flex justify-center items-center gap-2 h-[50px] text-[16px] border-[1px] relative border-[#dddddd]', locale === locales[1] && 'border-black')}
           onClick={() => {
             router.replace(pathname, { locale: locales[1] as Locale });
           }}
@@ -86,12 +79,12 @@ export default function ChooseLanguage() {
               </div>
             </div>
           )}
-        </Button>
+        </TButton>
       </div>
       <div className='flex px-5 self-start'>
-        <Button className='w-full h-[50px] text-[16px]' variant={'secondary'} onClick={onSubmit}>
+        <TButton className='w-full h-[50px] text-[16px]' variant={'secondary'} onClick={onSubmit}>
           Gọi món ngay
-        </Button>
+        </TButton>
       </div>
     </div>
   );

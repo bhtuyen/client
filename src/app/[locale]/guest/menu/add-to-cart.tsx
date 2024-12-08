@@ -1,18 +1,9 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 import { useAppStore } from '@/components/app-provider';
+import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import TQuantity from '@/components/t-quantity';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -53,9 +44,9 @@ export default function AddToCart({ dish }: { dish: DishDto }) {
   return (
     <Dialog modal={false}>
       <DialogTrigger asChild>
-        <Button className='bg-black shadow-sm rounded-full' size='icon' variant='ghost'>
+        <TButton className='bg-black shadow-sm rounded-full' size='icon' variant='ghost'>
           <Plus size={30} color='#fff' />
-        </Button>
+        </TButton>
       </DialogTrigger>
       <DialogContent className='w-full h-dvh p-0 bg-white text-black flex flex-col' isHiddenClose>
         <DialogHeader className='relative h-0'>
@@ -69,9 +60,7 @@ export default function AddToCart({ dish }: { dish: DishDto }) {
           <TImage src={dish.image} alt={dish.name} className='w-full aspect-auto' width={200} height={200} />
           <div className='p-4 rounded-tl-[2rem] rounded-tr-[2rem] bg-white flex flex-col'>
             <h2 className='text-2xl font-bold'>{dish.name}</h2>
-            <span className='text-red-500'>
-              {dish.category === DishCategory.Paid ? formatCurrency(dish.price) : dish.category}
-            </span>
+            <span className='text-red-500'>{dish.category === DishCategory.Paid ? formatCurrency(dish.price) : dish.category}</span>
             <h3 className='text-lg font-semibold mt-2'>Mô tả sản phẩm</h3>
             <p className='text-sm'>{dish.description}</p>
             {getOptions(dish.options).length > 0 && <h3 className='text-base font-semibold mt-2'>Tuỳ chọn</h3>}
@@ -96,15 +85,9 @@ export default function AddToCart({ dish }: { dish: DishDto }) {
             classInput='h-11 text-base '
           />
           <DialogClose className='flex-auto' disabled={quantity == 0}>
-            <Button
-              type='button'
-              variant={'ghost'}
-              className='w-full h-11 bg-black text-white'
-              disabled={quantity == 0}
-              onClick={handleAddToCart}
-            >
+            <TButton type='button' variant={'ghost'} className='w-full h-11 bg-black text-white' disabled={quantity == 0} onClick={handleAddToCart}>
               Thêm vào giỏ
-            </Button>
+            </TButton>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

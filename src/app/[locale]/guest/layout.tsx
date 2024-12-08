@@ -10,5 +10,5 @@ export default function GuestLayout({
   };
 }>) {
   unstable_setRequestLocale(locale);
-  return <div className='min-h-screen'>{children}</div>;
+  return <div className='h-full'>{children}</div>;
 }

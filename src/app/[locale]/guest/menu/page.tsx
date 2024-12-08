@@ -1,9 +1,9 @@
 import Cart from '@/app/[locale]/guest/menu/cart';
 import MenuGroup from '@/app/[locale]/guest/menu/menu-group';
+import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import TTabs from '@/components/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { BellRing, UserRound } from 'lucide-react';
 
@@ -20,10 +20,10 @@ export default function MenuPage() {
             <TImage src='/vietnam.png' alt='logo' width={30} height={30} />
             <Separator orientation='vertical' className='mx-2 h-[60%] w-[0.5px] bg-[#cecece]' />
             <Badge className='bg-[#f2f2f2] h-[60%] rounded-3xl mr-2'>Bàn 08</Badge>
-            <Button className='bg-[#f2f2f2] h-[60%] rounded-3xl flex items-center gap-1'>
+            <TButton className='bg-[#f2f2f2] h-[60%] rounded-3xl flex items-center gap-1'>
               <BellRing width={'20px'} height={'20px'} />
               Gọi NV
-            </Button>
+            </TButton>
           </div>
           <div className='flex items-center gap-2'>
             <Cart />

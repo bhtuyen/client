@@ -2,9 +2,9 @@
 
 import { useDishListQuery } from '@/app/queries/useDish';
 import { useGuestOrderMutation } from '@/app/queries/useGuest';
+import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import TQuantity from '@/components/t-quantity';
-import { Button } from '@/components/ui/button';
 import { DishStatus } from '@/constants/enum';
 import { useRouter } from '@/i18n/routing';
 import { cn, formatCurrency, getPrice, handleErrorApi } from '@/lib/utils';
@@ -66,17 +66,8 @@ export default function MenuOrder() {
             })}
           >
             <div className='flex-shrink-0 relative'>
-              {dish.status === DishStatus.Unavailable && (
-                <span className='absolute inset-0 flex justify-center items-center'>Hết hàng</span>
-              )}
-              <TImage
-                src={dish.image}
-                alt={dish.name}
-                height={100}
-                width={100}
-                quality={100}
-                className='object-cover w-[80px] h-[80px] rounded-md'
-              />
+              {dish.status === DishStatus.Unavailable && <span className='absolute inset-0 flex justify-center items-center'>Hết hàng</span>}
+              <TImage src={dish.image} alt={dish.name} height={100} width={100} quality={100} className='object-cover w-[80px] h-[80px] rounded-md' />
             </div>
             <div className='space-y-1'>
               <h3 className='text-sm'>{dish.name}</h3>
@@ -93,10 +84,10 @@ export default function MenuOrder() {
           </div>
         ))}
       <div className='sticky bottom-0'>
-        <Button className='w-full flex space-x-4' onClick={handleGuestOrder} disabled={orders.length === 0}>
+        <TButton className='w-full flex space-x-4' onClick={handleGuestOrder} disabled={orders.length === 0}>
           <span>Đặt hàng · {orders.length} món</span>
           <span>{formatCurrency(totalPrice)}</span>
-        </Button>
+        </TButton>
       </div>
     </>
   );

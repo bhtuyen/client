@@ -99,12 +99,7 @@ export default function CreateEmployeeForm() {
                   />
                 </FormControl>
                 <FormLabel>
-                  <TButton
-                    type='button'
-                    variant='outline'
-                    onClick={() => avatarInputRef.current?.click()}
-                    tooltip='upload-image'
-                  >
+                  <TButton type='button' variant='outline' onClick={() => avatarInputRef.current?.click()} tooltip='upload-image'>
                     <Upload />
                     <span className='sr-only'>{tButton('upload-image')}</span>
                   </TButton>
@@ -198,7 +193,7 @@ export default function CreateEmployeeForm() {
           <TButton type='button' variant='outline' asLink href={'/manage/employees'}>
             {tButton('cancel')}
           </TButton>
-          <TButton type='submit'>{tButton('create')}</TButton>
+          <TButton type='submit'>{tButton('create-employee')}</TButton>
         </div>
       </form>
     </Form>

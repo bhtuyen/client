@@ -2,14 +2,7 @@
 
 import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -28,16 +21,7 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  PencilIcon,
-  Search,
-  Settings2,
-  TrashIcon
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, PencilIcon, Search, Settings2, TrashIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
@@ -53,7 +37,7 @@ interface TToolbarProps<TData> {
   children?: ReactNode;
   filter?: {
     placeholder: TMessageOption<'t-data-table.filter'>;
-    column: string;
+    columnId: string;
   };
 }
 
@@ -62,7 +46,7 @@ interface TFilterProps<TData> {
 
   filter?: {
     placeholder: TMessageOption<'t-data-table.filter'>;
-    column: string;
+    columnId: string;
   };
 }
 
@@ -78,7 +62,7 @@ interface TTableProps<TData, TValue> {
 
   filter?: {
     placeholder: TMessageOption<'t-data-table.filter'>;
-    column: string;
+    columnId: string;
   };
 }
 
@@ -86,12 +70,7 @@ interface DataTablePaginationProps<TData> {
   table: TableType<TData>;
 }
 
-export default function TDataTable<TData, TValue>({
-  data,
-  columns,
-  childrenToolbar,
-  filter
-}: TTableProps<TData, TValue>) {
+export default function TDataTable<TData, TValue>({ data, columns, childrenToolbar, filter }: TTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -129,11 +108,7 @@ export default function TDataTable<TData, TValue>({
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                );
+                return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>;
               })}
             </TableRow>
           ))}
@@ -168,10 +143,10 @@ export function TFilter<TData>({
       key: 'input-placeholder-default',
       values: {}
     },
-    column: 'name'
+    columnId: 'name'
   }
 }: TFilterProps<TData>) {
-  const { column, placeholder } = filter;
+  const { columnId: column, placeholder } = filter;
   const tTableFilter = useTranslations('t-data-table.filter');
   return (
     <Input
@@ -203,12 +178,7 @@ export function TOption<TData>({ table }: TOptionProps<TData>) {
           .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
           .map((column) => {
             return (
-              <DropdownMenuCheckboxItem
-                className='cursor-pointer'
-                key={column.id}
-                checked={column.getIsVisible()}
-                onCheckedChange={(value) => column.toggleVisibility(!!value)}
-              >
+              <DropdownMenuCheckboxItem className='cursor-pointer' key={column.id} checked={column.getIsVisible()} onCheckedChange={(value) => column.toggleVisibility(!!value)}>
                 {tTableColumn(convertToKebabCase(column.id) as TMessageKeys<'t-data-table.column'>)}
               </DropdownMenuCheckboxItem>
             );
@@ -245,7 +215,7 @@ export function TCellActions({ editOption, deleteOption }: TCellActionsProps) {
     showAlertDialog(deleteOption ?? deleteOptionDefault);
   };
   return (
-    <div className='flex items-center gap-4 w-full'>
+    <div className='flex items-center justify-center gap-4 w-full'>
       <TButton size='icon' href={urlEdit} tooltip='edit' variant='outline' asLink>
         <PencilIcon height={16} width={16} />
       </TButton>
@@ -260,9 +230,7 @@ export function TDataTablePagination<TData>({ table }: DataTablePaginationProps<
   const tDataTablePagination = useTranslations('t-data-table.pagination');
   return (
     <div className='flex items-center justify-between'>
-      <div className='flex-1 text-sm text-muted-foreground'>
-        {tDataTablePagination('row-selected-info', { count: table.getFilteredSelectedRowModel().rows.length })}
-      </div>
+      <div className='flex-1 text-sm text-muted-foreground'>{tDataTablePagination('row-selected-info', { count: table.getFilteredSelectedRowModel().rows.length })}</div>
       <div className='flex items-center space-x-6 lg:space-x-8'>
         <div className='flex items-center space-x-2'>
           <p className='text-sm font-medium'>{tDataTablePagination('rows-per-page')}</p>
@@ -291,31 +259,16 @@ export function TDataTablePagination<TData>({ table }: DataTablePaginationProps<
           })}
         </div>
         <div className='flex items-center space-x-2'>
-          <TButton
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-            tooltip='first'
-            size='icon'
-          >
+          <TButton onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()} tooltip='first' size='icon'>
             <ChevronsLeft />
           </TButton>
-          <TButton
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-            tooltip='previous'
-            size='icon'
-          >
+          <TButton onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()} tooltip='previous' size='icon'>
             <ChevronLeft />
           </TButton>
           <TButton size='icon' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} tooltip='next'>
             <ChevronRight />
           </TButton>
-          <TButton
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            size='icon'
-            tooltip='last'
-            disabled={!table.getCanNextPage()}
-          >
+          <TButton onClick={() => table.setPageIndex(table.getPageCount() - 1)} size='icon' tooltip='last' disabled={!table.getCanNextPage()}>
             <ChevronsRight />
           </TButton>
         </div>

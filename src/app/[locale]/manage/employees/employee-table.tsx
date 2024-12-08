@@ -48,12 +48,7 @@ export default function EmployeeTable() {
         accessorKey: 'email',
         header: ({ column }) => {
           return (
-            <TButton
-              variant='ghost'
-              size='sm'
-              className='justify-start -ml-3'
-              onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            >
+            <TButton variant='ghost' size='sm' className='justify-start -ml-3' onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
               {tTableColumn('email')}
               <ArrowUpDown className='ml-2 h-4 w-4' />
             </TButton>
@@ -69,34 +64,32 @@ export default function EmployeeTable() {
       {
         id: 'actions',
         enableHiding: false,
-        cell: function Actions({ row }) {
-          return (
-            <TCellActions
-              editOption={{
-                urlEdit: `/manage/employees/${row.original.id}/edit`
-              }}
-              deleteOption={{
-                description: {
-                  key: 'delete-account',
-                  values: {
-                    name: row.original.name
-                  }
-                },
-                title: 'delete-account',
-                onAction: async () => {
-                  try {
-                    const result = await deleteEmployee.mutateAsync(row.original.id);
-                    toast({
-                      description: result.payload.message
-                    });
-                  } catch (error: any) {
-                    handleErrorApi({ error });
-                  }
+        cell: ({ row }) => (
+          <TCellActions
+            editOption={{
+              urlEdit: `/manage/employees/${row.original.id}/edit`
+            }}
+            deleteOption={{
+              description: {
+                key: 'delete-account',
+                values: {
+                  name: row.original.name
                 }
-              }}
-            />
-          );
-        }
+              },
+              title: 'delete-account',
+              onAction: async () => {
+                try {
+                  const result = await deleteEmployee.mutateAsync(row.original.id);
+                  toast({
+                    description: result.payload.message
+                  });
+                } catch (error: any) {
+                  handleErrorApi({ error });
+                }
+              }
+            }}
+          />
+        )
       }
     ],
     [tRole, tTableColumn, deleteEmployee]
@@ -111,7 +104,7 @@ export default function EmployeeTable() {
           <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>{tButton('create-employee')}</span>
         </TButton>
       }
-      filter={{ placeholder: { key: 'input-placeholder-employee' }, column: 'email' }}
+      filter={{ placeholder: { key: 'input-placeholder-employee' }, columnId: 'email' }}
     />
   );
 }
