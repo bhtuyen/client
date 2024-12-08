@@ -164,7 +164,7 @@ export default function Cart() {
 
         {((cart.length === 0 && activeTab == 'cart') || (orders.length == 0 && activeTab == 'ordered')) && (
           <div className='flex-auto bg-white flex flex-col items-center justify-center'>
-            <Image src='/empty-cart.jpg' alt='empty-cart' width={200} height={200} />
+            <TImage src='/empty-cart.jpg' alt='empty-cart' width={200} height={200} />
             <p>{`Bạn chưa ${activeTab == 'cart' ? 'chọn' : 'gọi'} món nào`}</p>
           </div>
         )}

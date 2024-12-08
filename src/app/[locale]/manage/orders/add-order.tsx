@@ -4,6 +4,7 @@ import { TablesDialog } from '@/app/[locale]/manage/orders/tables-dialog';
 import { useDishListQuery } from '@/app/queries/useDish';
 import { useCreateGuestMutation } from '@/app/queries/useGuest';
 import { useCreateOrderMutation } from '@/app/queries/useOrder';
+import TImage from '@/components/t-image';
 import TQuantity from '@/components/t-quantity';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,7 +26,6 @@ import { GuestDto, guestLogin, GuestLogin } from '@/schemaValidations/guest.sche
 import { CreateOrder } from '@/schemaValidations/order.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusCircle } from 'lucide-react';
-import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -191,7 +191,7 @@ export default function AddOrder() {
                 {dish.status === DishStatus.Unavailable && (
                   <span className='absolute inset-0 flex items-center justify-center text-sm'>Hết hàng</span>
                 )}
-                <Image
+                <TImage
                   src={dish.image ?? '/60000155_kem_sua_chua_1.jpg'}
                   alt={dish.name}
                   height={100}

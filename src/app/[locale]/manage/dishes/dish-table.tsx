@@ -3,14 +3,13 @@
 import { useDeleteDishMutation, useDishListQuery } from '@/app/queries/useDish';
 import TButton from '@/components/t-button';
 import TDataTable, { TCellActions } from '@/components/t-data-table';
-import type { DishCategory, DishStatus } from '@/constants/enum';
+import TImage from '@/components/t-image';
 import { toast } from '@/hooks/use-toast';
-import { formatCurrency, handleErrorApi } from '@/lib/utils';
-import type { DishDtoDetail, DishGroupDto } from '@/schemaValidations/dish.schema';
+import { getPrice, handleErrorApi } from '@/lib/utils';
+import type { DishDtoDetail } from '@/schemaValidations/dish.schema';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PlusCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { useMemo } from 'react';
 
 export default function DishTable() {
@@ -45,15 +44,12 @@ export default function DishTable() {
         header: () => <div className='text-center w-[100px]'>{tTableColumn('image')}</div>,
         cell: ({ row }) => (
           <div className='w-[100px]'>
-            <Image
+            <TImage
               src={row.getValue('image') ?? '/restaurant.jpg'}
               alt={row.original.name}
               width={100}
               height={100}
-              objectFit='cover'
               className='aspect-square w-[100px] h-[100px] rounded-md shadow-md mx-auto'
-              layout='responsive'
-              loading='lazy'
               quality={100}
             />
           </div>
@@ -62,41 +58,33 @@ export default function DishTable() {
       {
         accessorKey: 'name',
         header: () => <div className='w-[150px]'>{tTableColumn('name')}</div>,
-        cell: ({ row }) => <div className='capitalize w-[150px]'>{row.getValue('name')}</div>
+        cell: ({ row }) => <div className='capitalize w-[150px]'>{row.original.name}</div>
       },
       {
         accessorKey: 'description',
         header: () => <div className='w-auto'>{tTableColumn('description')}</div>,
-        cell: ({ row }) => (
-          <div
-            dangerouslySetInnerHTML={{ __html: row.getValue('description') }}
-            className='whitespace-pre-line w-auto'
-          />
-        )
+        cell: ({ row }) => <div className='whitespace-pre-line w-auto capitalize'>{row.original.description}</div>
       },
       {
         accessorKey: 'price',
         header: () => <div className='text-right w-[100px]'>{tTableColumn('price')}</div>,
-        cell: ({ row }) => <div className='text-right w-[100px]'>{formatCurrency(row.getValue('price'))}</div>
+        cell: ({ row }) => <div className='text-right w-[100px]'>{getPrice(row.original)}</div>
       },
       {
         accessorKey: 'category',
         header: () => <div className='text-center w-[100px]'>{tTableColumn('category')}</div>,
-        cell: ({ row }) => (
-          <div className='text-center w-[100px]'>{tDishCategory(row.getValue<DishCategory>('category'))}</div>
-        )
+        cell: ({ row }) => <div className='text-center w-[100px]'>{tDishCategory(row.original.category)}</div>
       },
       {
         accessorKey: 'group',
+        id: 'group-name',
         header: () => <div className='text-center w-[100px]'>{tTableColumn('group-name')}</div>,
-        cell: ({ row }) => <div className='text-center w-[100px]'>{row.getValue<DishGroupDto>('group').name}</div>
+        cell: ({ row }) => <div className='text-center w-[100px]'>{row.original.group.name}</div>
       },
       {
         accessorKey: 'status',
         header: () => <div className='text-center w-[100px]'>{tTableColumn('status')}</div>,
-        cell: ({ row }) => (
-          <div className='text-center w-[100px]'>{tDishStatus(row.getValue<DishStatus>('status'))}</div>
-        )
+        cell: ({ row }) => <div className='text-center w-[100px]'>{tDishStatus(row.original.status)}</div>
       },
       {
         id: 'actions',

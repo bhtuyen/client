@@ -4,7 +4,6 @@ import { Link } from '@/i18n/routing';
 import { generateSlugify } from '@/lib/utils';
 import type { DishesRes } from '@/schemaValidations/dish.schema';
 import { getTranslations } from 'next-intl/server';
-import Image from 'next/image';
 
 export default async function HomePage() {
   let dishList: DishesRes['data'] = [];
@@ -20,7 +19,7 @@ export default async function HomePage() {
     <div className='w-full space-y-4'>
       <section className='relative z-0'>
         <span className='absolute top-0 left-0 w-full h-full bg-black opacity-50 z-10'></span>
-        <Image
+        <TImage
           src='/banner.png'
           width={400}
           height={200}

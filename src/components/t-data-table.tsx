@@ -149,7 +149,7 @@ export default function TDataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className='h-24 text-center w-auto'>
+              <TableCell colSpan={columns.length} className='h-24'>
                 {tDataTable('no-data')}
               </TableCell>
             </TableRow>

@@ -212,7 +212,7 @@ export default function EditDish({ id }: { id: string }) {
                         setOpenFormAdd(true);
                       }}
                     >
-                      Tạo nhóm
+                      {tButton('create-dish-group')}
                     </TButton>
                   </div>
                   <div className='h-5'>
@@ -264,7 +264,7 @@ export default function EditDish({ id }: { id: string }) {
               disabled={form.watch('category') === DishCategory.Buffet}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá</FormLabel>
+                  <FormLabel>{tForm('dish-price')}</FormLabel>
                   <FormControl>
                     <Input {...field} type='number' IconLeft={Banknote} min={0} />
                   </FormControl>
@@ -280,7 +280,7 @@ export default function EditDish({ id }: { id: string }) {
               name='description'
               render={({ field }) => (
                 <FormItem className='col-start-1'>
-                  <FormLabel>Mô tả sản phẩm</FormLabel>
+                  <FormLabel>{tForm('dish-description')}</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
@@ -295,7 +295,7 @@ export default function EditDish({ id }: { id: string }) {
               name='options'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thêm tùy chọn</FormLabel>
+                  <FormLabel>{tForm('dish-options')}</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
@@ -310,7 +310,9 @@ export default function EditDish({ id }: { id: string }) {
             <TButton type='button' variant='outline' asLink href='/manage/dishes'>
               {tButton('cancel')}
             </TButton>
-            <TButton type='submit'>{tButton('save-change')}</TButton>
+            <TButton type='submit' disabled={!form.formState.isDirty}>
+              {tButton('save-change')}
+            </TButton>
           </div>
         </form>
       </Form>

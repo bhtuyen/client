@@ -97,7 +97,7 @@ export default function AddDishForm() {
               control={form.control}
               name='image'
               render={({ field }) => (
-                <FormItem className='flex items-center gap-4 space-y-0 col-span-3 mb-4'>
+                <FormItem className='col-span-3 mb-4 flex-row items-center gap-x-2'>
                   <FormDescription>
                     <Avatar className='aspect-square w-[100px] h-[100px] rounded-md object-cover'>
                       <AvatarImage src={previewAvatarFromFile} />
@@ -154,9 +154,9 @@ export default function AddDishForm() {
               control={form.control}
               name='status'
               render={({ field }) => (
-                <FormItem className='flex flex-col gap-y-1'>
+                <FormItem>
                   <FormLabel className='flex items-center gap-x-1'>
-                    <Loader width={16} height={16} />
+                    <Loader width={14} height={14} />
                     {tForm('dish-status')}
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
@@ -208,7 +208,7 @@ export default function AddDishForm() {
                         setOpenFormAdd(true);
                       }}
                     >
-                      Tạo nhóm
+                      {tButton('create-dish-group')}
                     </Button>
                   </div>
                   <div className='h-5'>
@@ -233,13 +233,13 @@ export default function AddDishForm() {
                       onValueChange={field.onChange}
                       className='flex items-center gap-x-4'
                     >
-                      <FormItem className='flex items-center space-y-0 gap-x-2'>
+                      <FormItem className='items-center flex-row gap-x-2'>
                         <FormControl>
                           <RadioGroupItem value='Buffet' />
                         </FormControl>
                         <FormLabel>{tDishCategory('Buffet')}</FormLabel>
                       </FormItem>
-                      <FormItem className='flex items-center space-y-0 gap-x-2'>
+                      <FormItem className='items-center flex-row gap-x-2'>
                         <FormControl>
                           <RadioGroupItem value='Paid' />
                         </FormControl>
@@ -260,7 +260,7 @@ export default function AddDishForm() {
               disabled={form.watch('category') === DishCategory.Buffet}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Giá</FormLabel>
+                  <FormLabel>{tForm('dish-price')}</FormLabel>
                   <FormControl>
                     <Input {...field} type='number' IconLeft={Banknote} min={0} pattern='([0-9]{1,3}).([0-9]{1,3})' />
                   </FormControl>
@@ -276,7 +276,7 @@ export default function AddDishForm() {
               name='description'
               render={({ field }) => (
                 <FormItem className='col-start-1'>
-                  <FormLabel>Mô tả sản phẩm</FormLabel>
+                  <FormLabel>{tForm('dish-description')}</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
@@ -291,7 +291,7 @@ export default function AddDishForm() {
               name='options'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thêm tùy chọn</FormLabel>
+                  <FormLabel>{tForm('dish-options')}</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>

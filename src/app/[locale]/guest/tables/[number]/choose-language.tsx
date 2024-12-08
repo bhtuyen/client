@@ -2,6 +2,7 @@
 
 import { useGuestLoginMutation } from '@/app/queries/useGuest';
 import { useAppStore } from '@/components/app-provider';
+import TImage from '@/components/t-image';
 import { Button } from '@/components/ui/button';
 import type { Locale } from '@/config';
 import { locales } from '@/config';
@@ -57,7 +58,7 @@ export default function ChooseLanguage() {
             router.replace(pathname, { locale: locales[0] as Locale });
           }}
         >
-          <Image src={'/vietnam.png'} alt='' width={20} height={20} />
+          <TImage src={'/vietnam.png'} alt='' width={20} height={20} />
           Tiếng Việt
           {locale === locales[0] && (
             <div className='absolute top-0 right-0'>
@@ -76,7 +77,7 @@ export default function ChooseLanguage() {
             router.replace(pathname, { locale: locales[1] as Locale });
           }}
         >
-          <Image src={'/england.png'} alt='' width={20} height={20} />
+          <TImage src={'/england.png'} alt='' width={20} height={20} />
           Tiếng Anh
           {locale === locales[1] && (
             <div className='absolute top-0 right-0'>

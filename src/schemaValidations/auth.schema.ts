@@ -13,8 +13,10 @@ export type Token = z.TypeOf<typeof token>;
 
 export const login = accountDto
   .pick({
-    email: true,
-    password: true
+    email: true
+  })
+  .extend({
+    password: z.string().min(6).max(100)
   })
   .strict();
 

@@ -1,11 +1,11 @@
 import Cart from '@/app/[locale]/guest/menu/cart';
 import MenuGroup from '@/app/[locale]/guest/menu/menu-group';
+import TImage from '@/components/t-image';
 import TTabs from '@/components/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { BellRing, UserRound } from 'lucide-react';
-import Image from 'next/image';
 
 export default function MenuPage() {
   const menuType = [
@@ -17,7 +17,7 @@ export default function MenuPage() {
       <div className='fixed top-0 z-10 bg-white right-0 left-0'>
         <nav className='h-[60px] flex justify-between px-4'>
           <div className='flex items-center'>
-            <Image src='/vietnam.png' alt='logo' width={30} height={30} />
+            <TImage src='/vietnam.png' alt='logo' width={30} height={30} />
             <Separator orientation='vertical' className='mx-2 h-[60%] w-[0.5px] bg-[#cecece]' />
             <Badge className='bg-[#f2f2f2] h-[60%] rounded-3xl mr-2'>Bàn 08</Badge>
             <Button className='bg-[#f2f2f2] h-[60%] rounded-3xl flex items-center gap-1'>
