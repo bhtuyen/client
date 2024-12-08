@@ -1,5 +1,5 @@
-import AddEmployee from '@/app/[locale]/manage/employees/create/add-employee';
+import CreateEmployeeForm from '@/app/[locale]/manage/employees/create/create-employee-form';
 
 export default function Page() {
-  return <AddEmployee />;
+  return <CreateEmployeeForm />;
 }

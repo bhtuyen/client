@@ -1,34 +1,45 @@
 'use client';
-import { useAddEmployeeMutation } from '@/app/queries/useAccount';
+import { useAccountQuery, useUpdateEmployeeMutation } from '@/app/queries/useAccount';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
 import TButton from '@/components/t-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Role } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
-import { handleErrorApi } from '@/lib/utils';
-import { createEmployee, CreateEmployee } from '@/schemaValidations/account.schema';
+import { useRouter } from '@/i18n/routing';
+import { getEnumValues, handleErrorApi } from '@/lib/utils';
+import { updateEmployee, UpdateEmployee } from '@/schemaValidations/account.schema';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { KeyRound, Mail, Phone, Upload, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-export default function AddEmployee() {
+
+export default function EditEmployeeForm({ id }: { id: string }) {
   const [file, setFile] = useState<File | null>(null);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);
 
-  const form = useForm<CreateEmployee>({
-    resolver: zodResolver(createEmployee)
+  const router = useRouter();
+
+  const { data } = useAccountQuery(id);
+  const account = data?.payload.data;
+
+  const form = useForm<UpdateEmployee>({
+    resolver: zodResolver(updateEmployee),
+    values: account
   });
 
-  const adddEmployeeMutation = useAddEmployeeMutation();
-  const uploadMediaMutation = useUploadMediaMutation();
-
+  const tRole = useTranslations('role');
   const tButton = useTranslations('t-button');
   const tForm = useTranslations('t-form');
 
   const avatar = form.watch('avatar');
   const name = form.watch('name');
+  const changePassword = form.watch('changePassword');
   const previewAvatarFromFile = useMemo(() => {
     if (file) {
       return URL.createObjectURL(file);
@@ -36,13 +47,11 @@ export default function AddEmployee() {
     return avatar;
   }, [file, avatar]);
 
-  const onReset = () => {
-    form.reset();
-    setFile(null);
-  };
+  const updateEmployeeMutation = useUpdateEmployeeMutation();
+  const uploadMediaMutation = useUploadMediaMutation();
 
-  const onSubmit = async (employee: CreateEmployee) => {
-    if (adddEmployeeMutation.isPending) return;
+  const onSubmit = async (employee: UpdateEmployee) => {
+    if (updateEmployeeMutation.isPending) return;
     try {
       if (file) {
         const formData = new FormData();
@@ -52,13 +61,13 @@ export default function AddEmployee() {
         employee = { ...employee, avatar: imageUrl };
       }
 
-      const result = await adddEmployeeMutation.mutateAsync(employee);
+      const result = await updateEmployeeMutation.mutateAsync(employee);
 
       toast({
         description: result.payload.message
       });
 
-      onReset();
+      router.push('/manage/employees');
     } catch (error: any) {
       handleErrorApi({ error, setError: form.setError });
     }
@@ -67,18 +76,17 @@ export default function AddEmployee() {
     <Form {...form}>
       <form
         noValidate
-        className='max-w-[900px] p-4'
+        className='max-w-[1000px] p-4'
         onSubmit={form.handleSubmit(onSubmit, (error) => {
           console.log(error);
         })}
-        onReset={onReset}
       >
-        <div className='grid grid-cols-2 gap-x-4'>
+        <div className='grid grid-cols-3 gap-x-4'>
           <FormField
             control={form.control}
             name='avatar'
             render={({ field }) => (
-              <FormItem className='flex items-center gap-4 space-y-0 col-span-2 mb-4'>
+              <FormItem className='col-span-3 mb-4 flex-row items-center gap-x-2'>
                 <FormDescription>
                   <Avatar className='w-[100px] h-[100px] rounded-full object-cover'>
                     <AvatarImage src={previewAvatarFromFile} />
@@ -133,13 +141,42 @@ export default function AddEmployee() {
 
           <FormField
             control={form.control}
-            name='password'
+            name='email'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{tForm('password')}</FormLabel>
+                <FormLabel>{tForm('email')}</FormLabel>
                 <FormControl>
-                  <Input type='password' {...field} IconLeft={KeyRound} />
+                  <Input type='email' {...field} IconLeft={Mail} />
                 </FormControl>
+                <div className='h-5'>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='role'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{tForm('role')}</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Chọn quyền hạn' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {getEnumValues(Role)
+                      .filter((role) => role !== Role.Guest)
+                      .map((role) => (
+                        <SelectItem key={role} value={role}>
+                          {tRole(role)}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
                 <div className='h-5'>
                   <FormMessage />
                 </div>
@@ -165,12 +202,15 @@ export default function AddEmployee() {
 
           <FormField
             control={form.control}
-            name='confirmPassword'
+            name='changePassword'
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>{tForm('confirm-password')}</FormLabel>
+              <FormItem className='row-start-2 col-span-3'>
+                <div>
+                  <FormLabel>{tForm('change-password')}</FormLabel>
+                  <FormDescription>{tForm('change-password-description')}</FormDescription>
+                </div>
                 <FormControl>
-                  <Input type='password' {...field} IconLeft={KeyRound} />
+                  <Switch checked={field.value} onCheckedChange={field.onChange} />
                 </FormControl>
                 <div className='h-5'>
                   <FormMessage />
@@ -178,28 +218,48 @@ export default function AddEmployee() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name='email'
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{tForm('email')}</FormLabel>
-                <FormControl>
-                  <Input type='email' {...field} IconLeft={Mail} />
-                </FormControl>
-                <div className='h-5'>
-                  <FormMessage />
-                </div>
-              </FormItem>
-            )}
-          />
+          {changePassword && (
+            <FormField
+              control={form.control}
+              name='password'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{tForm('new-password')}</FormLabel>
+                  <FormControl>
+                    <Input type='password' {...field} IconLeft={KeyRound} />
+                  </FormControl>
+                  <div className='h-5'>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+          )}
+          {changePassword && (
+            <FormField
+              control={form.control}
+              name='confirmPassword'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{tForm('confirm-password')}</FormLabel>
+                  <FormControl>
+                    <Input type='password' {...field} IconLeft={KeyRound} />
+                  </FormControl>
+                  <div className='h-5'>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+          )}
         </div>
-
         <div className='flex item-center justify-end gap-4'>
-          <TButton type='button' variant='outline' asLink href={'/manage/accounts'}>
+          <TButton type='button' variant='outline' asLink href={'/manage/employees'}>
             {tButton('cancel')}
           </TButton>
-          <TButton type='submit'>{tButton('create')}</TButton>
+          <TButton type='submit' disabled={!form.formState.isDirty}>
+            {tButton('save-change')}
+          </TButton>
         </div>
       </form>
     </Form>

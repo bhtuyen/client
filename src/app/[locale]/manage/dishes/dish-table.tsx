@@ -11,7 +11,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { PlusCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
 export default function DishTable() {
   const dishesListQuery = useDishListQuery();
@@ -33,20 +33,6 @@ export default function DishTable() {
   // });
 
   const deleteDishMutation = useDeleteDishMutation();
-
-  const handleDeleteAccount = useCallback(
-    async (id: string) => {
-      try {
-        const result = await deleteDishMutation.mutateAsync(id);
-        toast({
-          description: result.payload.message
-        });
-      } catch (error: any) {
-        handleErrorApi({ error });
-      }
-    },
-    [deleteDishMutation]
-  );
   const tDishStatus = useTranslations('dish-status');
   const tDishCategory = useTranslations('dish-category');
   const tTableColumn = useTranslations('t-data-table.column');
@@ -128,15 +114,22 @@ export default function DishTable() {
                 }
               },
               title: 'delete-dish',
-              onAction: () => {
-                handleDeleteAccount(row.original.id);
+              onAction: async () => {
+                try {
+                  const result = await deleteDishMutation.mutateAsync(row.original.id);
+                  toast({
+                    description: result.payload.message
+                  });
+                } catch (error: any) {
+                  handleErrorApi({ error });
+                }
               }
             }}
           />
         )
       }
     ],
-    [handleDeleteAccount, tDishCategory, tDishStatus, tTableColumn]
+    [deleteDishMutation, tDishCategory, tDishStatus, tTableColumn]
   );
 
   return (

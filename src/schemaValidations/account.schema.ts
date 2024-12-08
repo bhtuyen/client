@@ -19,7 +19,8 @@ const account = z
 
 export const accountDto = account.omit({
   createdAt: true,
-  updatedAt: true
+  updatedAt: true,
+  password: true
 });
 
 export const accountsRes = buildReply(z.array(accountDto));
@@ -39,13 +40,12 @@ export const createEmployee = accountDto
     name: true,
     email: true,
     phone: true,
-    avatar: true,
-    password: true
+    avatar: true
   })
   .extend({
-    confirmPassword: z.string().min(6).max(100)
+    confirmPassword: z.string().min(6).max(100),
+    password: z.string().min(6).max(100)
   })
-  .strict()
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {
       ctx.addIssue({
@@ -72,7 +72,6 @@ export const updateEmployee = accountDto
     password: z.string().min(6).max(100).optional(),
     confirmPassword: z.string().min(6).max(100).optional()
   })
-  .strict()
   .superRefine(({ confirmPassword, password, changePassword }, ctx) => {
     if (changePassword) {
       if (!password || !confirmPassword) {

@@ -1,5 +1,5 @@
-import EditEmployee from '@/app/[locale]/manage/employees/[id]/edit/edit-employee';
+import EditEmployeeForm from '@/app/[locale]/manage/employees/[id]/edit/edit-employee-form';
 
 export default function Page({ params: { id } }: { params: { id: string } }) {
-  return <EditEmployee id={id} />;
+  return <EditEmployeeForm id={id} />;
 }
