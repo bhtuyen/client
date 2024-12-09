@@ -200,7 +200,10 @@
       "group-name": "Group name",
       "table-number": "Table number",
       "capacity": "Capacity",
-      "qr-code": "QR code"
+      "qr-code": "QR code",
+      "create-update": "Create/Update",
+      "dish-name": "Dish name",
+      "order-handler": "Order handler"
     },
     "customize": {
       "toggle-column": "Toggle column"

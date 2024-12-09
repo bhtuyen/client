@@ -1,15 +1,6 @@
 'use client';
 import { useAppStore } from '@/components/app-provider';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from '@/components/ui/alert-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { getArguments } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
@@ -37,9 +28,7 @@ export default function TAlterDialog() {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{tAlertDialogTitle(...getArguments(title ?? 'default'))}</AlertDialogTitle>
-          <AlertDialogDescription>
-            {tAlertDialogDescription(...getArguments(description ?? 'default'))}
-          </AlertDialogDescription>
+          <AlertDialogDescription>{tAlertDialogDescription(...getArguments(description ?? 'default'))}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={handleClose}>{tButton(...getArguments(cancel ?? 'cancel'))}</AlertDialogCancel>
