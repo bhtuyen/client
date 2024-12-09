@@ -22,15 +22,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const handleErrorApi = ({
-  error,
-  setError,
-  duration
-}: {
-  error: any;
-  setError?: UseFormSetError<any>;
-  duration?: number;
-}) => {
+export const handleErrorApi = ({ error, setError, duration }: { error: any; setError?: UseFormSetError<any>; duration?: number }) => {
   if (error instanceof EntityError && setError) {
     error.payload.errors.forEach((error) => {
       setError(error.field, {
@@ -129,15 +121,7 @@ export const getPrice = (dish: DishSnapshotDto | DishDto) => {
   return dish.category === DishCategory.Paid ? formatCurrency(dish.price) : DishCategory.Buffet;
 };
 
-export const getTableLink = ({
-  token,
-  tableNumber,
-  locale
-}: {
-  token: string;
-  tableNumber: string;
-  locale: string;
-}) => {
+export const getTableLink = ({ token, tableNumber, locale }: { token: string; tableNumber: string; locale: string }) => {
   return envConfig.NEXT_PUBLIC_URL + `/${locale}/guest/tables/` + tableNumber + '?token=' + token;
 };
 
@@ -169,9 +153,7 @@ export const getOauthGoogleUrl = () => {
     access_type: 'offline',
     response_type: 'code',
     prompt: 'consent',
-    scope: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'].join(
-      ' '
-    )
+    scope: ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'].join(' ')
   };
   const qs = new URLSearchParams(options);
   return `${rootUrl}?${qs.toString()}`;
@@ -213,24 +195,19 @@ export function convertToKebabCase(str: string) {
   return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }
 
-export function getArguments<T extends TNamespaceKeys = TNamespaceKeys>(
-  tMessKey: TMessKey<T>
-): TranslationFunctionParams<T> {
+export function getArguments<T extends TNamespaceKeys = TNamespaceKeys>(tMessKey: TMessKey<T>): TranslationFunctionParams<T> {
   if (isMessageOption(tMessKey)) {
     return tMessKey.values ? [tMessKey.key, tMessKey.values] : [tMessKey.key];
   }
   return [tMessKey];
 }
 
-export function isMessageOption<T extends TNamespaceKeys = TNamespaceKeys>(
-  value: TMessKey<T>
-): value is TMessageOption<T> {
+export function isMessageOption<T extends TNamespaceKeys = TNamespaceKeys>(value: TMessKey<T>): value is TMessageOption<T> {
   return typeof value === 'object' && value !== null && 'key' in value;
 }
 
 export function buildSelect<TDto>(): Record<keyof TDto, any> {
-  const isObject = (value: unknown): value is object =>
-    value !== null && typeof value === 'object' && !Array.isArray(value);
+  const isObject = (value: unknown): value is object => value !== null && typeof value === 'object' && !Array.isArray(value);
 
   return new Proxy(
     {},

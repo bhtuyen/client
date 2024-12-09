@@ -57,12 +57,7 @@ export default function ChangePasswordForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form
-            noValidate
-            className='grid auto-rows-max items-start'
-            onSubmit={form.handleSubmit(onSubmit)}
-            onReset={onReset}
-          >
+          <form noValidate className='grid auto-rows-max items-start' onSubmit={form.handleSubmit(onSubmit)} onReset={onReset}>
             <FormField
               control={form.control}
               name='oldPassword'

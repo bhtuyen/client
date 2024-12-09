@@ -19,8 +19,9 @@ export default function TTabs<T extends TasbType>({ tabs, onChangeActive, value,
         <div
           key={tab.key}
           className={clsx('flex-1 h-full flex items-center justify-center cursor-pointer', {
-            'text-red-500 relative before:contents-[""] before:absolute before:bottom-0 before:right-0 before:left-0 before:border-b-[2px] before:border-red-500':
-              value ? value === tab.key : activeTab === tab.key
+            'text-red-500 relative before:contents-[""] before:absolute before:bottom-0 before:right-0 before:left-0 before:border-b-[2px] before:border-red-500': value
+              ? value === tab.key
+              : activeTab === tab.key
           })}
           onClick={() => {
             setActiveTab(tab.key);

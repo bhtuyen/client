@@ -8,7 +8,5 @@ const prefix = '/indicators';
 
 export const indicatorApiRequest = {
   getDashboardIndicators: ({ fromDate = new Date(), toDate = new Date() }: Period) =>
-    http.get<DashboardIndicatorRes>(
-      `${prefix}/dashboard?` + stringify({ fromDate: fromDate.toISOString(), toDate: toDate.toISOString() })
-    )
+    http.get<DashboardIndicatorRes>(`${prefix}/dashboard?` + stringify({ fromDate: fromDate.toISOString(), toDate: toDate.toISOString() }))
 };

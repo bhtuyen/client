@@ -10,13 +10,7 @@ import { TrendingUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
-const colors = [
-  'var(--color-chrome)',
-  'var(--color-safari)',
-  'var(--color-firefox)',
-  'var(--color-edge)',
-  'var(--color-other)'
-];
+const colors = ['var(--color-chrome)', 'var(--color-safari)', 'var(--color-firefox)', 'var(--color-edge)', 'var(--color-other)'];
 
 const chartConfig = {
   visitors: {
@@ -44,11 +38,7 @@ const chartConfig = {
   }
 } satisfies ChartConfig;
 
-export function DishBarChart({
-  chartData
-}: {
-  chartData: Pick<DashboardIndicatorRes['data']['dishesIndicator'][0], 'name' | 'successOrders'>[];
-}) {
+export function DishBarChart({ chartData }: { chartData: Pick<DashboardIndicatorRes['data']['dishesIndicator'][0], 'name' | 'successOrders'>[] }) {
   const chartDataColors = useMemo(
     () =>
       chartData.map((data, index) => ({

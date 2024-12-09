@@ -1,13 +1,5 @@
 import http from '@/lib/http';
-import type {
-  CreateDish,
-  CreateDishGroup,
-  DishGroupRes,
-  DishGroupsRes,
-  DishRes,
-  DishesRes,
-  UpdateDish
-} from '@/schemaValidations/dish.schema';
+import type { CreateDish, CreateDishGroup, DishGroupRes, DishGroupsRes, DishRes, DishesRes, UpdateDish } from '@/schemaValidations/dish.schema';
 
 const prefix = '/dishes';
 

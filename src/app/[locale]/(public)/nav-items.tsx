@@ -53,13 +53,7 @@ const menuItems: {
   }
 ];
 
-export default function NavItems({
-  className,
-  handleNavItemClick
-}: {
-  className?: string;
-  handleNavItemClick?: () => void;
-}) {
+export default function NavItems({ className, handleNavItemClick }: { className?: string; handleNavItemClick?: () => void }) {
   const lgoutMutation = useLogoutMutation();
   const { role, setRole, disconnectSocket } = useAppStore();
   const router = useRouter();
@@ -86,8 +80,7 @@ export default function NavItems({
     <>
       {menuItems.map((item) => {
         const isAuthenticator = role && item.roles?.includes(role);
-        const isShow =
-          item.roles === undefined && (item.hiddenWhenLogin == undefined || item.hiddenWhenLogin === !role);
+        const isShow = item.roles === undefined && (item.hiddenWhenLogin == undefined || item.hiddenWhenLogin === !role);
         if (isAuthenticator || isShow) {
           return (
             <Link href={item.href} key={item.href} className={className} onClick={handleNavItemClick}>

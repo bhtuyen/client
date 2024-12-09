@@ -21,14 +21,7 @@ export default function MenuGroup() {
         {dishes.map((dish) => (
           <div className='grid grid-rows-11 h-[300px] bg-white shadow-sm rounded-md p-3' key={dish.id}>
             <div className='row-span-6 relative'>
-              <TImage
-                src={dish.image}
-                alt={dish.name}
-                fill
-                className='rounded-md'
-                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-                objectFit='cover'
-              />
+              <TImage src={dish.image} alt={dish.name} fill className='rounded-md' sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw' objectFit='cover' />
             </div>
             <div className='row-span-3 flex items-center'>{dish.name}</div>
             <div className='row-span-2 flex justify-between items-end'>

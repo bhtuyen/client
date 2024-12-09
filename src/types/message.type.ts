@@ -25,11 +25,6 @@ export type TMessageOption<NestedKey extends TNamespaceKeys = TNamespaceKeys> = 
   values?: TranslationValues;
 };
 
-export type TranslationFunctionParams<NestedKey extends TNamespaceKeys = TNamespaceKeys> = [
-  TMessageKeys<NestedKey>,
-  TranslationValues?
-];
+export type TranslationFunctionParams<NestedKey extends TNamespaceKeys = TNamespaceKeys> = [TMessageKeys<NestedKey>, TranslationValues?];
 
-export type TMessKey<NestedKey extends TNamespaceKeys = TNamespaceKeys> =
-  | TMessageOption<NestedKey>
-  | TMessageKeys<NestedKey>;
+export type TMessKey<NestedKey extends TNamespaceKeys = TNamespaceKeys> = TMessageOption<NestedKey> | TMessageKeys<NestedKey>;

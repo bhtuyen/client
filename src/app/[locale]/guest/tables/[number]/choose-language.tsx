@@ -37,7 +37,6 @@ export default function ChooseLanguage() {
 
       setRole(Role.Guest);
 
-      
       router.push(`/guest/menu`);
     } catch (error) {
       console.log(error);

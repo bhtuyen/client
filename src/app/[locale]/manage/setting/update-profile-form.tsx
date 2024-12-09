@@ -92,12 +92,7 @@ export default function UpdateProfileForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form
-            noValidate
-            className='flex flex-col'
-            onReset={onReset}
-            onSubmit={form.handleSubmit(onSubmit, (e) => console.log(e))}
-          >
+          <form noValidate className='flex flex-col' onReset={onReset} onSubmit={form.handleSubmit(onSubmit, (e) => console.log(e))}>
             <FormField
               control={form.control}
               name='avatar'
@@ -126,13 +121,7 @@ export default function UpdateProfileForm() {
                     />
                   </FormControl>
                   <FormLabel>
-                    <TButton
-                      type='button'
-                      variant='outline'
-                      onClick={() => avatarInputRef.current?.click()}
-                      tooltip='upload-image'
-                      disabled={disabled}
-                    >
+                    <TButton type='button' variant='outline' onClick={() => avatarInputRef.current?.click()} tooltip='upload-image' disabled={disabled}>
                       <Upload />
                       <span className='sr-only'>{tButton('upload-image')}</span>
                     </TButton>

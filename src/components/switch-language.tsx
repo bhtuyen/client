@@ -1,13 +1,5 @@
 'use client';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { Locale } from '@/config';
 import { locales } from '@/config';
 import { usePathname, useRouter } from '@/i18n/routing';

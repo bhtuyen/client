@@ -1,12 +1,6 @@
 import envConfig from '@/config';
 import { redirect } from '@/i18n/routing';
-import {
-  getAccessTokenFromLocalStorage,
-  normalizePath,
-  removeAuthTokens,
-  setAccessTokenToLocalStorage,
-  setRefreshTokenToLocalStorage
-} from '@/lib/utils';
+import { getAccessTokenFromLocalStorage, normalizePath, removeAuthTokens, setAccessTokenToLocalStorage, setRefreshTokenToLocalStorage } from '@/lib/utils';
 import type { LoginRes, Token } from '@/schemaValidations/auth.schema';
 
 /**
@@ -75,11 +69,7 @@ const isClient = typeof window !== 'undefined';
  * @param method
  * @returns
  */
-const request = async <Response>(
-  url: string,
-  options?: customOptions | undefined,
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET'
-) => {
+const request = async <Response>(url: string, options?: customOptions | undefined, method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET') => {
   let body: FormData | string | undefined = undefined;
 
   if (options?.body instanceof FormData) {

@@ -24,10 +24,7 @@ export default function OrderCart() {
     () =>
       orders.reduce(
         (result, { quantity, status, dishSnapshot }) => {
-          if (
-            (status === OrderStatus.Delivered || status === OrderStatus.Processing || status === OrderStatus.Pending) &&
-            dishSnapshot.category === DishCategory.Paid
-          ) {
+          if ((status === OrderStatus.Delivered || status === OrderStatus.Processing || status === OrderStatus.Pending) && dishSnapshot.category === DishCategory.Paid) {
             return {
               ...result,
               waitingForPaying: {
@@ -97,14 +94,7 @@ export default function OrderCart() {
       {orders.map((order) => (
         <div key={order.id} className='flex gap-4'>
           <div className='flex-shrink-0 relative'>
-            <TImage
-              src={order.dishSnapshot.image}
-              alt={order.dishSnapshot.name}
-              height={100}
-              width={100}
-              quality={100}
-              className='object-cover w-[80px] h-[80px] rounded-md'
-            />
+            <TImage src={order.dishSnapshot.image} alt={order.dishSnapshot.name} height={100} width={100} quality={100} className='object-cover w-[80px] h-[80px] rounded-md' />
           </div>
           <div className='space-y-1'>
             <h3 className='text-sm'>{order.dishSnapshot.name}</h3>
