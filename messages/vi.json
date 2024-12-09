@@ -200,7 +200,10 @@
       "group-name": "Nhóm",
       "table-number": "Số bàn",
       "capacity": "Sức chứa",
-      "qr-code": "Mã QR"
+      "qr-code": "Mã QR",
+      "create-update": "Tạo/Cập nhật",
+      "dish-name": "Tên món ăn",
+      "order-handler": "Người xử lý"
     },
     "customize": {
       "toggle-column": "Chọn cột"

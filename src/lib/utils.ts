@@ -222,6 +222,6 @@ export function buildSelect<TDto>(): Record<keyof TDto, any> {
 }
 
 export const periodDefault: Period = {
-  fromDate: startOfDay(new Date()),
+  fromDate: startOfDay(new Date('2024-01-01')),
   toDate: endOfDay(new Date())
 };

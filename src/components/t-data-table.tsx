@@ -6,10 +6,12 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { convertToKebabCase } from '@/lib/utils';
+import { convertToKebabCase, getArguments } from '@/lib/utils';
 import type { DeleteOption, EditOption } from '@/types/common.type';
-import type { TMessageKeys, TMessageOption } from '@/types/message.type';
+
+import type { TMessageKeys, TMessKey } from '@/types/message.type';
 import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from '@tanstack/react-table';
+
 import {
   type Table as TableType,
   flexRender,
@@ -21,22 +23,23 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
+
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, PencilIcon, Search, Settings2, TrashIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 
 interface TCellActionsProps {
-  editOption: EditOption;
+  editOption?: EditOption;
 
-  deleteOption: DeleteOption;
+  deleteOption?: DeleteOption;
 }
 
 interface TToolbarProps<TData> {
   table: TableType<TData>;
   children?: ReactNode;
   filter?: {
-    placeholder: TMessageOption<'t-data-table.filter'>;
+    placeholder: TMessKey<'t-data-table.filter'>;
     columnId: string;
   };
 }
@@ -45,7 +48,7 @@ interface TFilterProps<TData> {
   table: TableType<TData>;
 
   filter?: {
-    placeholder: TMessageOption<'t-data-table.filter'>;
+    placeholder: TMessKey<'t-data-table.filter'>;
     columnId: string;
   };
 }
@@ -61,7 +64,7 @@ interface TTableProps<TData, TValue> {
   childrenToolbar?: ReactNode;
 
   filter?: {
-    placeholder: TMessageOption<'t-data-table.filter'>;
+    placeholder: TMessKey<'t-data-table.filter'>;
     columnId: string;
   };
 }
@@ -139,10 +142,7 @@ export default function TDataTable<TData, TValue>({ data, columns, childrenToolb
 export function TFilter<TData>({
   table,
   filter = {
-    placeholder: {
-      key: 'input-placeholder-default',
-      values: {}
-    },
+    placeholder: 'input-placeholder-default',
     columnId: 'name'
   }
 }: TFilterProps<TData>) {
@@ -150,7 +150,7 @@ export function TFilter<TData>({
   const tTableFilter = useTranslations('t-data-table.filter');
   return (
     <Input
-      placeholder={tTableFilter(placeholder?.key, placeholder?.values)}
+      placeholder={tTableFilter(...getArguments(placeholder))}
       value={(table.getColumn(column)?.getFilterValue() as string) ?? ''}
       onChange={(event) => table.getColumn(column)?.setFilterValue(event.target.value)}
       className='max-w-sm h-8'
@@ -175,7 +175,7 @@ export function TOption<TData>({ table }: TOptionProps<TData>) {
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
-          .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
+          .filter((column) => (typeof column.accessorFn !== 'undefined' || typeof column.id !== 'undefined') && column.getCanHide())
           .map((column) => {
             return (
               <DropdownMenuCheckboxItem className='cursor-pointer' key={column.id} checked={column.getIsVisible()} onCheckedChange={(value) => column.toggleVisibility(!!value)}>
@@ -201,7 +201,6 @@ export function TToolbar<TData>({ table, children, filter }: TToolbarProps<TData
 
 export function TCellActions({ editOption, deleteOption }: TCellActionsProps) {
   const { showAlertDialog } = useAppStore();
-  const { urlEdit } = editOption;
 
   const deleteOptionDefault: DeleteOption = {
     action: 'confirm',
@@ -214,14 +213,19 @@ export function TCellActions({ editOption, deleteOption }: TCellActionsProps) {
   const handleDeleteRow = () => {
     showAlertDialog(deleteOption ?? deleteOptionDefault);
   };
+
   return (
     <div className='flex items-center justify-center gap-4 w-full'>
-      <TButton size='icon' href={urlEdit} tooltip='edit' variant='outline' asLink>
-        <PencilIcon height={16} width={16} />
-      </TButton>
-      <TButton size='icon' onClick={handleDeleteRow} variant='outline' tooltip='delete'>
-        <TrashIcon />
-      </TButton>
+      {editOption && (
+        <TButton size='icon' href={editOption.urlEdit} tooltip='edit' variant='outline' asLink>
+          <PencilIcon height={16} width={16} />
+        </TButton>
+      )}
+      {deleteOption && (
+        <TButton size='icon' onClick={handleDeleteRow} variant='outline' tooltip='delete'>
+          <TrashIcon />
+        </TButton>
+      )}
     </div>
   );
 }
@@ -234,6 +238,7 @@ export function TDataTablePagination<TData>({ table }: DataTablePaginationProps<
       <div className='flex items-center space-x-6 lg:space-x-8'>
         <div className='flex items-center space-x-2'>
           <p className='text-sm font-medium'>{tDataTablePagination('rows-per-page')}</p>
+
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
@@ -252,12 +257,14 @@ export function TDataTablePagination<TData>({ table }: DataTablePaginationProps<
             </SelectContent>
           </Select>
         </div>
+
         <div className='flex w-[100px] items-center justify-center text-sm font-medium'>
           {tDataTablePagination('page-info', {
             page: table.getState().pagination.pageIndex + 1,
             total: table.getPageCount()
           })}
         </div>
+
         <div className='flex items-center space-x-2'>
           <TButton onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()} tooltip='first' size='icon'>
             <ChevronsLeft />
