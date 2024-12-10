@@ -73,18 +73,15 @@ export default function Cart() {
 
         <Tabs value={activeTab} className='w-full' onValueChange={(value) => setActiveTab(value as TabsKeyType<typeof tabs>)}>
           <TabsList className='w-full bg-primary p-0'>
-            <TabsTrigger
-              value='cart'
-              className='relative text-base flex-1 data-[state=active]:bg-primary data-[state=active]:text-red-700 data-[state=active]:shadow-none data-[state=active]:before:contents-[""] data-[state=active]:before:absolute data-[state=active]:before:bottom-0 data-[state=active]:before:right-0 data-[state=active]:before:left-0 data-[state=active]:before:border-b-[2px] data-[state=active]:before:border-red-500'
-            >
-              Account
-            </TabsTrigger>
-            <TabsTrigger
-              value='ordered'
-              className='relative text-base flex-1 data-[state=active]:bg-primary data-[state=active]:text-red-700 data-[state=active]:shadow-none data-[state=active]:before:contents-[""] data-[state=active]:before:absolute data-[state=active]:before:bottom-0 data-[state=active]:before:right-0 data-[state=active]:before:left-0 data-[state=active]:before:border-b-[2px] data-[state=active]:before:border-red-500'
-            >
-              Password
-            </TabsTrigger>
+            {tabs.map((tab) => (
+              <TabsTrigger
+                key={tab.key}
+                value={tab.key}
+                className='relative text-base flex-1 data-[state=active]:bg-primary data-[state=active]:text-red-700 data-[state=active]:shadow-none data-[state=active]:before:contents-[""] data-[state=active]:before:absolute data-[state=active]:before:bottom-0 data-[state=active]:before:right-0 data-[state=active]:before:left-0 data-[state=active]:before:border-b-[2px] data-[state=active]:before:border-red-500'
+              >
+                {tab.label}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
           <TabsContent value='cart'>

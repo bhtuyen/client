@@ -247,5 +247,11 @@
     "change-token": "Đổi mã QR",
     "change-token-description": "Tích chọn để đổi mã QR",
     "qr-code": "Mã QR"
+  },
+  "t-tab": {
+    "buffet-dish": "Món Buffet",
+    "paid-dish": "Món trả tiền",
+    "dish-cart": "Giỏ đồ ăn",
+    "ordered-dishes": "Món đã gọi"
   }
 }

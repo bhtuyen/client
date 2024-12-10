@@ -247,5 +247,11 @@
     "change-token": "Change QR code",
     "change-token-description": "Switch to change QR code",
     "qr-code": "QR code"
+  },
+  "t-tab": {
+    "buffet-dish": "Buffet",
+    "paid-dish": "Paid",
+    "dish-cart": "Cart",
+    "ordered-dishe": "Ordered"
   }
 }

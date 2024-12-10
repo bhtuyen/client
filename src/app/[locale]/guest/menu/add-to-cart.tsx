@@ -42,7 +42,7 @@ export default function AddToCart({ dish }: { dish: DishDto }) {
   };
 
   return (
-    <Dialog modal={false}>
+    <Dialog>
       <DialogTrigger asChild>
         <TButton className='bg-black shadow-sm rounded-full' size='icon' variant='ghost'>
           <Plus size={30} color='#fff' />

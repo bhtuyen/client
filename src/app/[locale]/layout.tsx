@@ -39,7 +39,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={cn('h-dvh bg-background font-sans antialiased', fontSans.variable)}>
+      <body className={cn('h-lvh bg-background font-sans antialiased overflow-hidden', fontSans.variable)}>
         <NextTopLoader />
         <NextIntlClientProvider messages={message}>
           <AppProvider>

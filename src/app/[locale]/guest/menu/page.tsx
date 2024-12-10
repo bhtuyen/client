@@ -1,41 +1,33 @@
 import Cart from '@/app/[locale]/guest/menu/cart';
-import MenuGroup from '@/app/[locale]/guest/menu/menu-group';
+import Menu from '@/app/[locale]/guest/menu/menu';
 import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
-import TTabs from '@/components/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { BellRing, UserRound } from 'lucide-react';
 
-export default function MenuPage() {
-  const menuType = [
-    { key: 'buffet', label: 'Món Buffet' },
-    { key: 'paid', label: 'Món tính tiền' }
-  ];
+export default function Page() {
   return (
-    <div className='bg-white min-h-dvh text-black flex flex-col'>
-      <div className='fixed top-0 z-10 bg-white right-0 left-0'>
-        <nav className='h-[60px] flex justify-between px-4'>
-          <div className='flex items-center'>
-            <TImage src='/vietnam.png' alt='logo' width={30} height={30} />
-            <Separator orientation='vertical' className='mx-2 h-[60%] w-[0.5px] bg-[#cecece]' />
-            <Badge className='bg-[#f2f2f2] h-[60%] rounded-3xl mr-2'>Bàn 08</Badge>
-            <TButton className='bg-[#f2f2f2] h-[60%] rounded-3xl flex items-center gap-1'>
-              <BellRing width={'20px'} height={'20px'} />
-              Gọi NV
-            </TButton>
+    <div className='h-full bg-white'>
+      <nav className='h-[60px] flex justify-between px-4'>
+        <div className='flex items-center'>
+          <TImage src='/vietnam.png' alt='logo' width={30} height={30} />
+          <Separator orientation='vertical' className='mx-2 h-[60%] w-[0.5px] bg-[#cecece]' />
+          <Badge className='bg-[#f2f2f2] h-[60%] rounded-3xl mr-2'>Bàn 08</Badge>
+          <TButton className='bg-[#f2f2f2] h-[60%] rounded-3xl flex items-center gap-1'>
+            <BellRing width={'20px'} height={'20px'} />
+            Gọi NV
+          </TButton>
+        </div>
+        <div className='flex items-center gap-2'>
+          <Cart />
+          <div className='rounded-full bg-[#f2f2f2] h-[60%] aspect-square flex items-center justify-center'>
+            <UserRound color='#000000' />
           </div>
-          <div className='flex items-center gap-2'>
-            <Cart />
-            <div className='rounded-full bg-[#f2f2f2] h-[60%] aspect-square flex items-center justify-center'>
-              <UserRound color='#000000' />
-            </div>
-          </div>
-        </nav>
-        <TTabs tabs={menuType} />
-      </div>
-      <div className='bg-[#f6f6f6] flex-1 p-4 overflow-y-auto pt-[110px]'>
-        <MenuGroup />
+        </div>
+      </nav>
+      <div className='h-[calc(100%_-_60px)]'>
+        <Menu />
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 'use client';
-import AddOrder from '@/app/[locale]/manage/orders/add-order';
+import AddOrder from '@/app/[locale]/manage/orders/create/create-order-form';
 import { useOrderService } from '@/app/[locale]/manage/orders/order.service';
 import { useOrderListQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
 import { useTableListQuery } from '@/app/queries/useTable';
@@ -18,6 +18,8 @@ import { OrderDtoDetail } from '@/schemaValidations/order.schema';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useTranslations } from 'next-intl';
 import { createContext, useEffect, useMemo, useState } from 'react';
+import { PlusCircle } from 'lucide-react';
+
 
 export const OrderTableContext = createContext({
   setOrderIdEdit: (_value: string | undefined) => {},
@@ -206,7 +208,12 @@ export default function OrderTable() {
       <TDataTable
         columns={orderTableColumns}
         data={orderList}
-        childrenToolbar={<AddOrder />}
+        childrenToolbar={
+          <TButton size='sm' className='h-7 gap-1' asLink href='/manage/orders/create'>
+            <PlusCircle className='h-3.5 w-3.5' />
+            <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>{tButton('create-order')}</span>
+          </TButton>
+        }
         filter={{
           columnId: 'tableNumber',
           placeholder: {
