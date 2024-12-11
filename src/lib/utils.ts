@@ -127,6 +127,8 @@ export const getTableLink = ({ token, tableNumber, locale }: { token: string; ta
 
 export function removeAccents(str: string) {
   return str
+    .trim()
+    .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/đ/g, 'd')
@@ -134,7 +136,7 @@ export function removeAccents(str: string) {
 }
 
 export const simpleMatchText = (fullText: string, matchText: string) => {
-  return removeAccents(fullText.toLowerCase()).includes(removeAccents(matchText.trim().toLowerCase()));
+  return removeAccents(fullText).includes(removeAccents(matchText));
 };
 
 export const formatDateTimeToLocaleString = (date: string | Date) => {
@@ -224,4 +226,16 @@ export function buildSelect<TDto>(): Record<keyof TDto, any> {
 export const periodDefault: Period = {
   fromDate: startOfDay(new Date('2024-01-01')),
   toDate: endOfDay(new Date())
+};
+
+export const getDishOptions = (options: string | undefined) => {
+  if (!options) return [];
+  return options
+    .replace(';', ',')
+    .split(',')
+    .map((option) => capitalize(option.trim()));
+};
+
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };

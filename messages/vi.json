@@ -43,7 +43,9 @@
     "create-order": "Tạo đơn hàng",
     "create-table": "Tạo bàn ăn",
     "create-dish-group": "Tạo nhóm",
-    "update": "Cập nhật"
+    "update": "Cập nhật",
+    "add-to-cart": "Thêm vào giỏ hàng",
+    "call-staff": "Gọi nhân viên"
   },
   "t-alert-dialog": {
     "title": {
@@ -203,7 +205,8 @@
       "qr-code": "Mã QR",
       "create-update": "Tạo/Cập nhật",
       "dish-name": "Tên món ăn",
-      "order-handler": "Người xử lý"
+      "order-handler": "Người xử lý",
+      "options": "Tùy chọn"
     },
     "customize": {
       "toggle-column": "Chọn cột"
@@ -253,5 +256,12 @@
     "paid-dish": "Món trả tiền",
     "dish-cart": "Giỏ đồ ăn",
     "ordered-dishes": "Món đã gọi"
+  },
+  "guest": {
+    "add-to-cart": {
+      "dish-description": "Mô tả sản phẩm",
+      "options": "Tùy chọn",
+      "your-request": "Yêu cầu của bạn"
+    }
   }
 }

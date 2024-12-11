@@ -1,5 +1,5 @@
 'use client';
-import AddToCart from '@/app/[locale]/guest/menu/add-to-cart';
+import AddToCartDialog from '@/app/[locale]/guest/menu/add-to-cart-dialog';
 import { useDishListQuery } from '@/app/queries/useDish';
 import TImage from '@/components/t-image';
 import type { TabsKeyType, TasbType } from '@/components/tabs';
@@ -12,7 +12,7 @@ import { TMessageKeys } from '@/types/message.type';
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 
-export default function Menu() {
+export default function MenuTabs() {
   const menuTabs: TasbType = [
     { key: 'buffet', label: 'buffet-dish' },
     { key: 'paid', label: 'paid-dish' }
@@ -66,26 +66,8 @@ export default function Menu() {
     }
   };
 
-  // Array.from({ length: 10 }).forEach(() => {
-  //   dishes.push({
-  //     id: '1fef656a-3d71-440a-8660-b1abd2e26e23',
-  //     name: 'Salad hành paro',
-  //     price: 69000,
-  //     description: 'Salad hành paro',
-  //     image: '/60000155_kem_sua_chua_1.jpg',
-  //     status: DishStatus.Available,
-  //     category: DishCategory.Paid,
-  //     groupId: 'da5e0a32-fb59-4474-9502-942f70811065',
-  //     options: '',
-  //     group: {
-  //       id: 'da5e0a32-fb59-4474-9502-942f70811065',
-  //       name: 'Salad'
-  //     }
-  //   });
-  // });
-
   return (
-    <Tabs className='h-full text-black' value={activeTab} onValueChange={(value: TabsKeyType<typeof menuTabs>) => setActiveTab(value)}>
+    <Tabs className='h-[calc(100%_-_60px)] text-black' value={activeTab} onValueChange={(value: TabsKeyType<typeof menuTabs>) => setActiveTab(value)}>
       <TabsList className='w-full bg-white p-0 h-11'>
         {menuTabs.map((tab) => (
           <TabsTrigger
@@ -106,7 +88,7 @@ export default function Menu() {
           ))}
         </CarouselContent>
       </Carousel>
-      <TabsContent ref={containerRef} value='buffet' className='mt-0 h-[calc(100%_-_4.5rem)] p-4 bg-[#f6f6f6] overflow-y-auto space-y-4'>
+      <TabsContent ref={containerRef} value='buffet' className='mt-0 h-[calc(100%_-_5.5rem)] p-4 bg-[#f6f6f6] overflow-y-auto space-y-4'>
         {groupDetails.map(({ groupName, dishes, href }) => (
           <div key={groupName} className='grid grid-cols-2 gap-4 lg:grid-cols-5' id={href}>
             <h2 className='col-span-2 lg:col-span-5 text-lg font-medium'>➡️ {groupName}</h2>
@@ -118,7 +100,7 @@ export default function Menu() {
                 <div className='row-span-3 flex items-center'>{dish.name}</div>
                 <div className='row-span-2 flex justify-between items-end'>
                   <div>{dish.category === DishCategory.Paid ? formatCurrency(dish.price) : dish.category}</div>
-                  <AddToCart dish={dish} />
+                  <AddToCartDialog dish={dish} />
                 </div>
               </div>
             ))}

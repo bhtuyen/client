@@ -43,7 +43,9 @@
     "create-order": "Create order",
     "create-table": "Create table",
     "create-dish-group": "Create group",
-    "update": "Update"
+    "update": "Update",
+    "add-to-cart": "Add to cart",
+    "call-staff": "Call staff"
   },
   "t-alert-dialog": {
     "title": {
@@ -203,7 +205,8 @@
       "qr-code": "QR code",
       "create-update": "Create/Update",
       "dish-name": "Dish name",
-      "order-handler": "Order handler"
+      "order-handler": "Order handler",
+      "options": "Options"
     },
     "customize": {
       "toggle-column": "Toggle column"
@@ -253,5 +256,12 @@
     "paid-dish": "Paid",
     "dish-cart": "Cart",
     "ordered-dishe": "Ordered"
+  },
+  "guest": {
+    "add-to-cart": {
+      "dish-description": "Description",
+      "options": "Options",
+      "your-request": "Your request"
+    }
   }
 }

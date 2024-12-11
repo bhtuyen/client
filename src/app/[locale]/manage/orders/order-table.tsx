@@ -1,5 +1,4 @@
 'use client';
-import AddOrder from '@/app/[locale]/manage/orders/create/create-order-form';
 import { useOrderService } from '@/app/[locale]/manage/orders/order.service';
 import { useOrderListQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
 import { useTableListQuery } from '@/app/queries/useTable';
@@ -12,14 +11,13 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { OrderStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
-import { formatDateTimeToLocaleString, getEnumValues, getPrice, handleErrorApi, periodDefault } from '@/lib/utils';
+import { formatDateTimeToLocaleString, getDishOptions, getEnumValues, getPrice, handleErrorApi, periodDefault, removeAccents } from '@/lib/utils';
 import { Period } from '@/schemaValidations/common.schema';
 import { OrderDtoDetail } from '@/schemaValidations/order.schema';
 import type { ColumnDef } from '@tanstack/react-table';
+import { PlusCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { createContext, useEffect, useMemo, useState } from 'react';
-import { PlusCircle } from 'lucide-react';
-
 
 export const OrderTableContext = createContext({
   setOrderIdEdit: (_value: string | undefined) => {},
@@ -132,6 +130,19 @@ export default function OrderTable() {
               <span className='italic'>{getPrice(row.original.dishSnapshot)}</span>
             </div>
           </div>
+        )
+      },
+      {
+        accessorKey: 'options',
+        header: () => <div className='text-left w-[150px]'>{tTableColumn('options')}</div>,
+        cell: ({ row }) => (
+          <ul className='text-left w-[150px] space-y-1'>
+            {getDishOptions(row.original.options).map((option) => (
+              <li key={removeAccents(option)} className='capitalize'>
+                ➡️ {option}
+              </li>
+            ))}
+          </ul>
         )
       },
       {

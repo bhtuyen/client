@@ -5,7 +5,7 @@ import TButton from '@/components/t-button';
 import TDataTable, { TCellActions } from '@/components/t-data-table';
 import TImage from '@/components/t-image';
 import { toast } from '@/hooks/use-toast';
-import { getPrice, handleErrorApi } from '@/lib/utils';
+import { getDishOptions, getPrice, handleErrorApi, removeAccents } from '@/lib/utils';
 import type { DishDtoDetail } from '@/schemaValidations/dish.schema';
 import type { ColumnDef } from '@tanstack/react-table';
 import { PlusCircle } from 'lucide-react';
@@ -15,21 +15,6 @@ import { useMemo } from 'react';
 export default function DishTable() {
   const dishesListQuery = useDishListQuery();
   const data = dishesListQuery.data?.payload.data ?? [];
-
-  // data.push({
-  //   id: '1fef656a-3d71-440a-8660-b1abd2e26e23',
-  //   name: 'Salad hành paro',
-  //   price: 69000,
-  //   description: 'Salad hành paro',
-  //   image: 'http://localhost:4000/static/0011b20501a14cce8d451357d7fc5282.jpg',
-  //   status: DishStatus.Available,
-  //   category: DishCategory.Paid,
-  //   groupId: 'da5e0a32-fb59-4474-9502-942f70811065',
-  //   options: '',
-  //   groupName: 'Salad',
-  //   createdAt: new Date(),
-  //   updatedAt: new Date()
-  // });
 
   const deleteDishMutation = useDeleteDishMutation();
   const tDishStatus = useTranslations('dish-status');
@@ -69,6 +54,19 @@ export default function DishTable() {
         accessorKey: 'price',
         header: () => <div className='text-right w-[100px]'>{tTableColumn('price')}</div>,
         cell: ({ row }) => <div className='text-right w-[100px]'>{getPrice(row.original)}</div>
+      },
+      {
+        accessorKey: 'options',
+        header: () => <div className='text-left w-[150px]'>{tTableColumn('options')}</div>,
+        cell: ({ row }) => (
+          <ul className='text-left w-[150px] space-y-1'>
+            {getDishOptions(row.original.options).map((option) => (
+              <li key={removeAccents(option)} className='capitalize'>
+                ➡️ {option}
+              </li>
+            ))}
+          </ul>
+        )
       },
       {
         accessorKey: 'category',
