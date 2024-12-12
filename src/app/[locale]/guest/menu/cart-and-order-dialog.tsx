@@ -4,7 +4,7 @@ import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import type { TabsKeyType } from '@/components/tabs';
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DishCategory } from '@/constants/enum';
 import { formatCurrency, getPrice, handleErrorApi } from '@/lib/utils';
@@ -61,7 +61,7 @@ export default function CartAndOrderDialog() {
         </div>
       </DialogTrigger>
       <DialogContent className='w-full h-full p-0 bg-white text-black flex flex-col' isHiddenClose>
-        <DialogHeader className='p-4 pb-2 z-10'>
+        <DialogHeader className='p-4 pb-2 z-10 h-12'>
           <DialogTitle className='flex-auto relative text-center'>
             Gọi món của bạn
             <DialogClose className='absolute top-[50%] translate-y-[-50%] left-0'>
@@ -71,8 +71,8 @@ export default function CartAndOrderDialog() {
           <DialogDescription />
         </DialogHeader>
 
-        <Tabs value={activeTab} className='w-full' onValueChange={(value) => setActiveTab(value as TabsKeyType<typeof tabs>)}>
-          <TabsList className='w-full bg-white p-0 h-11'>
+        <Tabs value={activeTab} className='w-full h-[calc(100%_-_3rem)]' onValueChange={(value) => setActiveTab(value as TabsKeyType<typeof tabs>)}>
+          <TabsList className='w-full bg-white p-0 h-11 shadow-sm'>
             {tabs.map((tab) => (
               <TabsTrigger
                 key={tab.key}
@@ -84,50 +84,52 @@ export default function CartAndOrderDialog() {
             ))}
           </TabsList>
 
-          <TabsContent value='cart'>
-            <div>
-              {cart.length > 0 && (
-                <div className='flex-auto bg-[#e6e6e6] overflow-y-auto'>
-                  <div className='p-3 grid gap-3'>
-                    {cart.map((dish) => (
-                      <div className='bg-white h-[140px] rounded-md flex p-2 relative text-black' key={dish.id}>
-                        <div className='relative h-full aspect-square'>
-                          <TImage src={dish.image} alt={dish.name} fill className='rounded-md' sizes='' />
-                        </div>
-                        <div className='flex-auto flex flex-col justify-between pl-2'>
-                          <div>
-                            <p>{dish.name}</p>
-                          </div>
-                          <div className='flex items-center justify-between'>
-                            <div className='flex items-center rounded-2xl gap-3 border px-2 py-1'>
-                              <Minus size={20} onClick={() => changeQuantity(dish.id, dish.quantity - 1)} />
-                              <p>{dish.quantity}</p>
-                              <Plus size={20} onClick={() => changeQuantity(dish.id, dish.quantity + 1)} />
-                            </div>
-                            <p className='text-red-950 font-medium'>{dish.category === DishCategory.Buffet ? 'Buffet' : formatCurrency(dish.price * dish.quantity)}</p>
-                          </div>
-                        </div>
-                        <X className='h-6 w-6 absolute top-3 right-3' onClick={() => removeDishFromCart([dish.id])} />
+          <TabsContent value='cart' className='mt-0 h-[calc(100%_-_2.75rem)]'>
+            <div
+              className={clsx({
+                'bg-white p-0 h-[calc(100%_-_5rem)]': cart.length == 0,
+                'bg-[#e6e6e6] p-3 flex-1 h-[calc(100%_-_9rem)] overflow-y-auto space-y-3': cart.length > 0
+              })}
+            >
+              {cart.length > 0 &&
+                cart.map((dish) => (
+                  <div className='bg-white h-[140px] rounded-md flex p-2 relative text-black' key={dish.id}>
+                    <div className='relative h-full aspect-square'>
+                      <TImage src={dish.image} alt={dish.name} fill className='rounded-md' sizes='' />
+                    </div>
+                    <div className='flex-auto flex flex-col justify-between pl-2'>
+                      <div>
+                        <p>{dish.name}</p>
                       </div>
-                    ))}
+                      <div className='flex items-center justify-between'>
+                        <div className='flex items-center rounded-2xl gap-1 border px-2 py-1'>
+                          <Minus size={20} onClick={() => changeQuantity(dish.id, dish.quantity - 1)} />
+                          <p className='w-6 text-center'>{dish.quantity}</p>
+                          <Plus size={20} onClick={() => changeQuantity(dish.id, dish.quantity + 1)} />
+                        </div>
+                        <p className='text-red-950 font-medium'>{dish.category === DishCategory.Buffet ? 'Buffet' : formatCurrency(dish.price * dish.quantity)}</p>
+                      </div>
+                    </div>
+                    <X className='h-6 w-6 absolute top-3 right-3' onClick={() => removeDishFromCart([dish.id])} />
                   </div>
-                </div>
-              )}
+                ))}
+
               {cart.length === 0 && (
-                <div className='flex-auto bg-white flex flex-col items-center justify-center'>
+                <div className='bg-white h-full flex flex-col items-center justify-center'>
                   <TImage src='/empty-cart.jpg' alt='empty-cart' width={200} height={200} />
                   <p>{`Bạn chưa chọn món nào`}</p>
                 </div>
               )}
             </div>
+
             <div
               className={clsx({
-                'shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_-2px_4px_-2px_rgba(0,0,0,0.1)] z-10 p-4': cart.length > 0,
-                'p-4': cart.length === 0
+                'shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_-2px_4px_-2px_rgba(0,0,0,0.1)] z-10 p-4 h-36': cart.length > 0,
+                'p-4 h-auto': cart.length === 0
               })}
             >
               {cart.length > 0 && (
-                <div className='w-full'>
+                <>
                   <div className='flex items-center justify-between pb-4 text-lg'>
                     <p>Tạm tính</p>
                     <p className='text-red-950 font-medium text-xl'>{formatCurrency(sumPrice)}</p>
@@ -140,11 +142,11 @@ export default function CartAndOrderDialog() {
                       Gọi món ngay
                     </TButton>
                   </div>
-                </div>
+                </>
               )}
               {cart.length === 0 && (
                 <DialogClose asChild>
-                  <TButton className='text-white bg-black w-full h-[50px] text-base' variant={'ghost'}>
+                  <TButton className='text-white bg-black w-full h-12 text-base' variant={'ghost'}>
                     Chọn món ngay
                   </TButton>
                 </DialogClose>
@@ -152,10 +154,10 @@ export default function CartAndOrderDialog() {
             </div>
           </TabsContent>
 
-          <TabsContent value='ordered'>
-            {activeTab === 'ordered' && orders.length > 0 && (
-              <div className='flex-auto overflow-y-auto'>
-                {orders.map(({ id, quantity, status, dishSnapshot }) => (
+          <TabsContent value='ordered' className='mt-0 h-[calc(100%_-_2.75rem)]'>
+            <div className={'p-3 flex-1 h-[calc(100%_-_5rem)] overflow-y-auto'}>
+              {orders.length > 0 &&
+                orders.map(({ id, quantity, status, dishSnapshot }) => (
                   <div className='flex p-4 relative text-black border-b-[1px] border-b-[#e3e3e3] gap-4 items-center' key={id}>
                     <span className='bg-[#f2f2f2] text-lg font-medium h-8 w-8 rounded-md flex items-center justify-center'>{quantity}x</span>
                     <span className='text-lg font-medium flex-auto'>{dishSnapshot.name}</span>
@@ -163,26 +165,30 @@ export default function CartAndOrderDialog() {
                     <span className='text-red-950 font-medium'>{getPrice(dishSnapshot)}</span>
                   </div>
                 ))}
-              </div>
-            )}
-            <DialogFooter
-              className={clsx({
-                'shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_-2px_4px_-2px_rgba(0,0,0,0.1)] z-10 p-4': cart.length > 0,
-                'p-4': cart.length === 0
-              })}
-            >
+
+              {orders.length === 0 && (
+                <div className='bg-white h-full flex flex-col items-center justify-center'>
+                  <TImage src='/empty-cart.jpg' alt='empty-cart' width={200} height={200} />
+                  <p>{`Bạn chưa gọi món nào`}</p>
+                </div>
+              )}
+            </div>
+
+            <div className='shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_-2px_4px_-2px_rgba(0,0,0,0.1)] z-10 p-4'>
               {orders.length > 0 && (
-                <div className='text-white bg-black w-full h-[50px] flex items-center justify-between px-4 text-lg rounded-lg'>
+                <div className='text-white bg-black w-full h-12 flex items-center justify-between px-4 text-lg rounded-lg'>
                   <span>Tổng: {formatCurrency(sumOrder)}</span>
                   <span>Thanh toán ngay</span>
                 </div>
               )}
               {orders.length === 0 && (
-                <TButton className='text-white bg-black w-full h-[50px] text-base' variant={'ghost'}>
-                  Chọn món ngay
-                </TButton>
+                <DialogClose asChild>
+                  <TButton className='text-white bg-black w-full h-12 text-base' variant={'ghost'}>
+                    Chọn món ngay
+                  </TButton>
+                </DialogClose>
               )}
-            </DialogFooter>
+            </div>
           </TabsContent>
         </Tabs>
       </DialogContent>
