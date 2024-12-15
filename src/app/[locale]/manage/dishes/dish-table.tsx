@@ -22,7 +22,7 @@ export default function DishTable() {
   const tTableColumn = useTranslations('t-data-table.column');
   const tButton = useTranslations('t-button');
 
-  const columns: ColumnDef<DishDtoDetail>[] = useMemo(
+  const columns = useMemo<ColumnDef<DishDtoDetail>[]>(
     () => [
       {
         accessorKey: 'image',

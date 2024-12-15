@@ -1,4 +1,5 @@
 import { dishApiRequets } from '@/app/apiRequests/dish';
+import { DishCategory } from '@/constants/enum';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const useDishListQuery = () => {
@@ -12,6 +13,14 @@ export const useDishQuery = (id: string) => {
   return useQuery({
     queryKey: ['dish', id],
     queryFn: () => dishApiRequets.getById(id)
+  });
+};
+
+export const useDishesChooseQuery = (body: { category: DishCategory; ignores?: string[] }, enabled: boolean) => {
+  return useQuery({
+    queryKey: ['dishes-choose', body],
+    queryFn: () => dishApiRequets.getToChoose(body),
+    enabled
   });
 };
 

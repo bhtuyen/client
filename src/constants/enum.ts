@@ -34,7 +34,9 @@ export enum OrderStatus {
 
 export enum DishCategory {
   Buffet = 'Buffet',
-  Paid = 'Paid'
+  Paid = 'Paid',
+  ComboBuffet = 'ComboBuffet',
+  ComboPaid = 'ComboPaid'
 }
 
 export enum RouteAction {
@@ -42,7 +44,9 @@ export enum RouteAction {
   Edit = 'edit'
 }
 
-export enum RowAction {
-  Edit = 'Edit',
-  Delete = 'Delete'
+export enum RowMode {
+  None,
+  Insert,
+  Update,
+  Delete
 }

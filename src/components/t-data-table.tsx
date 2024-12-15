@@ -2,7 +2,15 @@
 
 import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -27,7 +35,7 @@ import {
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, PencilIcon, Search, Settings2, TrashIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface TCellActionsProps {
   editOption?: EditOption;
@@ -60,20 +68,37 @@ interface TOptionProps<TData> {
 interface TTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-
+  className?: string | undefined;
   childrenToolbar?: ReactNode;
-
   filter?: {
     placeholder: TMessKey<'t-data-table.filter'>;
     columnId: string;
   };
+
+  selected?: TData[];
+
+  setIdsSelected?: (idsSelected: string[]) => void;
+
+  hasDbClickToSelect?: boolean;
+
+  rowKey?: keyof TData;
 }
 
 interface DataTablePaginationProps<TData> {
   table: TableType<TData>;
+  hasDbClickToSelect?: boolean;
 }
 
-export default function TDataTable<TData, TValue>({ data, columns, childrenToolbar, filter }: TTableProps<TData, TValue>) {
+export default function TDataTable<TData, TValue>({
+  data,
+  columns,
+  childrenToolbar,
+  filter,
+  className,
+  hasDbClickToSelect = false,
+  setIdsSelected,
+  rowKey
+}: TTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -99,10 +124,17 @@ export default function TDataTable<TData, TValue>({ data, columns, childrenToolb
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues()
   });
+
+  useEffect(() => {
+    if (setIdsSelected && rowKey) {
+      setIdsSelected(table.getFilteredSelectedRowModel().rows.map((row) => row.original[rowKey] as string));
+    }
+  }, [rowKey, rowSelection, setIdsSelected, table]);
+
   const tDataTable = useTranslations('t-data-table');
 
   return (
-    <div className='flex flex-col gap-2 p-2 w-full overflow-hidden'>
+    <div className={`flex flex-col gap-2 w-full h-full ${className} select-none`}>
       <TToolbar table={table} filter={filter}>
         {childrenToolbar}
       </TToolbar>
@@ -111,7 +143,11 @@ export default function TDataTable<TData, TValue>({ data, columns, childrenToolb
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
-                return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>;
+                return (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                );
               })}
             </TableRow>
           ))}
@@ -119,7 +155,16 @@ export default function TDataTable<TData, TValue>({ data, columns, childrenToolb
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && 'selected'}
+                onDoubleClick={() => {
+                  if (hasDbClickToSelect) {
+                    row.toggleSelected();
+                  }
+                }}
+                className='cursor-pointer'
+              >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                 ))}
@@ -134,7 +179,7 @@ export default function TDataTable<TData, TValue>({ data, columns, childrenToolb
           )}
         </TableBody>
       </Table>
-      <TDataTablePagination table={table} />
+      <TDataTablePagination table={table} hasDbClickToSelect={hasDbClickToSelect} />
     </div>
   );
 }
@@ -178,7 +223,12 @@ export function TOption<TData>({ table }: TOptionProps<TData>) {
           .filter((column) => (typeof column.accessorFn !== 'undefined' || typeof column.id !== 'undefined') && column.getCanHide())
           .map((column) => {
             return (
-              <DropdownMenuCheckboxItem className='cursor-pointer' key={column.id} checked={column.getIsVisible()} onCheckedChange={(value) => column.toggleVisibility(!!value)}>
+              <DropdownMenuCheckboxItem
+                className='cursor-pointer'
+                key={column.id}
+                checked={column.getIsVisible()}
+                onCheckedChange={(value) => column.toggleVisibility(!!value)}
+              >
                 {tTableColumn(convertToKebabCase(column.id) as TMessageKeys<'t-data-table.column'>)}
               </DropdownMenuCheckboxItem>
             );
@@ -230,11 +280,26 @@ export function TCellActions({ editOption, deleteOption }: TCellActionsProps) {
   );
 }
 
-export function TDataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
+export function TDataTablePagination<TData>({ table, hasDbClickToSelect = false }: DataTablePaginationProps<TData>) {
   const tDataTablePagination = useTranslations('t-data-table.pagination');
   return (
     <div className='flex items-center justify-between'>
-      <div className='flex-1 text-sm text-muted-foreground'>{tDataTablePagination('row-selected-info', { count: table.getFilteredSelectedRowModel().rows.length })}</div>
+      <div className='flex-1 flex items-center gap-x-4 pl-2'>
+        {hasDbClickToSelect && (
+          <>
+            <Checkbox
+              checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            />
+            <span className='text-sm text-muted-foreground'>
+              {tDataTablePagination('row-selected-info', { selected: table.getFilteredSelectedRowModel().rows.length, count: table.getRowCount() })}
+            </span>
+          </>
+        )}
+        {!hasDbClickToSelect && (
+          <span className='text-sm text-muted-foreground'>{tDataTablePagination('total-row', { count: table.getRowCount() })}</span>
+        )}
+      </div>
       <div className='flex items-center space-x-6 lg:space-x-8'>
         <div className='flex items-center space-x-2'>
           <p className='text-sm font-medium'>{tDataTablePagination('rows-per-page')}</p>

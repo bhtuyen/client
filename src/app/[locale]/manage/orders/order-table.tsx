@@ -209,7 +209,7 @@ export default function OrderTable() {
 
   return (
     <>
-      <div className='flex gap-2 p-2 pb-0'>
+      <div className='flex gap-2 pb-0'>
         <TDateRange dateRange={dateRange} setDateRange={setDateRange} />
         <TButton size='sm' variant={'outline'} onClick={resetDateFilter}>
           {tButton('reset')}

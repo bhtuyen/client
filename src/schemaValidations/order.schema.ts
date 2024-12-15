@@ -26,7 +26,7 @@ const guest = z
   .object({
     tableNumber: z.string().trim().min(1).max(50),
     refreshToken: z.string().nullable(),
-    refreshTokenExpiresAt: z.date().nullable()
+    expiredAt: z.date().nullable()
   })
   .merge(updateAndCreate)
   .merge(id);

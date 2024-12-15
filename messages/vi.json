@@ -45,7 +45,10 @@
     "create-dish-group": "Tạo nhóm",
     "update": "Cập nhật",
     "add-to-cart": "Thêm vào giỏ hàng",
-    "call-staff": "Gọi nhân viên"
+    "call-staff": "Gọi nhân viên",
+    "choose-dish": "Chọn món ăn",
+    "increase": "Tăng",
+    "decrease": "Giảm"
   },
   "t-alert-dialog": {
     "title": {
@@ -94,7 +97,9 @@
   },
   "dish-category": {
     "Buffet": "Món Buffet",
-    "Paid": "Món trả tiền"
+    "Paid": "Món trả tiền",
+    "ComboBuffet": "Combo Buffet",
+    "ComboPaid": "Combo trả tiền"
   },
 
   "manage-sidebar": {
@@ -151,7 +156,8 @@
         "description": "Chỉnh sửa thông tin món ăn"
       },
       "choose-group": "Chọn nhóm cho món ăn",
-      "choose-status": "Chọn trạng thái cho món ăn"
+      "choose-status": "Chọn trạng thái cho món ăn",
+      "choose-category": "Chọn loại món cho món ăn"
     },
 
     "orders": {
@@ -206,7 +212,8 @@
       "create-update": "Tạo/Cập nhật",
       "dish-name": "Tên món ăn",
       "order-handler": "Người xử lý",
-      "options": "Tùy chọn"
+      "options": "Tùy chọn",
+      "quantity": "Số lượng"
     },
     "customize": {
       "toggle-column": "Chọn cột"
@@ -222,7 +229,8 @@
     "pagination": {
       "rows-per-page": "Dòng trên trang",
       "page-info": "Trang {page} của {total}",
-      "row-selected-info": "Đã chọn {count} bản ghi"
+      "row-selected-info": "Đã chọn {selected}/{count} bản ghi",
+      "total-row": "Tổng số {count} bản ghi"
     }
   },
   "t-form": {
@@ -249,7 +257,8 @@
     "table-status": "Trạng thái",
     "change-token": "Đổi mã QR",
     "change-token-description": "Tích chọn để đổi mã QR",
-    "qr-code": "Mã QR"
+    "qr-code": "Mã QR",
+    "choose-combos": "Chọn combo"
   },
   "t-tab": {
     "buffet-dish": "Món Buffet",
@@ -263,5 +272,9 @@
       "options": "Tùy chọn",
       "your-request": "Yêu cầu của bạn"
     }
+  },
+  "t-sheet": {
+    "choose-dish-title": "Chọn món ăn",
+    "choose-dish-description": "Chọn món ăn cho combo hoặc combo cho món ăn"
   }
 }

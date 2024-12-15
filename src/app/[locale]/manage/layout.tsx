@@ -13,7 +13,7 @@ export default function Layout({
       <ManageSidebar />
       <SidebarInset className='h-screen overflow-hidden'>
         <ManageHeader />
-        <main className='flex flex-col overflow-hidden h-full'>{children}</main>
+        <main className='flex flex-col overflow-hidden p-2 h-full space-y-2'>{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

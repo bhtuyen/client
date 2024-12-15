@@ -118,7 +118,7 @@ export const formatCurrency = (number: number) => {
 };
 
 export const getPrice = (dish: DishSnapshotDto | DishDto) => {
-  return dish.category === DishCategory.Paid ? formatCurrency(dish.price) : DishCategory.Buffet;
+  return dish.category === DishCategory.Buffet ? DishCategory.Buffet : formatCurrency(dish.price);
 };
 
 export const getTableLink = ({ token, tableNumber, locale }: { token: string; tableNumber: string; locale: string }) => {
