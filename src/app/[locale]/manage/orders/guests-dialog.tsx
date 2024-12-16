@@ -123,7 +123,12 @@ export default function GuestsDialog({ onChoose }: { onChoose: (_guest: GuestDto
               </div>
               <div className='flex items-center'>
                 <span className='mr-2'>Đến</span>
-                <Input type='datetime-local' placeholder='Đến ngày' value={format(toDate, 'yyyy-MM-dd HH:mm').replace(' ', 'T')} onChange={(event) => setToDate(new Date(event.target.value))} />
+                <Input
+                  type='datetime-local'
+                  placeholder='Đến ngày'
+                  value={format(toDate, 'yyyy-MM-dd HH:mm').replace(' ', 'T')}
+                  onChange={(event) => setToDate(new Date(event.target.value))}
+                />
               </div>
               <TButton className='' variant={'outline'} onClick={resetDateFilter}>
                 Reset
@@ -149,7 +154,11 @@ export default function GuestsDialog({ onChoose }: { onChoose: (_guest: GuestDto
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => {
-                        return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>;
+                        return (
+                          <TableHead key={header.id}>
+                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                          </TableHead>
+                        );
                       })}
                     </TableRow>
                   ))}

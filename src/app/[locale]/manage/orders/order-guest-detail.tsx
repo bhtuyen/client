@@ -9,7 +9,15 @@ import { OrderDtoDetail, OrdersDtoDetailRes } from '@/schemaValidations/order.sc
 import { useTranslations } from 'next-intl';
 import { Fragment } from 'react';
 
-export default async function OrderGuestDetail({ guest, orders, onPaySuccess }: { guest: GuestDto; orders: OrderDtoDetail[]; onPaySuccess?: (_data: OrdersDtoDetailRes) => void }) {
+export default async function OrderGuestDetail({
+  guest,
+  orders,
+  onPaySuccess
+}: {
+  guest: GuestDto;
+  orders: OrderDtoDetail[];
+  onPaySuccess?: (_data: OrdersDtoDetailRes) => void;
+}) {
   const ordersFilterToPurchase = guest ? orders.filter((order) => order.status !== OrderStatus.Paid && order.status !== OrderStatus.Rejected) : [];
   const purchasedOrderFilter = guest ? orders.filter((order) => order.status === OrderStatus.Paid) : [];
 
@@ -58,7 +66,14 @@ export default async function OrderGuestDetail({ guest, orders, onPaySuccess }: 
                 {order.status === OrderStatus.Delivered && <OrderStatusIcon.Delivered className='w-4 h-4' />}
                 {order.status === OrderStatus.Paid && <OrderStatusIcon.Paid className='w-4 h-4 text-yellow-400' />}
               </span>
-              <TImage src={order.dishSnapshot.image} alt={order.dishSnapshot.name} title={order.dishSnapshot.name} width={30} height={30} className='h-[30px] w-[30px] rounded object-cover' />
+              <TImage
+                src={order.dishSnapshot.image}
+                alt={order.dishSnapshot.name}
+                title={order.dishSnapshot.name}
+                width={30}
+                height={30}
+                className='h-[30px] w-[30px] rounded object-cover'
+              />
               <span className='truncate w-[70px] sm:w-[100px]' title={order.dishSnapshot.name}>
                 {order.dishSnapshot.name}
               </span>

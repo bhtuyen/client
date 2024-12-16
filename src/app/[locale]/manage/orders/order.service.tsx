@@ -57,7 +57,9 @@ export const useOrderService = (orderList: OrderDtoDetail[]) => {
       const servingGuestObject: OrderObjectByGuestID = {};
       for (const guestId in guestObject) {
         const guestOrders = guestObject[guestId];
-        const isServingGuest = guestOrders.some((order) => [OrderStatus.Pending, OrderStatus.Processing, OrderStatus.Delivered].includes(order.status));
+        const isServingGuest = guestOrders.some((order) =>
+          [OrderStatus.Pending, OrderStatus.Processing, OrderStatus.Delivered].includes(order.status)
+        );
         if (isServingGuest) {
           servingGuestObject[guestId] = guestOrders;
         }

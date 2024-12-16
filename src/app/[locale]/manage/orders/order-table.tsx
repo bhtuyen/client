@@ -119,7 +119,13 @@ export default function OrderTable() {
         header: 'Món ăn',
         cell: ({ row }) => (
           <div className='flex items-center gap-2'>
-            <TImage src={row.original.dishSnapshot.image} alt={row.original.dishSnapshot.name} width={50} height={50} className='rounded-md object-cover w-[50px] h-[50px]' />
+            <TImage
+              src={row.original.dishSnapshot.image}
+              alt={row.original.dishSnapshot.name}
+              width={50}
+              height={50}
+              className='rounded-md object-cover w-[50px] h-[50px]'
+            />
             <div className='space-y-2'>
               <div className='flex items-center gap-2'>
                 <span>{row.original.dishSnapshot.name}</span>

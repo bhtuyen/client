@@ -57,7 +57,9 @@ export default function CartAndOrderDialog() {
       <DialogTrigger asChild>
         <div className='rounded-full bg-[#f2f2f2] h-[60%] aspect-square flex items-center justify-center relative'>
           <ShoppingCart color='#000000' />
-          <span className='text-white absolute top-[-4px] right-[-4px] rounded-full flex justify-center items-center bg-red-500 h-[45%] aspect-square text-[12px]'>{cart.length}</span>
+          <span className='text-white absolute top-[-4px] right-[-4px] rounded-full flex justify-center items-center bg-red-500 h-[45%] aspect-square text-[12px]'>
+            {cart.length}
+          </span>
         </div>
       </DialogTrigger>
       <DialogContent className='w-full h-full p-0 bg-white text-black flex flex-col' isHiddenClose>
@@ -107,7 +109,9 @@ export default function CartAndOrderDialog() {
                           <p className='w-6 text-center'>{dish.quantity}</p>
                           <Plus size={20} onClick={() => changeQuantity(dish.id, dish.quantity + 1)} />
                         </div>
-                        <p className='text-red-950 font-medium'>{dish.category === DishCategory.Buffet ? 'Buffet' : formatCurrency(dish.price * dish.quantity)}</p>
+                        <p className='text-red-950 font-medium'>
+                          {dish.category === DishCategory.Buffet ? 'Buffet' : formatCurrency(dish.price * dish.quantity)}
+                        </p>
                       </div>
                     </div>
                     <X className='h-6 w-6 absolute top-3 right-3' onClick={() => removeDishFromCart([dish.id])} />

@@ -38,7 +38,12 @@ export function TDateRange({ className, dateRange, setDateRange }: TDateRangePro
     <div className={cn('grid gap-2', className)}>
       <Popover>
         <PopoverTrigger asChild>
-          <TButton id='date' variant={'outline'} className={cn('min-w-[209px] justify-start text-left font-normal', !date && 'text-muted-foreground')} size={'sm'}>
+          <TButton
+            id='date'
+            variant={'outline'}
+            className={cn('min-w-[209px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
+            size={'sm'}
+          >
             <CalendarIcon />
             {date?.from ? (
               date.to ? (
@@ -54,7 +59,16 @@ export function TDateRange({ className, dateRange, setDateRange }: TDateRangePro
           </TButton>
         </PopoverTrigger>
         <PopoverContent className='w-auto p-0' align='start'>
-          <Calendar initialFocus mode='range' defaultMonth={date?.from} selected={date} onSelect={onSelect} numberOfMonths={1} weekStartsOn={1} locale={vi} />
+          <Calendar
+            initialFocus
+            mode='range'
+            defaultMonth={date?.from}
+            selected={date}
+            onSelect={onSelect}
+            numberOfMonths={1}
+            weekStartsOn={1}
+            locale={vi}
+          />
         </PopoverContent>
       </Popover>
     </div>

@@ -48,7 +48,10 @@ export default function ChooseLanguage() {
       <div className='border-b-[0.05px] border-[#dddddd] h-full flex items-center justify-center'>Chọn ngôn ngữ để tiếp tục</div>
       <div className='flex justify-center gap-5 px-5'>
         <TButton
-          className={clsx('w-full flex bg-white justify-center items-center gap-2 h-[50px] text-[16px] border-[1px] border-[#dddddd] relative', locale === locales[0] && 'border-black')}
+          className={clsx(
+            'w-full flex bg-white justify-center items-center gap-2 h-[50px] text-[16px] border-[1px] border-[#dddddd] relative',
+            locale === locales[0] && 'border-black'
+          )}
           onClick={() => {
             router.replace(pathname, { locale: locales[0] as Locale });
           }}
@@ -64,7 +67,10 @@ export default function ChooseLanguage() {
           )}
         </TButton>
         <TButton
-          className={clsx('w-full flex justify-center items-center gap-2 h-[50px] text-[16px] border-[1px] relative border-[#dddddd]', locale === locales[1] && 'border-black')}
+          className={clsx(
+            'w-full flex justify-center items-center gap-2 h-[50px] text-[16px] border-[1px] relative border-[#dddddd]',
+            locale === locales[1] && 'border-black'
+          )}
           onClick={() => {
             router.replace(pathname, { locale: locales[1] as Locale });
           }}

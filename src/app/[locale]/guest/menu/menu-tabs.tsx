@@ -82,7 +82,11 @@ export default function MenuTabs() {
       <Carousel className='w-full h-11 flex items-center shadow-sm'>
         <CarouselContent className='ml-0 w-full h-full'>
           {groupDetails.map(({ href, groupName }) => (
-            <CarouselItem key={href} className={`basis-[${(1 / groupDetails.length) * 100}%] flex items-center relative h-full`} onClick={() => scrollToGroup(href)}>
+            <CarouselItem
+              key={href}
+              className={`basis-[${(1 / groupDetails.length) * 100}%] flex items-center relative h-full`}
+              onClick={() => scrollToGroup(href)}
+            >
               {groupName}
             </CarouselItem>
           ))}
@@ -95,7 +99,13 @@ export default function MenuTabs() {
             {dishes.map((dish) => (
               <div className='grid grid-rows-11 h-[300px] bg-white shadow-md rounded-md p-3 text-black' key={dish.id}>
                 <div className='row-span-6 relative'>
-                  <TImage src={dish.image} alt={dish.name} fill className='rounded-md' sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw' />
+                  <TImage
+                    src={dish.image}
+                    alt={dish.name}
+                    fill
+                    className='rounded-md'
+                    sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+                  />
                 </div>
                 <div className='row-span-3 flex items-center'>{dish.name}</div>
                 <div className='row-span-2 flex justify-between items-end'>

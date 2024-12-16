@@ -155,7 +155,14 @@ export default function CreateOrderForm() {
           >
             <div className='flex-shrink-0 relative'>
               {dish.status === DishStatus.Unavailable && <span className='absolute inset-0 flex items-center justify-center text-sm'>Hết hàng</span>}
-              <TImage src={dish.image ?? '/60000155_kem_sua_chua_1.jpg'} alt={dish.name} height={100} width={100} quality={100} className='object-cover w-[80px] h-[80px] rounded-md' />
+              <TImage
+                src={dish.image ?? '/60000155_kem_sua_chua_1.jpg'}
+                alt={dish.name}
+                height={100}
+                width={100}
+                quality={100}
+                className='object-cover w-[80px] h-[80px] rounded-md'
+              />
             </div>
             <div className='space-y-1'>
               <h3 className='text-sm'>{dish.name}</h3>

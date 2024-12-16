@@ -1,6 +1,15 @@
 import { DishCategory } from '@/constants/enum';
 import http from '@/lib/http';
-import type { CreateDishCombo, CreateDishGroup, DishDtoComboDetailRes, DishDtoDetailChooseRes, DishGroupRes, DishGroupsRes, DishesRes, UpdateDishCombo } from '@/schemaValidations/dish.schema';
+import type {
+  CreateDishCombo,
+  CreateDishGroup,
+  DishDtoComboDetailRes,
+  DishDtoDetailChooseRes,
+  DishGroupRes,
+  DishGroupsRes,
+  DishesRes,
+  UpdateDishCombo
+} from '@/schemaValidations/dish.schema';
 
 const prefix = '/dishes';
 

@@ -31,7 +31,14 @@ export default async function HomePage() {
           {dishList.map((dish) => (
             <Link href={`/dishes/${generateSlugify({ id: dish.id, name: dish.name })}`} className='flex gap-4 w' key={dish.id}>
               <div className='flex-shrink-0'>
-                <TImage src={dish.image} className='object-cover w-[150px] h-[150px] rounded-md' width={150} height={150} quality={100} alt={dish.name} />
+                <TImage
+                  src={dish.image}
+                  className='object-cover w-[150px] h-[150px] rounded-md'
+                  width={150}
+                  height={150}
+                  quality={100}
+                  alt={dish.name}
+                />
               </div>
               <div className='space-y-1'>
                 <h3 className='text-xl font-semibold'>{dish.name}</h3>

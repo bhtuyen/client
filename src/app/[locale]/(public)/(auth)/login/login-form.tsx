@@ -76,7 +76,11 @@ export default function LoginForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form className='space-y-2 max-w-[600px] flex-shrink-0 w-full' noValidate onSubmit={form.handleSubmit(onSubmit, (error) => console.warn(error))}>
+          <form
+            className='space-y-2 max-w-[600px] flex-shrink-0 w-full'
+            noValidate
+            onSubmit={form.handleSubmit(onSubmit, (error) => console.warn(error))}
+          >
             <div className='grid gap-4'>
               <FormField
                 control={form.control}
@@ -86,7 +90,9 @@ export default function LoginForm() {
                     <div className='grid gap-2'>
                       <Label htmlFor='email'>{tLoginForm('email')}</Label>
                       <Input id='email' type='email' placeholder='m@example.com' required {...field} />
-                      <FormMessage message={errors.email?.message ? tMessageValidation(errors.email?.message as TMessageKeys<'message-validation'>) : null} />
+                      <FormMessage
+                        message={errors.email?.message ? tMessageValidation(errors.email?.message as TMessageKeys<'message-validation'>) : null}
+                      />
                     </div>
                   </FormItem>
                 )}

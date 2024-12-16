@@ -117,7 +117,11 @@ export function DishesDialog({ onChoose }: { onChoose: (_dish: DishItem) => void
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => {
-                        return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>;
+                        return (
+                          <TableHead key={header.id}>
+                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                          </TableHead>
+                        );
                       })}
                     </TableRow>
                   ))}
@@ -125,7 +129,12 @@ export function DishesDialog({ onChoose }: { onChoose: (_dish: DishItem) => void
                 <TableBody>
                   {table.getRowModel().rows?.length ? (
                     table.getRowModel().rows.map((row) => (
-                      <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} onClick={() => choose(row.original)} className='cursor-pointer'>
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && 'selected'}
+                        onClick={() => choose(row.original)}
+                        className='cursor-pointer'
+                      >
                         {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                         ))}

@@ -18,7 +18,15 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-export default function EditOrder({ id, setId, onSubmitSuccess }: { id?: string | undefined; setId: (_value: string | undefined) => void; onSubmitSuccess?: () => void }) {
+export default function EditOrder({
+  id,
+  setId,
+  onSubmitSuccess
+}: {
+  id?: string | undefined;
+  setId: (_value: string | undefined) => void;
+  onSubmitSuccess?: () => void;
+}) {
   const [selectedDish, setSelectedDish] = useState<DishDto | null>(null);
   const updateOrderMutation = useUpdateOrderMutation();
   const { data } = useOrderQuery(id!);
@@ -89,7 +97,12 @@ export default function EditOrder({ id, setId, onSubmitSuccess }: { id?: string 
           <DialogTitle>Cập nhật đơn hàng</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form noValidate className='grid auto-rows-max items-start gap-4 md:gap-8' id='edit-order-form' onSubmit={form.handleSubmit(onSubmit, console.log)}>
+          <form
+            noValidate
+            className='grid auto-rows-max items-start gap-4 md:gap-8'
+            id='edit-order-form'
+            onSubmit={form.handleSubmit(onSubmit, console.log)}
+          >
             <div className='grid gap-4 py-4'>
               <FormField
                 control={form.control}

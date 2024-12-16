@@ -7,7 +7,8 @@ import { stringify } from 'querystring';
 const prefix = 'orders';
 
 const orderApiRequest = {
-  getOrders: ({ fromDate, toDate }: Period) => http.get<OrdersDtoDetailRes>(`/${prefix}?${stringify({ fromDate: fromDate?.toISOString(), toDate: toDate?.toISOString() })}`),
+  getOrders: ({ fromDate, toDate }: Period) =>
+    http.get<OrdersDtoDetailRes>(`/${prefix}?${stringify({ fromDate: fromDate?.toISOString(), toDate: toDate?.toISOString() })}`),
   getOrderDetail: (orderId: string) => http.get<OrderDtoDetailRes>(`/${prefix}/${orderId}`),
   createOrder: (body: CreateOrders) => http.post<OrdersDtoDetailRes>(`/${prefix}`, body),
   updateOrder: (body: UpdateOrder) => http.put<OrderDtoDetailRes>(`/${prefix}/${body.id}`, body),

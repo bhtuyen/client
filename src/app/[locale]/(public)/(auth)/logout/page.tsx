@@ -18,7 +18,11 @@ export default function Logout() {
   const accessToken = searchParams?.get('accessToken');
 
   useEffect(() => {
-    if (ref.current || (refreshToken && refreshToken !== getRefreshTokenFromLocalStorage()) || (accessToken && accessToken !== getAccessTokenFromLocalStorage())) {
+    if (
+      ref.current ||
+      (refreshToken && refreshToken !== getRefreshTokenFromLocalStorage()) ||
+      (accessToken && accessToken !== getAccessTokenFromLocalStorage())
+    ) {
       router.push('/');
       return;
     }

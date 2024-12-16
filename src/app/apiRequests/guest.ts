@@ -1,7 +1,15 @@
 import http from '@/lib/http';
 import type { Logout, RefreshToken, RefreshTokenRes } from '@/schemaValidations/auth.schema';
 import type { MessageRes, Period } from '@/schemaValidations/common.schema';
-import type { CreateGuest, CreateGuestRes, GuestCreateOrders, GuestCreateOrdersRes, GuestLogin, GuestLoginRes, GuestsRes } from '@/schemaValidations/guest.schema';
+import type {
+  CreateGuest,
+  CreateGuestRes,
+  GuestCreateOrders,
+  GuestCreateOrdersRes,
+  GuestLogin,
+  GuestLoginRes,
+  GuestsRes
+} from '@/schemaValidations/guest.schema';
 import { stringify } from 'querystring';
 
 const prefix = 'guest';
@@ -15,7 +23,11 @@ const guestApiRequest = {
   sLogin: (body: GuestLogin) => http.post<GuestLoginRes>(`/${prefix}/auth/login`, body),
   logout: (body: Logout) => http.post<MessageRes>(`/api/${prefix}/auth/logout`, body, { baseUrl: '' }),
   sLogout: (body: Logout & { accessToken: string }) =>
-    http.post<MessageRes>(`/${prefix}/auth/logout`, { refreshToken: body.refreshToken }, { headers: { Authorization: `Bearer ${body.accessToken}` } }),
+    http.post<MessageRes>(
+      `/${prefix}/auth/logout`,
+      { refreshToken: body.refreshToken },
+      { headers: { Authorization: `Bearer ${body.accessToken}` } }
+    ),
   sRefreshToken: (body: RefreshToken) => http.post<RefreshTokenRes>(`/${prefix}/auth/refresh-token`, body),
   async refreshToken() {
     if (this.refreshTokenRequest) {
@@ -33,7 +45,8 @@ const guestApiRequest = {
   orders: (body: GuestCreateOrders) => http.post<GuestCreateOrdersRes>(`/${prefix}/orders`, body),
   getOrders: () => http.get<GuestCreateOrdersRes>(`/${prefix}/orders`),
   createGuest: (body: CreateGuest) => http.post<CreateGuestRes>(`${prefix}`, body),
-  getGuests: ({ fromDate, toDate }: Period) => http.get<GuestsRes>(`${prefix}/?${stringify({ fromDate: fromDate?.toISOString(), toDate: toDate?.toISOString() })}`)
+  getGuests: ({ fromDate, toDate }: Period) =>
+    http.get<GuestsRes>(`${prefix}/?${stringify({ fromDate: fromDate?.toISOString(), toDate: toDate?.toISOString() })}`)
 };
 
 export default guestApiRequest;

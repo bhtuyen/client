@@ -1,6 +1,12 @@
 import envConfig from '@/config';
 import { redirect } from '@/i18n/routing';
-import { getAccessTokenFromLocalStorage, normalizePath, removeAuthTokens, setAccessTokenToLocalStorage, setRefreshTokenToLocalStorage } from '@/lib/utils';
+import {
+  getAccessTokenFromLocalStorage,
+  normalizePath,
+  removeAuthTokens,
+  setAccessTokenToLocalStorage,
+  setRefreshTokenToLocalStorage
+} from '@/lib/utils';
 import type { LoginRes, Token } from '@/schemaValidations/auth.schema';
 
 /**

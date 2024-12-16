@@ -10,7 +10,15 @@ import { TableDto } from '@/schemaValidations/table.schema';
 import { Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Fragment, useState } from 'react';
-export default function OrderStatics({ statics, tableList, servingGuestByTableNumber }: { statics: Statics; tableList: TableDto[]; servingGuestByTableNumber: ServingGuestByTableNumber }) {
+export default function OrderStatics({
+  statics,
+  tableList,
+  servingGuestByTableNumber
+}: {
+  statics: Statics;
+  tableList: TableDto[];
+  servingGuestByTableNumber: ServingGuestByTableNumber;
+}) {
   const [selectedTableNumber, setSelectedTableNumber] = useState<string>('');
   const selectedServingGuest = servingGuestByTableNumber[selectedTableNumber];
 
