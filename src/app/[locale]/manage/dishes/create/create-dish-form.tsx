@@ -1,7 +1,7 @@
 'use client';
 import AddDishGroup from '@/app/[locale]/manage/dishes/add-dish-group';
 import revalidateApiRequest from '@/app/apiRequests/revalidate';
-import { useCreateDishMutation, useDishesChooseQuery, useDishGroupQuery } from '@/app/queries/useDish';
+import { useCreateDishMutation, useDishGroupQuery } from '@/app/queries/useDish';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
 import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';

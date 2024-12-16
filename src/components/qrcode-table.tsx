@@ -57,7 +57,7 @@ export default function QRCodeTable({ token, tableNumber, size = 200, isFillText
         }
       );
     }
-  }, [url, size, tableNumber, tManageTable]);
+  }, [url, size, tableNumber, tManageTable, isFillText]);
   return (
     <canvas
       ref={canvasRef}
