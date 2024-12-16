@@ -1,7 +1,8 @@
+import z from 'zod';
+
 import { TableStatus } from '@/constants/enum';
 import { buildSelect } from '@/lib/utils';
 import { buildReply, id, updateAndCreate } from '@/schemaValidations/common.schema';
-import z from 'zod';
 
 /**
  * Schema

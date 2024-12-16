@@ -1,5 +1,6 @@
+import type { CreateTable, TableRes, TablesRes, UpdateTable } from '@/schemaValidations/table.schema';
+
 import http from '@/lib/http';
-import { CreateTable, TableRes, TablesRes, UpdateTable } from '@/schemaValidations/table.schema';
 
 const prefix = '/tables';
 

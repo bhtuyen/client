@@ -1,8 +1,9 @@
-import http from '@/lib/http';
-import { Period } from '@/schemaValidations/common.schema';
-import { CreateOrders, GuestPayOrders, OrderDtoDetailRes, OrdersDtoDetailRes, UpdateOrder } from '@/schemaValidations/order.schema';
-
 import { stringify } from 'querystring';
+
+import type { Period } from '@/schemaValidations/common.schema';
+import type { CreateOrders, GuestPayOrders, OrderDtoDetailRes, OrdersDtoDetailRes, UpdateOrder } from '@/schemaValidations/order.schema';
+
+import http from '@/lib/http';
 
 const prefix = 'orders';
 

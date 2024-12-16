@@ -1,5 +1,6 @@
-import guestApiRequest from '@/app/apiRequests/guest';
 import { cookies } from 'next/headers';
+
+import guestApiRequest from '@/app/apiRequests/guest';
 
 export async function POST(request: Request) {
   const cookieStore = cookies();
@@ -17,7 +18,7 @@ export async function POST(request: Request) {
   try {
     const result = await guestApiRequest.sLogout({ accessToken, refreshToken });
     return Response.json(result.payload);
-  } catch (error) {
+  } catch {
     return Response.json({ message: 'Unauthorized from server backend' }, { status: 200 });
   }
 }

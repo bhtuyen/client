@@ -1,16 +1,18 @@
-import { useDishesChooseQuery } from '@/app/queries/useDish';
-import TButton from '@/components/t-button';
-import TDataTable from '@/components/t-data-table';
-import { DishCategory } from '@/constants/enum';
-import { DishDtoDetailChoose } from '@/schemaValidations/dish.schema';
-import { ColumnDef } from '@tanstack/react-table';
 import { Minus, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+
+import type { DishCategory } from '@/constants/enum';
+import type { DishDtoDetailChoose } from '@/schemaValidations/dish.schema';
+import type { ColumnDef } from '@tanstack/react-table';
+
+import { useDishesChooseQuery } from '@/app/queries/useDish';
+import TButton from '@/components/t-button';
+import TDataTable from '@/components/t-data-table';
 import TImage from '@/components/t-image';
-import { getPrice } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { getPrice } from '@/lib/utils';
 
 export type DishesChooseBody = { category: DishCategory; ignores?: string[] };
 type ChooseDishTableProps = {

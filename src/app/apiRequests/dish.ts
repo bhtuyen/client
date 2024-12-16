@@ -1,5 +1,4 @@
-import { DishCategory } from '@/constants/enum';
-import http from '@/lib/http';
+import type { DishCategory } from '@/constants/enum';
 import type {
   CreateDishCombo,
   CreateDishGroup,
@@ -10,6 +9,8 @@ import type {
   DishesRes,
   UpdateDishCombo
 } from '@/schemaValidations/dish.schema';
+
+import http from '@/lib/http';
 
 const prefix = '/dishes';
 

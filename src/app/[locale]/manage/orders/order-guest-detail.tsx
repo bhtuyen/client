@@ -1,13 +1,15 @@
+import { useTranslations } from 'next-intl';
+import { Fragment } from 'react';
+
+import type { GuestDto } from '@/schemaValidations/guest.schema';
+import type { OrderDtoDetail, OrdersDtoDetailRes } from '@/schemaValidations/order.schema';
+
 import { usePayOrderMutation } from '@/app/queries/useOrder';
 import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import { Badge } from '@/components/ui/badge';
 import { DishCategory, OrderStatus } from '@/constants/enum';
 import { OrderStatusIcon, formatCurrency, formatDateTimeToLocaleString, formatDateTimeToTimeString, getPrice, handleErrorApi } from '@/lib/utils';
-import { GuestDto } from '@/schemaValidations/guest.schema';
-import { OrderDtoDetail, OrdersDtoDetailRes } from '@/schemaValidations/order.schema';
-import { useTranslations } from 'next-intl';
-import { Fragment } from 'react';
 
 export default async function OrderGuestDetail({
   guest,
@@ -29,7 +31,9 @@ export default async function OrderGuestDetail({
     if (payMutation.isPending || guest === null) return;
     try {
       const result = await payMutation.mutateAsync({ guestId: guest.id });
-      onPaySuccess && onPaySuccess(result.payload);
+      if (onPaySuccess) {
+        onPaySuccess(result.payload);
+      }
     } catch (error) {
       handleErrorApi({ error });
     }

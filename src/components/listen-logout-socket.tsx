@@ -1,10 +1,11 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import { useLogoutMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
 import { usePathname, useRouter } from '@/i18n/routing';
 import { handleErrorApi } from '@/lib/utils';
-import { useEffect } from 'react';
 
 const UNAUTHENTICATED_PATHS = ['/login', '/logout', '/refresh-token'];
 
@@ -26,7 +27,7 @@ export default function ListenLogoutSocket() {
         setRole(null);
         disconnectSocket();
         router.push('/');
-      } catch (error: any) {
+      } catch (error) {
         handleErrorApi({ error });
       }
     }

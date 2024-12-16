@@ -1,3 +1,5 @@
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
 import TButton from '@/components/t-button';
 import {
   Pagination,
@@ -9,7 +11,6 @@ import {
   PaginationPrevious
 } from '@/components/ui/pagination';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 interface Props {
   page: number;
   pageSize: number;

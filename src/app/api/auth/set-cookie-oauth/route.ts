@@ -1,9 +1,11 @@
-import { HttpError } from '@/lib/http';
-import { decodeJWT } from '@/lib/utils';
-import { Token } from '@/schemaValidations/auth.schema';
+import { cookies } from 'next/headers';
+
+import type { Token } from '@/schemaValidations/auth.schema';
 import type { JwtPayload } from 'jsonwebtoken';
 import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
-import { cookies } from 'next/headers';
+
+import { HttpError } from '@/lib/http';
+import { decodeJWT } from '@/lib/utils';
 
 export async function POST(request: Request) {
   const body = (await request.json()) as Token;

@@ -1,6 +1,7 @@
+import type { Login, LoginRes, RefreshToken, RefreshTokenRes, Token } from '@/schemaValidations/auth.schema';
+import type { MessageRes } from '@/schemaValidations/common.schema';
+
 import http from '@/lib/http';
-import { Login, LoginRes, RefreshToken, RefreshTokenRes, Token } from '@/schemaValidations/auth.schema';
-import { MessageRes } from '@/schemaValidations/common.schema';
 
 const authApiRequest = {
   refreshTokenRequest: null as Promise<{

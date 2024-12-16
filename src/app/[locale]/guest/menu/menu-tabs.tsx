@@ -1,16 +1,18 @@
 'use client';
+import { useTranslations } from 'next-intl';
+import { useRef, useState } from 'react';
+
+import type { TabsKeyType, TasbType } from '@/components/tabs';
+import type { DishDto } from '@/schemaValidations/dish.schema';
+import type { TMessageKeys } from '@/types/message.type';
+
 import AddToCartDialog from '@/app/[locale]/guest/menu/add-to-cart-dialog';
 import { useDishListQuery } from '@/app/queries/useDish';
 import TImage from '@/components/t-image';
-import type { TabsKeyType, TasbType } from '@/components/tabs';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DishCategory } from '@/constants/enum';
 import { formatCurrency, removeAccents } from '@/lib/utils';
-import { DishDto } from '@/schemaValidations/dish.schema';
-import { TMessageKeys } from '@/types/message.type';
-import { useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
 
 export default function MenuTabs() {
   const menuTabs: TasbType = [

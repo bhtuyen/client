@@ -1,4 +1,12 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+
+import type { Login } from '@/schemaValidations/auth.schema';
+import type { TMessageKeys } from '@/types/message.type';
+
 import { useLoginMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
 import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
@@ -10,12 +18,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { Link, useRouter } from '@/i18n/routing';
 import { getOauthGoogleUrl, handleErrorApi } from '@/lib/utils';
-import { Login, login } from '@/schemaValidations/auth.schema';
-import type { TMessageKeys } from '@/types/message.type';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations } from 'next-intl';
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { login } from '@/schemaValidations/auth.schema';
 
 export default function LoginForm() {
   const { setRole, socket, createConnectSocket, disconnectSocket } = useAppStore();
@@ -42,7 +45,7 @@ export default function LoginForm() {
   const tMessageValidation = useTranslations('message-validation');
 
   useEffect(() => {
-    if (Boolean(clearTokens)) {
+    if (clearTokens) {
       setRole(null);
       disconnectSocket();
     }

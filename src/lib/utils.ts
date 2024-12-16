@@ -1,20 +1,22 @@
+import { type ClassValue, clsx } from 'clsx';
+import { endOfDay, format, startOfDay } from 'date-fns';
+import { decode } from 'jsonwebtoken';
+import { BookX, CookingPot, HandCoins, Loader, Truck } from 'lucide-react';
+import slugify from 'slugify';
+import { twMerge } from 'tailwind-merge';
+
+import type { Period } from '@/schemaValidations/common.schema';
+import type { DishDto, DishSnapshotDto } from '@/schemaValidations/dish.schema';
+import type { TokenPayload } from '@/types/jwt.types';
+import type { TMessKey, TMessageOption, TNamespaceKeys, TranslationFunctionParams } from '@/types/message.type';
+import type { UseFormSetError } from 'react-hook-form';
+
 import authApiRequest from '@/app/apiRequests/auth';
 import guestApiRequest from '@/app/apiRequests/guest';
 import envConfig from '@/config';
 import { DishCategory, OrderStatus, Role } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { EntityError } from '@/lib/http';
-import { Period } from '@/schemaValidations/common.schema';
-import { DishDto, DishSnapshotDto } from '@/schemaValidations/dish.schema';
-import type { TokenPayload } from '@/types/jwt.types';
-import type { TMessKey, TMessageOption, TNamespaceKeys, TranslationFunctionParams } from '@/types/message.type';
-import { type ClassValue, clsx } from 'clsx';
-import { endOfDay, format, startOfDay } from 'date-fns';
-import { decode } from 'jsonwebtoken';
-import { BookX, CookingPot, HandCoins, Loader, Truck } from 'lucide-react';
-import type { UseFormSetError } from 'react-hook-form';
-import slugify from 'slugify';
-import { twMerge } from 'tailwind-merge';
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -91,7 +93,9 @@ export const checkAndRefreshToken = async (param?: ParamType) => {
   // check if refresh token is expired -> logout
   if (refreshTokenPayload.exp <= now) {
     removeAuthTokens();
-    param?.onError && param.onError();
+    if (param?.onError) {
+      param.onError();
+    }
     return;
   }
 
@@ -103,9 +107,13 @@ export const checkAndRefreshToken = async (param?: ParamType) => {
       const { accessToken, refreshToken } = res.payload.data;
       setAccessTokenToLocalStorage(accessToken);
       setRefreshTokenToLocalStorage(refreshToken);
-      param?.onSuccess && param.onSuccess();
-    } catch (error) {
-      param?.onError && param.onError();
+      if (param?.onSuccess) {
+        param.onSuccess();
+      }
+    } catch {
+      if (param?.onError) {
+        param.onError();
+      }
     }
   }
 };
@@ -211,6 +219,7 @@ export function isMessageOption<T extends TNamespaceKeys = TNamespaceKeys>(value
 export function buildSelect<TDto>(): Record<keyof TDto, any> {
   const isObject = (value: unknown): value is object => value !== null && typeof value === 'object' && !Array.isArray(value);
 
+  // eslint-disable-next-line no-undef
   return new Proxy(
     {},
     {

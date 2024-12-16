@@ -1,6 +1,7 @@
+import { Minus, Plus } from 'lucide-react';
+
 import TButton from '@/components/t-button';
 import { Input } from '@/components/ui/input';
-import { Minus, Plus } from 'lucide-react';
 
 interface TQuantityProps {
   onChange: (_value: number) => void;

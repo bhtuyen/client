@@ -1,10 +1,12 @@
+import { cookies } from 'next/headers';
+
+import type { GuestLogin } from '@/schemaValidations/guest.schema';
+import type { JwtPayload } from 'jsonwebtoken';
+import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
+
 import guestApiRequest from '@/app/apiRequests/guest';
 import { HttpError } from '@/lib/http';
 import { decodeJWT } from '@/lib/utils';
-import { GuestLogin } from '@/schemaValidations/guest.schema';
-import type { JwtPayload } from 'jsonwebtoken';
-import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
-import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
   const body = (await request.json()) as GuestLogin;

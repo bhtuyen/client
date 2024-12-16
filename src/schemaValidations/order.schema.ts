@@ -1,10 +1,11 @@
+import z from 'zod';
+
 import { OrderStatus } from '@/constants/enum';
 import { buildSelect } from '@/lib/utils';
 import { accountDto } from '@/schemaValidations/account.schema';
 import { buildReply, id, updateAndCreate } from '@/schemaValidations/common.schema';
 import { dishSnapshotDto } from '@/schemaValidations/dish.schema';
 import { tableDto } from '@/schemaValidations/table.schema';
-import z from 'zod';
 
 const order = z
   .object({

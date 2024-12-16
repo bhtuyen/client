@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import type { MessageKeys, NamespaceKeys, NestedKeyOf, NestedValueOf, TranslationValues } from 'next-intl';
 import type en from '~/en.json';
 

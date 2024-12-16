@@ -1,3 +1,6 @@
+import type { LoginRes, Token } from '@/schemaValidations/auth.schema';
+import type { RequestInit } from 'next/dist/server/web/spec-extension/request';
+
 import envConfig from '@/config';
 import { redirect } from '@/i18n/routing';
 import {
@@ -7,7 +10,6 @@ import {
   setAccessTokenToLocalStorage,
   setRefreshTokenToLocalStorage
 } from '@/lib/utils';
-import type { LoginRes, Token } from '@/schemaValidations/auth.schema';
 
 /**
  * customOptions: Tùy chỉnh options cho fetch

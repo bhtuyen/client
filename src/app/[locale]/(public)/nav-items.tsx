@@ -1,5 +1,9 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
+import type { TMessageKeys } from '@/types/message.type';
+
 import { useLogoutMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
 import {
@@ -15,11 +19,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Role } from '@/constants/enum';
 import { Link } from '@/i18n/routing';
-import { cn, handleErrorApi } from '@/lib/utils';
-
 import { useRouter } from '@/i18n/routing';
-import type { TMessageKeys } from '@/types/message.type';
-import { useTranslations } from 'next-intl';
+import { cn, handleErrorApi } from '@/lib/utils';
 
 const menuItems: {
   titleKey: string;

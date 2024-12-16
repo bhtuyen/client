@@ -1,10 +1,12 @@
+import { NextResponse } from 'next/server';
+import createMiddleware from 'next-intl/middleware';
+
+import type { NextRequest } from 'next/server';
+
 import { defaultLocale } from '@/config';
 import { Role } from '@/constants/enum';
 import { routing } from '@/i18n/routing';
 import { decodeJWT } from '@/lib/utils';
-import createMiddleware from 'next-intl/middleware';
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
 
 const managePaths = ['/vi/manage', '/en/manage'];
 const guestPaths = ['/vi/guest/menu', '/en/guest/menu', '/vi/guest/orders', '/en/guest/orders'];

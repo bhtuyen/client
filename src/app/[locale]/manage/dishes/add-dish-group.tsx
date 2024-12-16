@@ -1,3 +1,8 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+
+import type { CreateDishGroup } from '@/schemaValidations/dish.schema';
+
 import { useCreateDishGroupMutation } from '@/app/queries/useDish';
 import TButton from '@/components/t-button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -6,9 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { handleErrorApi } from '@/lib/utils';
-import { CreateDishGroup, createDishGroup } from '@/schemaValidations/dish.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { createDishGroup } from '@/schemaValidations/dish.schema';
 
 export default function AddDishGroup({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) {
   const form = useForm<CreateDishGroup>({

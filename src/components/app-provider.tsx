@@ -1,14 +1,17 @@
 'use client';
-import ListenLogoutSocket from '@/components/listen-logout-socket';
-import RefreshToken from '@/components/refresh-token';
-import envConfig from '@/config';
-import type { Role } from '@/constants/enum';
-import { decodeJWT, getAccessTokenFromLocalStorage, removeAuthTokens } from '@/lib/utils';
-import type { StoreType } from '@/types/common.type';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { create } from 'zustand';
+
+import type { Role } from '@/constants/enum';
+import type { StoreType } from '@/types/common.type';
+import type { ReactNode } from 'react';
+
+import ListenLogoutSocket from '@/components/listen-logout-socket';
+import RefreshToken from '@/components/refresh-token';
+import envConfig from '@/config';
+import { decodeJWT, getAccessTokenFromLocalStorage, removeAuthTokens } from '@/lib/utils';
 
 // Default
 // staleTime: 0
@@ -103,7 +106,7 @@ export const useAppStore = () => useStore((state) => state);
 const AppProvider = ({
   children
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) => {
   const { setRole, createConnectSocket } = useAppStore();
 

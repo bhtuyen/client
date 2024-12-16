@@ -1,16 +1,18 @@
+import { getTranslations } from 'next-intl/server';
+
+import type { DishesRes } from '@/schemaValidations/dish.schema';
+
 import { dishApiRequets } from '@/app/apiRequests/dish';
 import TImage from '@/components/t-image';
 import { Link } from '@/i18n/routing';
 import { generateSlugify } from '@/lib/utils';
-import type { DishesRes } from '@/schemaValidations/dish.schema';
-import { getTranslations } from 'next-intl/server';
 
 export default async function HomePage() {
   let dishList: DishesRes['data'] = [];
   try {
     const dishListQuery = await dishApiRequets.getAll();
     dishList = dishListQuery.payload.data;
-  } catch (error) {
+  } catch {
     return <div>Something went wrong</div>;
   }
   const tHomePage = await getTranslations('home-page');

@@ -1,4 +1,5 @@
-import http from '@/lib/http';
+import { stringify } from 'querystring';
+
 import type { Logout, RefreshToken, RefreshTokenRes } from '@/schemaValidations/auth.schema';
 import type { MessageRes, Period } from '@/schemaValidations/common.schema';
 import type {
@@ -10,7 +11,8 @@ import type {
   GuestLoginRes,
   GuestsRes
 } from '@/schemaValidations/guest.schema';
-import { stringify } from 'querystring';
+
+import http from '@/lib/http';
 
 const prefix = 'guest';
 

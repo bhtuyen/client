@@ -1,9 +1,11 @@
 'use client';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useLocale, useTranslations } from 'next-intl';
+
 import type { Locale } from '@/config';
+
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { locales } from '@/config';
 import { usePathname, useRouter } from '@/i18n/routing';
-import { useLocale, useTranslations } from 'next-intl';
 
 export function SwitchLanguage() {
   const tSwitchLanguage = useTranslations('switch-language');

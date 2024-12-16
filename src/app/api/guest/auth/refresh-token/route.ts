@@ -1,8 +1,10 @@
-import guestApiRequest from '@/app/apiRequests/guest';
-import { decodeJWT } from '@/lib/utils';
+import { cookies } from 'next/headers';
+
 import type { JwtPayload } from 'jsonwebtoken';
 import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
-import { cookies } from 'next/headers';
+
+import guestApiRequest from '@/app/apiRequests/guest';
+import { decodeJWT } from '@/lib/utils';
 
 export async function POST(request: Request) {
   const cookieStore = cookies();

@@ -1,9 +1,10 @@
+import { unstable_setRequestLocale } from 'next-intl/server';
+
 import Modal from '@/app/[locale]/(public)/@modal/(.)dishes/[slug]/modal';
 import { dishApiRequets } from '@/app/apiRequests/dish';
 import TImage from '@/components/t-image';
 import { routing } from '@/i18n/routing';
 import { generateSlugify, getIdFromSlugifyString, wrapperServerApi } from '@/lib/utils';
-import { unstable_setRequestLocale } from 'next-intl/server';
 interface PostPageProps {
   params: {
     slug: string;

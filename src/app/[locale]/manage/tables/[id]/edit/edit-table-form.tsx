@@ -1,4 +1,11 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader, Table, User } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import { useForm } from 'react-hook-form';
+
+import type { UpdateTable } from '@/schemaValidations/table.schema';
+
 import { useTableQuery, useUpdateTableMutation } from '@/app/queries/useTable';
 import QRCodeTable from '@/components/qrcode-table';
 import TButton from '@/components/t-button';
@@ -10,11 +17,7 @@ import { TableStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { Link, useRouter } from '@/i18n/routing';
 import { getEnumValues, getTableLink, handleErrorApi } from '@/lib/utils';
-import { updateTable, UpdateTable } from '@/schemaValidations/table.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader, Table, User } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
+import { updateTable } from '@/schemaValidations/table.schema';
 
 export default function EditTableForm({ id }: { id: string }) {
   const locale = useLocale();

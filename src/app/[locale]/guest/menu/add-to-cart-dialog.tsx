@@ -1,5 +1,12 @@
 'use client';
 
+import { Cross2Icon } from '@radix-ui/react-icons';
+import { Plus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+
+import type { DishDto, DishInCart } from '@/schemaValidations/dish.schema';
+
 import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
@@ -19,11 +26,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DishCategory, DishStatus } from '@/constants/enum';
 import { capitalize, formatCurrency, getDishOptions, removeAccents } from '@/lib/utils';
-import type { DishDto, DishInCart } from '@/schemaValidations/dish.schema';
-import { Cross2Icon } from '@radix-ui/react-icons';
-import { Plus } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 
 export default function AddToCartDialog({ dish }: { dish: DishDto }) {
   const [quantity, setQuantity] = useState(0);

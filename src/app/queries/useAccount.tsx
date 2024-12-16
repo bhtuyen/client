@@ -1,5 +1,6 @@
-import accountApiRequest from '@/app/apiRequests/account';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import accountApiRequest from '@/app/apiRequests/account';
 
 export const useAccountMeQuery = () =>
   useQuery({

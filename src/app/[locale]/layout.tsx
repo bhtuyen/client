@@ -1,15 +1,18 @@
 import '@/app/globals.css';
+import { Inter as FontSans } from 'next/font/google';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, unstable_setRequestLocale } from 'next-intl/server';
+import NextTopLoader from 'nextjs-toploader';
+
+import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
+
 import AppProvider from '@/components/app-provider';
 import TAlterDialog from '@/components/t-alert-dialog';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { routing } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
-import type { Metadata } from 'next';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, unstable_setRequestLocale } from 'next-intl/server';
-import { Inter as FontSans } from 'next/font/google';
-import NextTopLoader from 'nextjs-toploader';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -29,7 +32,7 @@ export default async function RootLayout({
   children,
   params: { locale }
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
   params: {
     locale: string;
   };

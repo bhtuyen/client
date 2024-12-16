@@ -1,6 +1,8 @@
-import { dishApiRequets } from '@/app/apiRequests/dish';
-import { DishCategory } from '@/constants/enum';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import type { DishCategory } from '@/constants/enum';
+
+import { dishApiRequets } from '@/app/apiRequests/dish';
 
 export const useDishListQuery = () => {
   return useQuery({

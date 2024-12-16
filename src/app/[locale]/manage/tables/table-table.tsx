@@ -1,16 +1,18 @@
 'use client';
 
+import { Loader, PlusCircle, QrCode, Table, Users } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
+
+import type { TableDto } from '@/schemaValidations/table.schema';
+import type { ColumnDef } from '@tanstack/react-table';
+
 import { useDeleteTableMutation, useTableListQuery } from '@/app/queries/useTable';
 import QRCodeTable from '@/components/qrcode-table';
 import TButton from '@/components/t-button';
 import TDataTable, { TCellActions } from '@/components/t-data-table';
 import { toast } from '@/hooks/use-toast';
 import { handleErrorApi } from '@/lib/utils';
-import { TableDto } from '@/schemaValidations/table.schema';
-import type { ColumnDef } from '@tanstack/react-table';
-import { Loader, PlusCircle, QrCode, Table, Users } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
 
 export default function TableTable() {
   const tableListQuery = useTableListQuery();
@@ -88,7 +90,7 @@ export default function TableTable() {
                   toast({
                     description: result.payload.message
                   });
-                } catch (error: any) {
+                } catch (error) {
                   handleErrorApi({ error });
                 }
               }

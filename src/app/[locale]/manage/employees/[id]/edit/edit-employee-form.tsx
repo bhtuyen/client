@@ -1,4 +1,12 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { KeyRound, Mail, Phone, Upload, User } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useMemo, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+import type { UpdateEmployee } from '@/schemaValidations/account.schema';
+
 import { useAccountQuery, useUpdateEmployeeMutation } from '@/app/queries/useAccount';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
 import TButton from '@/components/t-button';
@@ -11,13 +19,7 @@ import { Role } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from '@/i18n/routing';
 import { getEnumValues, handleErrorApi } from '@/lib/utils';
-import { updateEmployee, UpdateEmployee } from '@/schemaValidations/account.schema';
-
-import { zodResolver } from '@hookform/resolvers/zod';
-import { KeyRound, Mail, Phone, Upload, User } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { updateEmployee } from '@/schemaValidations/account.schema';
 
 export default function EditEmployeeForm({ id }: { id: string }) {
   const [file, setFile] = useState<File | null>(null);

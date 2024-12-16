@@ -1,4 +1,12 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Upload, User } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+import type { UpdateMe } from '@/schemaValidations/account.schema';
+
 import { useAccountMeQuery, useUpdateMeMutation } from '@/app/queries/useAccount';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
 import TButton from '@/components/t-button';
@@ -8,12 +16,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { handleErrorApi } from '@/lib/utils';
-import { UpdateMe, updateMe } from '@/schemaValidations/account.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Upload, User } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { updateMe } from '@/schemaValidations/account.schema';
 
 export default function UpdateProfileForm() {
   const [file, setFile] = useState<File | null>(null);

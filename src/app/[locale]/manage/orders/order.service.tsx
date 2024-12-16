@@ -1,7 +1,9 @@
-import type { OrderObjectByGuestID, ServingGuestByTableNumber, Statics } from '@/app/[locale]/manage/orders/order-table';
-import { OrderStatus } from '@/constants/enum';
-import type { OrderDtoDetail } from '@/schemaValidations/order.schema';
 import { useMemo } from 'react';
+
+import type { OrderObjectByGuestID, ServingGuestByTableNumber, Statics } from '@/app/[locale]/manage/orders/order-table';
+import type { OrderDtoDetail } from '@/schemaValidations/order.schema';
+
+import { OrderStatus } from '@/constants/enum';
 
 export const useOrderService = (orderList: OrderDtoDetail[]) => {
   const result = useMemo(() => {

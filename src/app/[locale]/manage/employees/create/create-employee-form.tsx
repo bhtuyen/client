@@ -1,4 +1,12 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { KeyRound, Mail, Phone, Upload, User } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useMemo, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+import type { CreateEmployee } from '@/schemaValidations/account.schema';
+
 import { useAddEmployeeMutation } from '@/app/queries/useAccount';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
 import TButton from '@/components/t-button';
@@ -8,12 +16,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from '@/i18n/routing';
 import { handleErrorApi } from '@/lib/utils';
-import { createEmployee, CreateEmployee } from '@/schemaValidations/account.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { KeyRound, Mail, Phone, Upload, User } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { createEmployee } from '@/schemaValidations/account.schema';
 export default function CreateEmployeeForm() {
   const [file, setFile] = useState<File | null>(null);
   const avatarInputRef = useRef<HTMLInputElement | null>(null);

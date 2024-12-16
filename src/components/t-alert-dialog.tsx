@@ -1,4 +1,6 @@
 'use client';
+import { useTranslations } from 'next-intl';
+
 import { useAppStore } from '@/components/app-provider';
 import {
   AlertDialog,
@@ -11,7 +13,6 @@ import {
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
 import { getArguments } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
 
 export default function TAlterDialog() {
   const { isShowAlertDialog, optionAlertDialog, closeAlertDialog } = useAppStore();
@@ -23,7 +24,9 @@ export default function TAlterDialog() {
   const tAlertDialogDescription = useTranslations('t-alert-dialog.description');
 
   const handleClose = () => {
-    onCancel && onCancel();
+    if (onCancel) {
+      onCancel();
+    }
     closeAlertDialog();
   };
 

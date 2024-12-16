@@ -1,7 +1,15 @@
 'use client';
 
+import { ViewVerticalIcon } from '@radix-ui/react-icons';
+import { Slot } from '@radix-ui/react-slot';
+import { cva } from 'class-variance-authority';
+import { useTranslations } from 'next-intl';
+import * as React from 'react';
+
+import type { Button } from '@/components/ui/button';
+import type { VariantProps } from 'class-variance-authority';
+
 import TButton from '@/components/t-button';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
@@ -9,12 +17,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { ViewVerticalIcon } from '@radix-ui/react-icons';
-import { Slot } from '@radix-ui/react-slot';
-import type { VariantProps } from 'class-variance-authority';
-import { cva } from 'class-variance-authority';
-import { useTranslations } from 'next-intl';
-import * as React from 'react';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar:state';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -33,10 +35,10 @@ type SidebarContext = {
   toggleSidebar: () => void;
 };
 
-const SidebarContext = React.createContext<SidebarContext | null>(null);
+const sidebarContext = React.createContext<SidebarContext | null>(null);
 
 function useSidebar() {
-  const context = React.useContext(SidebarContext);
+  const context = React.useContext(sidebarContext);
   if (!context) {
     throw new Error('useSidebar must be used within a SidebarProvider.');
   }
@@ -110,7 +112,7 @@ const SidebarProvider = React.forwardRef<
   );
 
   return (
-    <SidebarContext.Provider value={contextValue}>
+    <sidebarContext.Provider value={contextValue}>
       <TooltipProvider delayDuration={0}>
         <div
           style={
@@ -127,7 +129,7 @@ const SidebarProvider = React.forwardRef<
           {children}
         </div>
       </TooltipProvider>
-    </SidebarContext.Provider>
+    </sidebarContext.Provider>
   );
 });
 SidebarProvider.displayName = 'SidebarProvider';

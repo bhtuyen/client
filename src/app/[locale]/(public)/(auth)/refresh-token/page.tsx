@@ -1,8 +1,9 @@
 'use client';
+import { useEffect } from 'react';
+
 import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
 import { useRouter } from '@/i18n/routing';
 import { checkAndRefreshToken, getRefreshTokenFromLocalStorage } from '@/lib/utils';
-import { useEffect } from 'react';
 
 export default function RefreshToken() {
   const router = useRouter();

@@ -1,6 +1,8 @@
-import { tableApiRequets } from '@/app/apiRequests/table';
-import { UpdateTable } from '@/schemaValidations/table.schema';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import type { UpdateTable } from '@/schemaValidations/table.schema';
+
+import { tableApiRequets } from '@/app/apiRequests/table';
 
 export const useTableListQuery = () => {
   return useQuery({

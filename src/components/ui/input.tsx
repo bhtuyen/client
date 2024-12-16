@@ -1,8 +1,9 @@
 import * as React from 'react';
 
-import { cn } from '@/lib/utils';
 import type { LucideProps } from 'lucide-react';
 import type { ForwardRefExoticComponent, RefAttributes } from 'react';
+
+import { cn } from '@/lib/utils';
 
 const Input = React.forwardRef<
   HTMLInputElement,

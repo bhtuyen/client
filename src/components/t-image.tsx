@@ -1,5 +1,7 @@
-import { StaticImport } from 'next/dist/shared/lib/get-img-props';
-import Image, { ImageProps } from 'next/image';
+import Image from 'next/image';
+
+import type { StaticImport } from 'next/dist/shared/lib/get-img-props';
+import type { ImageProps } from 'next/image';
 
 export default function TImage({
   width,

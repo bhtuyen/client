@@ -1,15 +1,17 @@
-import OrderGuestDetail from '@/app/[locale]/manage/orders/order-guest-detail';
+import { Users } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Fragment, useState } from 'react';
+
 import type { ServingGuestByTableNumber, Statics, StatusCountObject } from '@/app/[locale]/manage/orders/order-table';
+import type { TableDto } from '@/schemaValidations/table.schema';
+
+import OrderGuestDetail from '@/app/[locale]/manage/orders/order-guest-detail';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { OrderStatus } from '@/constants/enum';
 import { OrderStatusIcon, cn, getEnumValues } from '@/lib/utils';
-import { TableDto } from '@/schemaValidations/table.schema';
-import { Users } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { Fragment, useState } from 'react';
 export default function OrderStatics({
   statics,
   tableList,

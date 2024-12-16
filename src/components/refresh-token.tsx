@@ -1,11 +1,13 @@
 'use client';
 
+import { useEffect } from 'react';
+
+import type { ParamType } from '@/lib/utils';
+import type { AccountDto } from '@/schemaValidations/account.schema';
+
 import { useAppStore } from '@/components/app-provider';
 import { usePathname, useRouter } from '@/i18n/routing';
-import type { ParamType } from '@/lib/utils';
 import { checkAndRefreshToken } from '@/lib/utils';
-import { AccountDto } from '@/schemaValidations/account.schema';
-import { useEffect } from 'react';
 
 const UNAUTHENTICATED_PATHS = ['/login', '/logout', '/refresh-token'];
 
@@ -15,7 +17,8 @@ export default function RefreshToken() {
   const router = useRouter();
   useEffect(() => {
     if (UNAUTHENTICATED_PATHS.includes(pathname)) return;
-    let interval: NodeJS.Timeout;
+    // eslint-disable-next-line no-undef
+    let interval: NodeJS.Timeout | undefined = undefined;
 
     const TIMEOUT = 1000;
 

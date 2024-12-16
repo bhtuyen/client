@@ -1,10 +1,11 @@
+import { BellRing, UserRound } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
 import CartAndOrderDialog from '@/app/[locale]/guest/menu/cart-and-order-dialog';
 import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { BellRing, UserRound } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 
 export default function Header() {
   const tButton = useTranslations('t-button');

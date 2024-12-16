@@ -1,5 +1,15 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Banknote, Loader, Minus, Plus, Salad, Tags, Upload, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useMemo, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+import type { DishesChooseBody } from '@/app/[locale]/manage/dishes/choose-dish-table';
+import type { DishDtoDetailChoose, UpdateDishCombo } from '@/schemaValidations/dish.schema';
+
 import AddDishGroup from '@/app/[locale]/manage/dishes/add-dish-group';
+import ChooseDishTable from '@/app/[locale]/manage/dishes/choose-dish-table';
 import revalidateApiRequest from '@/app/apiRequests/revalidate';
 import { useDishGroupQuery, useDishQuery, useUpdateDishMutation } from '@/app/queries/useDish';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
@@ -17,14 +27,7 @@ import { DishCategory, DishStatus, RowMode } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from '@/i18n/routing';
 import { getEnumValues, handleErrorApi } from '@/lib/utils';
-import type { DishDtoDetailChoose, UpdateDishCombo } from '@/schemaValidations/dish.schema';
 import { updateDishCombo } from '@/schemaValidations/dish.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Banknote, Loader, Minus, Plus, Salad, Tags, Upload, X } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import ChooseDishTable, { DishesChooseBody } from '@/app/[locale]/manage/dishes/choose-dish-table';
 
 export default function EditDishForm({ id }: { id: string }) {
   const [file, setFile] = useState<File | null>(null);
@@ -36,6 +39,7 @@ export default function EditDishForm({ id }: { id: string }) {
   const dishGroupQuery = useDishGroupQuery();
 
   const dishGroups = dishGroupQuery.data?.payload.data ?? [];
+  // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
   const dishComboDetail = dishQuery.data?.payload.data!;
 
   const getRowMode = (mode: RowMode, rowMode: RowMode = RowMode.None): RowMode => {

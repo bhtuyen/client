@@ -1,7 +1,8 @@
+import z from 'zod';
+
 import { Role } from '@/constants/enum';
 import { buildSelect } from '@/lib/utils';
 import { buildReply, id, name, updateAndCreate } from '@/schemaValidations/common.schema';
-import z from 'zod';
 
 const account = z
   .object({

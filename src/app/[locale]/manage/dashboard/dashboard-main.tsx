@@ -1,4 +1,9 @@
 'use client';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+
+import type { Period } from '@/schemaValidations/common.schema';
+
 import { DishBarChart } from '@/app/[locale]/manage/dashboard/dish-bar-chart';
 import { RevenueLineChart } from '@/app/[locale]/manage/dashboard/revenue-line-chart';
 import { useIndicatorQuery } from '@/app/queries/useIndicator';
@@ -7,9 +12,6 @@ import { TDateRange } from '@/components/t-date-range';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { formatCurrency, periodDefault } from '@/lib/utils';
-import { Period } from '@/schemaValidations/common.schema';
-import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 
 export default function DashboardMain() {
   const [dateRange, setDateRange] = useState<Period>(periodDefault);

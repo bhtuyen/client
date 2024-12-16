@@ -1,8 +1,9 @@
-import http from '@/lib/http';
-import { Period } from '@/schemaValidations/common.schema';
-import { DashboardIndicatorRes } from '@/schemaValidations/indicator.schema';
-
 import { stringify } from 'querystring';
+
+import type { Period } from '@/schemaValidations/common.schema';
+import type { DashboardIndicatorRes } from '@/schemaValidations/indicator.schema';
+
+import http from '@/lib/http';
 
 const prefix = '/indicators';
 

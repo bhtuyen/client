@@ -1,5 +1,6 @@
-import TImage from '@/components/t-image';
 import type { DishRes } from '@/schemaValidations/dish.schema';
+
+import TImage from '@/components/t-image';
 
 export default function DishDetail({ dish }: { dish: DishRes['data'] | undefined }) {
   return (

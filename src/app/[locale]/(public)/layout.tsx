@@ -1,18 +1,21 @@
-import { Link } from '@/i18n/routing';
 import { Package2 } from 'lucide-react';
-import DarkModeToggle from '@/components/dark-mode-toggle';
+import { unstable_setRequestLocale } from 'next-intl/server';
+
+import type { ReactNode } from 'react';
+
 import NavItems from '@/app/[locale]/(public)/nav-items';
 import NavigationMenu from '@/app/[locale]/(public)/navigation-menu';
+import DarkModeToggle from '@/components/dark-mode-toggle';
 import { SwitchLanguage } from '@/components/switch-language';
-import { unstable_setRequestLocale } from 'next-intl/server';
+import { Link } from '@/i18n/routing';
 
 export default function PublicLayout({
   children,
   modal,
   params: { locale }
 }: Readonly<{
-  children: React.ReactNode;
-  modal: React.ReactNode;
+  children: ReactNode;
+  modal: ReactNode;
   params: {
     locale: string;
   };

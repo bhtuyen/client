@@ -1,15 +1,10 @@
 'use client';
 
-import * as React from 'react';
 import { CaretSortIcon, CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import * as SelectPrimitive from '@radix-ui/react-select';
+import * as React from 'react';
 
 import { cn } from '@/lib/utils';
-
-// eslint-disable-next-line no-unused-vars
-interface SelectProps {
-  value: string | number;
-}
 
 const Select = SelectPrimitive.Root;
 

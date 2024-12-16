@@ -1,13 +1,15 @@
 'use client';
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import type { ChartConfig } from '@/components/ui/chart';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { DashboardIndicatorRes } from '@/schemaValidations/indicator.schema';
 import { format, parse } from 'date-fns';
 import { TrendingUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
+
+import type { ChartConfig } from '@/components/ui/chart';
+import type { DashboardIndicatorRes } from '@/schemaValidations/indicator.schema';
+
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 const chartConfig = {
   desktop: {
     label: 'Desktop',

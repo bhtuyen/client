@@ -1,17 +1,19 @@
 'use client';
 
+import clsx from 'clsx';
+import { Check } from 'lucide-react';
+import { useParams, useSearchParams } from 'next/navigation';
+import { useLocale } from 'next-intl';
+
+import type { Locale } from '@/config';
+
 import { useGuestLoginMutation } from '@/app/queries/useGuest';
 import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
-import type { Locale } from '@/config';
 import { locales } from '@/config';
 import { Role } from '@/constants/enum';
 import { usePathname, useRouter } from '@/i18n/routing';
-import clsx from 'clsx';
-import { Check } from 'lucide-react';
-import { useLocale } from 'next-intl';
-import { useParams, useSearchParams } from 'next/navigation';
 
 export default function ChooseLanguage() {
   const locale = useLocale();

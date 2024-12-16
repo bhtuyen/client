@@ -1,10 +1,11 @@
 'use client';
+import { useEffect, useRef } from 'react';
+
 import { useLogoutMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
 import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
 import { useRouter } from '@/i18n/routing';
 import { getAccessTokenFromLocalStorage, getRefreshTokenFromLocalStorage } from '@/lib/utils';
-import { useEffect, useRef } from 'react';
 
 export default function Logout() {
   const { mutateAsync } = useLogoutMutation();
@@ -28,7 +29,8 @@ export default function Logout() {
     }
 
     ref.current = mutateAsync;
-    let timer: NodeJS.Timeout;
+    // eslint-disable-next-line no-undef
+    let timer: NodeJS.Timeout | undefined = undefined;
     mutateAsync().then(() => {
       timer = setTimeout(() => {
         ref.current = null;

@@ -1,9 +1,12 @@
 'use client';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { useRouter } from '@/i18n/routing';
 import { useState } from 'react';
 
-export default function Modal({ children }: { children: React.ReactNode }) {
+import type { ReactNode } from 'react';
+
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { useRouter } from '@/i18n/routing';
+
+export default function Modal({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [open, setOpen] = useState(true);
   const onOpenChange = (open: boolean) => {

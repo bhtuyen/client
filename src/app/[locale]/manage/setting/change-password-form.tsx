@@ -1,4 +1,12 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { KeyRound } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+import type { ChangePassword } from '@/schemaValidations/account.schema';
+
 import { useChangePasswordMutation } from '@/app/queries/useAccount';
 import TButton from '@/components/t-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,12 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { handleErrorApi } from '@/lib/utils';
-import { changePassword, ChangePassword } from '@/schemaValidations/account.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { KeyRound } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { changePassword } from '@/schemaValidations/account.schema';
 
 export default function ChangePasswordForm() {
   const [disabled, setDisabled] = useState(true);

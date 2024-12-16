@@ -1,4 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable no-unused-vars */
 'use client';
+import { PlusCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { createContext, useEffect, useMemo, useState } from 'react';
+
+import type { Period } from '@/schemaValidations/common.schema';
+import type { OrderDtoDetail } from '@/schemaValidations/order.schema';
+import type { ColumnDef } from '@tanstack/react-table';
+
 import { useOrderService } from '@/app/[locale]/manage/orders/order.service';
 import { useOrderListQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
 import { useTableListQuery } from '@/app/queries/useTable';
@@ -12,12 +22,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { OrderStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { formatDateTimeToLocaleString, getDishOptions, getEnumValues, getPrice, handleErrorApi, periodDefault, removeAccents } from '@/lib/utils';
-import { Period } from '@/schemaValidations/common.schema';
-import { OrderDtoDetail } from '@/schemaValidations/order.schema';
-import type { ColumnDef } from '@tanstack/react-table';
-import { PlusCircle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { createContext, useEffect, useMemo, useState } from 'react';
 
 export const OrderTableContext = createContext({
   setOrderIdEdit: (_value: string | undefined) => {},

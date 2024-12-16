@@ -1,6 +1,8 @@
-import orderApiRequest from '@/app/apiRequests/order';
-import { Period } from '@/schemaValidations/common.schema';
 import { useMutation, useQuery } from '@tanstack/react-query';
+
+import type { Period } from '@/schemaValidations/common.schema';
+
+import orderApiRequest from '@/app/apiRequests/order';
 
 export const useOrderListQuery = (queryParam: Period) =>
   useQuery({

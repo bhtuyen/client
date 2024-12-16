@@ -1,9 +1,10 @@
 'use client';
 
-import { getTableLink } from '@/lib/utils';
 import { useLocale, useTranslations } from 'next-intl';
 import QRCode from 'qrcode';
 import { useEffect, useRef } from 'react';
+
+import { getTableLink } from '@/lib/utils';
 
 interface QRCodeTableProps {
   token: string;

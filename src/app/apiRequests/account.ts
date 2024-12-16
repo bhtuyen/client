@@ -1,5 +1,6 @@
+import type { AccountRes, AccountsRes, ChangePassword, CreateEmployee, UpdateEmployee, UpdateMe } from '@/schemaValidations/account.schema';
+
 import http from '@/lib/http';
-import { AccountRes, AccountsRes, ChangePassword, CreateEmployee, UpdateEmployee, UpdateMe } from '@/schemaValidations/account.schema';
 
 const prefix = '/accounts';
 

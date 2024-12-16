@@ -1,4 +1,11 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader, Table, User } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useForm } from 'react-hook-form';
+
+import type { CreateTable } from '@/schemaValidations/table.schema';
+
 import { useCreateTableMutation } from '@/app/queries/useTable';
 import TButton from '@/components/t-button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -8,11 +15,7 @@ import { TableStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from '@/i18n/routing';
 import { getEnumValues, handleErrorApi } from '@/lib/utils';
-import { createTable, CreateTable } from '@/schemaValidations/table.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader, Table, User } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
+import { createTable } from '@/schemaValidations/table.schema';
 
 export default function CreateTableForm() {
   const router = useRouter();

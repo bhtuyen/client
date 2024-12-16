@@ -1,9 +1,10 @@
-import { dishApiRequets } from '@/app/apiRequests/dish';
-import { generateSlugify, getIdFromSlugifyString, wrapperServerApi } from '@/lib/utils';
-import React from 'react';
-import DishDetail from '@/app/[locale]/(public)/dishes/[slug]/dish-detail';
 import { unstable_setRequestLocale } from 'next-intl/server';
+import React from 'react';
+
+import DishDetail from '@/app/[locale]/(public)/dishes/[slug]/dish-detail';
+import { dishApiRequets } from '@/app/apiRequests/dish';
 import { routing } from '@/i18n/routing';
+import { generateSlugify, getIdFromSlugifyString, wrapperServerApi } from '@/lib/utils';
 
 interface PostPageProps {
   params: {

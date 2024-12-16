@@ -1,4 +1,11 @@
 'use client';
+import { ChevronsUpDown, HomeIcon, LogOut, Package2, Salad, Settings, ShoppingCart, Table, User2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
+import type { LucideProps } from 'lucide-react';
+import type { MessageKeys } from 'next-intl';
+import type { ComponentProps, ForwardRefExoticComponent, RefAttributes } from 'react';
+
 import { useAccountMeQuery } from '@/app/queries/useAccount';
 import { useLogoutMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
@@ -26,11 +33,6 @@ import {
 import { Role } from '@/constants/enum';
 import { Link, usePathname, useRouter } from '@/i18n/routing';
 import { handleErrorApi } from '@/lib/utils';
-import type { LucideProps } from 'lucide-react';
-import { ChevronsUpDown, HomeIcon, LogOut, Package2, Salad, Settings, ShoppingCart, Table, User2 } from 'lucide-react';
-import type { MessageKeys } from 'next-intl';
-import { useTranslations } from 'next-intl';
-import type { ComponentProps, ForwardRefExoticComponent, RefAttributes } from 'react';
 
 export type MenuItemType = {
   key: string;

@@ -1,4 +1,13 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { omit } from 'lodash';
+import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+import type { DishDtoDetail, DishSnapshotDto } from '@/schemaValidations/dish.schema';
+import type { UpdateOrder } from '@/schemaValidations/order.schema';
+
 import { DishesDialog } from '@/app/[locale]/manage/orders/dishes-dialog';
 import { useOrderQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
 import TButton from '@/components/t-button';
@@ -11,12 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { OrderStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { getEnumValues, handleErrorApi } from '@/lib/utils';
-import type { DishDto } from '@/schemaValidations/dish.schema';
-import { updateOrder, UpdateOrder } from '@/schemaValidations/order.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { updateOrder } from '@/schemaValidations/order.schema';
 
 export default function EditOrder({
   id,
@@ -27,7 +31,7 @@ export default function EditOrder({
   setId: (_value: string | undefined) => void;
   onSubmitSuccess?: () => void;
 }) {
-  const [selectedDish, setSelectedDish] = useState<DishDto | null>(null);
+  const [selectedDish, setSelectedDish] = useState<DishSnapshotDto | null>(null);
   const updateOrderMutation = useUpdateOrderMutation();
   const { data } = useOrderQuery(id!);
 
@@ -121,7 +125,8 @@ export default function EditOrder({
                     <DishesDialog
                       onChoose={(dish) => {
                         field.onChange(dish.id);
-                        setSelectedDish(dish);
+                        const newDish = omit<DishDtoDetail, keyof DishDtoDetail>(dish, ['groupId', 'group']) as DishSnapshotDto;
+                        setSelectedDish(newDish);
                       }}
                     />
                   </FormItem>

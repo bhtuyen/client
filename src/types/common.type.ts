@@ -11,7 +11,7 @@ export interface ShowAlertDialogOption {
   action?: TMessKey<'t-button'>;
 }
 
-export interface DeleteOption extends ShowAlertDialogOption {}
+export type DeleteOption = ShowAlertDialogOption;
 
 export interface EditOption {
   urlEdit: string;
