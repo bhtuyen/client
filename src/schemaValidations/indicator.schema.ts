@@ -4,12 +4,10 @@ import { buildReply } from '@/schemaValidations/common.schema';
 import { dishDtoDetail } from '@/schemaValidations/dish.schema';
 
 export const dishIndicator = dishDtoDetail.and(z.object({ successOrders: z.number() }));
-
 export const revenueByDate = z.object({
   date: z.string(),
   revenue: z.number()
 });
-
 export const dashboardIndicator = z.object({
   revenue: z.number(),
   guestCount: z.number(),
@@ -20,11 +18,7 @@ export const dashboardIndicator = z.object({
 });
 
 export const dashboardIndicatorRes = buildReply(dashboardIndicator);
-
 export type DishIndicator = z.TypeOf<typeof dishIndicator>;
-
 export type DashboardIndicator = z.TypeOf<typeof dashboardIndicator>;
-
 export type DashboardIndicatorRes = z.TypeOf<typeof dashboardIndicatorRes>;
-
 export type RevenueByDate = z.TypeOf<typeof revenueByDate>;

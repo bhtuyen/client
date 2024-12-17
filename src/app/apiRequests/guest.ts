@@ -2,17 +2,10 @@ import { stringify } from 'querystring';
 
 import type { Logout, RefreshToken, RefreshTokenRes } from '@/schemaValidations/auth.schema';
 import type { MessageRes, Period } from '@/schemaValidations/common.schema';
-import type {
-  CreateGuest,
-  CreateGuestRes,
-  GuestCreateOrders,
-  GuestCreateOrdersRes,
-  GuestLogin,
-  GuestLoginRes,
-  GuestsRes
-} from '@/schemaValidations/guest.schema';
+import type { GuestCreateOrders, GuestLogin, GuestLoginRes, GuestsRes } from '@/schemaValidations/guest.schema';
 
 import http from '@/lib/http';
+import { OrdersDtoDetailRes } from '@/schemaValidations/order.schema';
 
 const prefix = 'guest';
 
@@ -35,18 +28,14 @@ const guestApiRequest = {
     if (this.refreshTokenRequest) {
       return this.refreshTokenRequest;
     }
-
     this.refreshTokenRequest = http.post<RefreshTokenRes>(`/api/${prefix}/auth/refresh-token`, null, {
       baseUrl: ''
     });
-
     const result = await this.refreshTokenRequest;
     this.refreshTokenRequest = null;
     return result;
   },
-  orders: (body: GuestCreateOrders) => http.post<GuestCreateOrdersRes>(`/${prefix}/orders`, body),
-  getOrders: () => http.get<GuestCreateOrdersRes>(`/${prefix}/orders`),
-  createGuest: (body: CreateGuest) => http.post<CreateGuestRes>(`${prefix}`, body),
+  orders: (body: GuestCreateOrders) => http.post<OrdersDtoDetailRes>(`/${prefix}/orders`, body),
   getGuests: ({ fromDate, toDate }: Period) =>
     http.get<GuestsRes>(`${prefix}/?${stringify({ fromDate: fromDate?.toISOString(), toDate: toDate?.toISOString() })}`)
 };

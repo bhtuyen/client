@@ -1,9 +1,8 @@
 import { Minus, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 
-import type { DishCategory } from '@/constants/enum';
-import type { DishDtoDetailChoose } from '@/schemaValidations/dish.schema';
+import type { DishDtoDetailChoose, DishChooseBody } from '@/schemaValidations/dish.schema';
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { useDishesChooseQuery } from '@/app/queries/useDish';
@@ -11,25 +10,26 @@ import TButton from '@/components/t-button';
 import TDataTable from '@/components/t-data-table';
 import TImage from '@/components/t-image';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { getPrice } from '@/lib/utils';
-
-export type DishesChooseBody = { category: DishCategory; ignores?: string[] };
+import { Textarea } from '@/components/ui/textarea';
+import { getDishOptions, getPrice, removeAccents } from '@/lib/utils';
+import { v4 as uuidv4 } from 'uuid';
 type ChooseDishTableProps = {
-  dishesChooseBody: DishesChooseBody;
+  dishChooseBody: DishChooseBody;
   getDishSelected: (dishes: DishDtoDetailChoose[]) => void;
 };
 
-export default function ChooseDishTable({ dishesChooseBody, getDishSelected }: ChooseDishTableProps) {
+export default function ChooseDishTable({ dishChooseBody, getDishSelected }: ChooseDishTableProps) {
   const [idsSelected, setIdsSelected] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
   const [dishesChoose, setDishesChoose] = useState<DishDtoDetailChoose[]>([]);
 
-  const { data } = useDishesChooseQuery(dishesChooseBody, open);
+  const { data } = useDishesChooseQuery(dishChooseBody, open);
 
   useEffect(() => {
     if (data) {
-      setDishesChoose(data.payload.data);
+      setDishesChoose(data.payload.data.map((dish) => ({ ...dish, key: uuidv4() })));
     }
   }, [data]);
 
@@ -104,6 +104,25 @@ export default function ChooseDishTable({ dishesChooseBody, getDishSelected }: C
         cell: ({ row }) => <div className='text-center w-[100px]'>{row.original.group.name}</div>
       },
       {
+        id: 'options',
+        header: () => <div className='text-center w-[100px]'>{tTableColumn('options')}</div>,
+        cell: ({ row }) => (
+          <div className='text-center w-[100px]'>
+            <ul className='space-y-1'>
+              {getDishOptions(row.original.options).map((option) => (
+                <li key={removeAccents(option)} className='flex items-center gap-1'>
+                  <Checkbox id={removeAccents(option)} onDoubleClick={(e) => e.stopPropagation()} />
+                  <Label htmlFor={removeAccents(option)} onDoubleClick={(e) => e.stopPropagation()}>
+                    {option}
+                  </Label>
+                </li>
+              ))}
+              <Textarea className='mt-1' />
+            </ul>
+          </div>
+        )
+      },
+      {
         accessorKey: 'status',
         header: () => <div className='text-center w-[100px]'>{tTableColumn('status')}</div>,
         cell: ({ row }) => <div className='text-center w-[100px]'>{tDishStatus(row.original.status)}</div>
@@ -150,7 +169,7 @@ export default function ChooseDishTable({ dishesChooseBody, getDishSelected }: C
         )
       }
     ],
-    [tDishCategory, tDishStatus, tTableColumn, updateQuantity]
+    [tTableColumn, tDishCategory, tDishStatus, updateQuantity]
   );
   return (
     <Sheet open={open} onOpenChange={setOpen}>

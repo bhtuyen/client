@@ -78,6 +78,8 @@ interface TTableProps<TData, TValue> {
 
   setIdsSelected?: (idsSelected: string[]) => void;
 
+  setRowSelected?: (rowSelected: TData) => void;
+
   hasDbClickToSelect?: boolean;
 
   rowKey?: keyof TData;
@@ -90,13 +92,14 @@ interface DataTablePaginationProps<TData> {
 
 export default function TDataTable<TData, TValue>({
   data,
+  rowKey,
+  filter,
   columns,
   childrenToolbar,
-  filter,
   className,
   hasDbClickToSelect = false,
   setIdsSelected,
-  rowKey
+  setRowSelected
 }: TTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -157,9 +160,16 @@ export default function TDataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
-                onDoubleClick={() => {
+                onDoubleClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   if (hasDbClickToSelect) {
                     row.toggleSelected();
+                  }
+                }}
+                onClick={() => {
+                  if (setRowSelected) {
+                    setRowSelected(row.original);
                   }
                 }}
                 className='cursor-pointer'

@@ -34,8 +34,7 @@ export default function TableTable() {
             {tTableColumn('table-number')}
           </div>
         ),
-        cell: ({ row }) => <div className='capitalize text-center'>{row.original.number}</div>,
-        filterFn: 'weakEquals'
+        cell: ({ row }) => <div className='capitalize text-center'>{row.original.number}</div>
       },
       {
         accessorKey: 'capacity',

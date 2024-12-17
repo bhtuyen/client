@@ -204,39 +204,19 @@ export const OrderStatusIcon = {
 export function convertToKebabCase(str: string) {
   return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }
-
 export function getArguments<T extends TNamespaceKeys = TNamespaceKeys>(tMessKey: TMessKey<T>): TranslationFunctionParams<T> {
   if (isMessageOption(tMessKey)) {
     return tMessKey.values ? [tMessKey.key, tMessKey.values] : [tMessKey.key];
   }
   return [tMessKey];
 }
-
 export function isMessageOption<T extends TNamespaceKeys = TNamespaceKeys>(value: TMessKey<T>): value is TMessageOption<T> {
   return typeof value === 'object' && value !== null && 'key' in value;
 }
-
-export function buildSelect<TDto>(): Record<keyof TDto, any> {
-  const isObject = (value: unknown): value is object => value !== null && typeof value === 'object' && !Array.isArray(value);
-
-  // eslint-disable-next-line no-undef
-  return new Proxy(
-    {},
-    {
-      get: (_, key: string) => {
-        // Nếu giá trị là object, tiếp tục đệ quy
-        const nestedKeyType = {} as TDto[keyof TDto];
-        return isObject(nestedKeyType) ? buildSelect() : true;
-      }
-    }
-  ) as Record<keyof TDto, any>;
-}
-
 export const periodDefault: Period = {
   fromDate: startOfDay(new Date('2024-01-01')),
   toDate: endOfDay(new Date())
 };
-
 export const getDishOptions = (options: string | undefined) => {
   if (!options) return [];
   return options
@@ -244,7 +224,6 @@ export const getDishOptions = (options: string | undefined) => {
     .split(',')
     .map((option) => capitalize(option.trim()));
 };
-
 export const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };

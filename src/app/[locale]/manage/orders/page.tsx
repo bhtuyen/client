@@ -1,5 +1,5 @@
-import OrderTable from '@/app/[locale]/manage/orders/order-table';
+import OrderDashboard from '@/app/[locale]/manage/orders/order-dashboard';
 
 export default function EmployeesPage() {
-  return <OrderTable />;
+  return <OrderDashboard />;
 }

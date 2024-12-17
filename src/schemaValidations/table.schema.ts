@@ -1,7 +1,6 @@
 import z from 'zod';
 
 import { TableStatus } from '@/constants/enum';
-import { buildSelect } from '@/lib/utils';
 import { buildReply, id, updateAndCreate } from '@/schemaValidations/common.schema';
 
 /**
@@ -24,7 +23,6 @@ export const createTable = tableDto.omit({ token: true, id: true });
 export const tableRes = buildReply(tableDto);
 export const tablesRes = buildReply(z.array(tableDto));
 export const updateTable = tableDto.omit({ token: true }).extend({ changeToken: z.boolean() });
-export const selectTableDto = buildSelect<TableDto>();
 
 /**
  * Type

@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { DishCategory, OrderStatus } from '@/constants/enum';
 import { OrderStatusIcon, formatCurrency, formatDateTimeToLocaleString, formatDateTimeToTimeString, getPrice, handleErrorApi } from '@/lib/utils';
 
-export default async function OrderGuestDetail({
+export default async function OrdersTableDetail({
   guest,
   orders,
   onPaySuccess
@@ -30,7 +30,7 @@ export default async function OrderGuestDetail({
   const pay = async () => {
     if (payMutation.isPending || guest === null) return;
     try {
-      const result = await payMutation.mutateAsync({ guestId: guest.id });
+      const result = await payMutation.mutateAsync({ tableNumber: guest.id });
       if (onPaySuccess) {
         onPaySuccess(result.payload);
       }

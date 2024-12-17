@@ -1,190 +1,244 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Link, Minus, Plus, X } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import type { GuestDto, GuestLogin } from '@/schemaValidations/guest.schema';
-import type { CreateOrder } from '@/schemaValidations/order.schema';
+import type { DishChooseBody, DishDtoDetailChoose } from '@/schemaValidations/dish.schema';
+import type { DishToOrder, CreateOrdersTable, CreateOrdersTableForm } from '@/schemaValidations/order.schema';
+import type { TableDto } from '@/schemaValidations/table.schema';
 
-import GuestsDialog from '@/app/[locale]/manage/orders/guests-dialog';
-import { TablesDialog } from '@/app/[locale]/manage/orders/tables-dialog';
+import ChooseDishTable from '@/app/[locale]/manage/dishes/choose-dish-table';
+import { ChooseTable } from '@/app/[locale]/manage/orders/choose-table';
 import { useDishListQuery } from '@/app/queries/useDish';
-import { useCreateGuestMutation } from '@/app/queries/useGuest';
 import { useCreateOrderMutation } from '@/app/queries/useOrder';
+import QRCodeTable from '@/components/qrcode-table';
 import TButton from '@/components/t-button';
-import TImage from '@/components/t-image';
-import TQuantity from '@/components/t-quantity';
-import { Form, FormField, FormItem } from '@/components/ui/form';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { DishCategory, DishStatus } from '@/constants/enum';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { DishCategory } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
-import { cn, formatCurrency, handleErrorApi } from '@/lib/utils';
-import { guestLogin } from '@/schemaValidations/guest.schema';
+import { getTableLink, handleErrorApi } from '@/lib/utils';
+import { createOrdersTableForm } from '@/schemaValidations/order.schema';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
+import TImage from '@/components/t-image';
+import { Separator } from '@/components/ui/separator';
 
-export default function CreateOrderForm() {
-  const [selectedGuest, setSelectedGuest] = useState<GuestDto | null>(null);
-  const [isNewGuest, setIsNewGuest] = useState(true);
-  const [createOrders, setCreateOrders] = useState<CreateOrder[]>([]);
+export default function CreateOrdersForm() {
+  const [createOrders, setCreateOrders] = useState<DishToOrder[]>([]);
+  const [table, setTable] = useState<TableDto | null>(null);
+  const locale = useLocale();
   const { data } = useDishListQuery();
   const dishes = useMemo(() => data?.payload.data ?? [], [data?.payload.data]);
 
   const createOrderMutation = useCreateOrderMutation();
-  const createGuestMutation = useCreateGuestMutation();
 
-  const totalPrice = useMemo(() => {
-    return dishes.reduce((result, dish) => {
-      const order = createOrders.find((order) => order.dishId === dish.id);
-      if (!order) return result;
-      if (dish.category === DishCategory.Paid) {
-        return result + dish.price * order.quantity;
-      }
-      return result;
-    }, 0);
-  }, [dishes, createOrders]);
-
-  const form = useForm<GuestLogin>({
-    resolver: zodResolver(guestLogin),
+  const form = useForm<CreateOrdersTableForm>({
+    resolver: zodResolver(createOrdersTableForm),
     defaultValues: {
-      tableNumber: undefined
+      tableNumber: '',
+      dishes: []
     }
   });
-  const tableNumber = form.watch('tableNumber');
 
-  const handleQuantityChange = ({ dishId, quantity, options }: CreateOrder) => {
-    setCreateOrders((prevOrders) => {
-      if (quantity === 0) {
-        return prevOrders.filter((order) => order.dishId !== dishId);
-      }
-      const index = prevOrders.findIndex((order) => order.dishId === dishId);
-      if (index === -1) {
-        return [...prevOrders, { dishId, options, quantity }];
-      }
-      const newOrders = [...prevOrders];
-      newOrders[index] = { ...newOrders[index], quantity };
-      return prevOrders;
-    });
-  };
+  const tButton = useTranslations('t-button');
+  const tForm = useTranslations('t-form');
 
-  const handleOrder = async () => {
+  const dishChooseBody = useMemo<DishChooseBody>(
+    () => ({
+      categories: [DishCategory.Buffet, DishCategory.ComboPaid, DishCategory.Paid, DishCategory.ComboBuffet],
+      ignores: []
+    }),
+    []
+  );
+
+  // const handleQuantityChange = ({ dishId, quantity, options }: CreateOrder) => {
+  //   setCreateOrders((prevOrders) => {
+  //     if (quantity === 0) {
+  //       return prevOrders.filter((order) => order.dishId !== dishId);
+  //     }
+  //     const index = prevOrders.findIndex((order) => order.dishId === dishId);
+  //     if (index === -1) {
+  //       return [...prevOrders, { dishId, options, quantity }];
+  //     }
+  //     const newOrders = [...prevOrders];
+  //     newOrders[index] = { ...newOrders[index], quantity };
+  //     return prevOrders;
+  //   });
+  // };
+
+  // const totalPrice = useMemo(() => {
+  //   return dishes.reduce((result, dish) => {
+  //     const order = createOrders.find((order) => order.dishId === dish.id);
+  //     if (!order) return result;
+  //     if (dish.category === DishCategory.Paid) {
+  //       return result + dish.price * order.quantity;
+  //     }
+  //     return result;
+  //   }, 0);
+  // }, [dishes, createOrders]);
+
+  const onSubmit = async ({ tableNumber, dishes }: CreateOrdersTableForm) => {
+    if (createOrderMutation.isPending) return;
     try {
-      let guestId = selectedGuest?.id;
-      if (isNewGuest) {
-        const guestRes = await createGuestMutation.mutateAsync({
-          tableNumber
-        });
-
-        guestId = guestRes.payload.data.id;
-      }
-      if (!guestId) {
-        toast({ description: 'Hãy chọn một khách hàng' });
-        return;
-      }
-      await createOrderMutation.mutateAsync({
-        guestId: guestId!,
-        orders: createOrders
+      const newBody: CreateOrdersTable = {
+        tableNumber,
+        dishes: dishes.map<DishToOrder>(({ id: dishId, options, quantity }) => ({ dishId, options, quantity }))
+      };
+      const result = await createOrderMutation.mutateAsync(newBody);
+      toast({
+        description: result.payload.message
       });
-      reset();
     } catch (error) {
       handleErrorApi({ error, setError: form.setError });
     }
   };
 
-  const reset = () => {
-    form.reset();
-    setIsNewGuest(true);
-    setSelectedGuest(null);
-    setCreateOrders([]);
-  };
-
   return (
-    <div>
-      <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
-        <Label htmlFor='isNewGuest'>Khách hàng mới</Label>
-        <div className='col-span-3 flex items-center'>
-          <Switch id='isNewGuest' checked={isNewGuest} onCheckedChange={setIsNewGuest} />
-        </div>
-      </div>
-      {isNewGuest && (
-        <Form {...form}>
-          <form noValidate className='grid auto-rows-max items-start gap-4 md:gap-8'>
-            <FormField
-              control={form.control}
-              name='tableNumber'
-              render={({ field }) => (
-                <FormItem>
-                  <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
-                    <Label htmlFor='tableNumber'>Chọn bàn</Label>
-                    <div className='col-span-3 w-full space-y-2'>
-                      <div className='flex items-center gap-4'>
-                        <div>{field.value}</div>
-                        <TablesDialog
-                          onChoose={(table) => {
-                            field.onChange(table.number);
-                          }}
-                        />
-                      </div>
-                    </div>
+    <Form {...form}>
+      <form noValidate className='h-full flex flex-col justify-between p-0' onSubmit={form.handleSubmit(onSubmit, console.log)}>
+        <div className='h-[calc(100%_-_3rem)] grid grid-cols-[2fr,3fr] gap-4'>
+          <FormField
+            control={form.control}
+            name='tableNumber'
+            render={({ field }) => (
+              <FormItem className='h-full'>
+                <p>{tForm('table-number')}</p>
+                <ChooseTable setTable={setTable} />
+                {table && (
+                  <Link
+                    href={getTableLink({
+                      token: table.token,
+                      tableNumber: table.number,
+                      locale
+                    })}
+                    target='_blank'
+                    className='break-all'
+                  >
+                    {getTableLink({
+                      token: table.token,
+                      tableNumber: table.number,
+                      locale
+                    })}
+                  </Link>
+                )}
+                {table && <QRCodeTable token={table.token} tableNumber={table.number} size={300} />}
+                <div className='h-5'>
+                  <FormMessage />
+                </div>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='dishes'
+            render={({ field }) => (
+              <FormItem className='border-l-red-600 border-l h-full pl-2'>
+                <ChooseDishTable
+                  dishChooseBody={dishChooseBody}
+                  getDishSelected={(dishes) => {
+                    field.onChange(field.value.concat(dishes));
+                  }}
+                />
+                <ScrollArea className='w-full h-[calc(100%_-_3rem)]'>
+                  <div className='space-y-2'>
+                    {field.value &&
+                      field.value.map(({ key, price, image, name, description, quantity }) => {
+                        return (
+                          <Badge key={key} variant='secondary' className='w-full flex items-center'>
+                            <TImage src={image} alt={name} className='size-20 rounded-full mr-4' />
+                            <div>
+                              <h3 className='text-sm'>{name}</h3>
+                              <p className='text-muted-foreground text-xs'>{description}</p>
+                            </div>
+                            <div className='flex items-center ml-auto gap-2'>
+                              <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
+                                <TButton
+                                  size='icon'
+                                  className='size-4'
+                                  variant='ghost'
+                                  type='button'
+                                  tooltip='decrease'
+                                  onClick={() => {
+                                    if (quantity === 1) return;
+                                    field.onChange(
+                                      field.value.map((item) =>
+                                        item.key === key
+                                          ? {
+                                              ...item,
+                                              quantity: quantity - 1
+                                            }
+                                          : item
+                                      )
+                                    );
+                                  }}
+                                >
+                                  <Minus />
+                                </TButton>
+                                <p className='w-4 text-center'>{quantity}</p>
+                                <TButton
+                                  size='icon'
+                                  className='size-4'
+                                  variant='ghost'
+                                  type='button'
+                                  tooltip='increase'
+                                  onClick={() => {
+                                    if (quantity === 20) return;
+                                    field.onChange(
+                                      field.value.map((item) =>
+                                        item.key === key
+                                          ? {
+                                              ...item,
+                                              quantity: quantity + 1
+                                            }
+                                          : item
+                                      )
+                                    );
+                                  }}
+                                >
+                                  <Plus />
+                                </TButton>
+                              </div>
+                              <Separator orientation='vertical' className='h-6' />
+                              <TButton
+                                size='icon'
+                                className='size-4'
+                                variant='ghost'
+                                type='button'
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                }}
+                                tooltip='delete'
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  field.onChange(field.value.filter((item) => item.key !== key));
+                                }}
+                              >
+                                <X />
+                              </TButton>
+                            </div>
+                          </Badge>
+                        );
+                      })}
+
+                    {field.value.length === 0 && <span>Chưa chọn</span>}
                   </div>
-                </FormItem>
-              )}
-            />
-          </form>
-        </Form>
-      )}
-      {!isNewGuest && (
-        <GuestsDialog
-          onChoose={(guest) => {
-            setSelectedGuest(guest);
-          }}
-        />
-      )}
-      {!isNewGuest && selectedGuest && (
-        <div className='grid grid-cols-4 items-center justify-items-start gap-4'>
-          <Label htmlFor='selectedGuest'>Khách đã chọn</Label>
-          <div className='col-span-3 w-full gap-4 flex items-center'>
-            <div>(#{selectedGuest.id})</div>
-            <div>Bàn: {selectedGuest.tableNumber}</div>
-          </div>
+                </ScrollArea>
+              </FormItem>
+            )}
+          />
         </div>
-      )}
-      {dishes
-        .filter((dish) => dish.status !== DishStatus.Hidden)
-        .map((dish) => (
-          <div
-            key={dish.id}
-            className={cn('flex gap-4', {
-              'pointer-events-none': dish.status === DishStatus.Unavailable
-            })}
-          >
-            <div className='flex-shrink-0 relative'>
-              {dish.status === DishStatus.Unavailable && <span className='absolute inset-0 flex items-center justify-center text-sm'>Hết hàng</span>}
-              <TImage
-                src={dish.image ?? '/60000155_kem_sua_chua_1.jpg'}
-                alt={dish.name}
-                height={100}
-                width={100}
-                quality={100}
-                className='object-cover w-[80px] h-[80px] rounded-md'
-              />
-            </div>
-            <div className='space-y-1'>
-              <h3 className='text-sm'>{dish.name}</h3>
-              <p className='text-xs'>{dish.description}</p>
-              <p className='text-xs font-semibold'>{dish.category == DishCategory.Paid ? formatCurrency(dish.price) : DishCategory.Buffet}</p>
-            </div>
-            <div className='flex-shrink-0 ml-auto flex justify-center items-center'>
-              <TQuantity
-                onChange={(value) => handleQuantityChange({ dishId: dish.id, options: dish.options, quantity: value })}
-                value={createOrders.find((order) => order.dishId === dish.id)?.quantity ?? 0}
-              />
-            </div>
-          </div>
-        ))}
-      <TButton className='w-full justify-between' onClick={handleOrder} disabled={createOrders.length === 0}>
-        <span>Đặt hàng · {createOrders.length} món</span>
-        <span>{formatCurrency(totalPrice)}</span>
-      </TButton>
-    </div>
+        <FormItem className='flex flex-row items-center justify-center gap-x-4 h-12 w-full border-t'>
+          <TButton type='button' variant='outline' asLink href={'/manage/tables'}>
+            {tButton('cancel')}
+          </TButton>
+          <TButton type='submit' disabled={!form.formState.isDirty}>
+            {tButton('save-change')}
+          </TButton>
+        </FormItem>
+      </form>
+    </Form>
   );
 }

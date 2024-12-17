@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import type { DishCategory } from '@/constants/enum';
+import type { DishChooseBody } from '@/schemaValidations/dish.schema';
 
 import { dishApiRequets } from '@/app/apiRequests/dish';
 
@@ -18,7 +18,7 @@ export const useDishQuery = (id: string) => {
   });
 };
 
-export const useDishesChooseQuery = (body: { category: DishCategory; ignores?: string[] }, enabled: boolean) => {
+export const useDishesChooseQuery = (body: DishChooseBody, enabled: boolean) => {
   return useQuery({
     queryKey: ['dishes-choose', body],
     queryFn: () => dishApiRequets.getToChoose(body),

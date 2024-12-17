@@ -6,7 +6,8 @@ import { useMemo, useState } from 'react';
 
 import type { TabsKeyType } from '@/components/tabs';
 
-import { useGuestOrderMutation, useGuestOrdersQuery } from '@/app/queries/useGuest';
+import { useGuestOrderMutation } from '@/app/queries/useGuest';
+import { useOrderByTableQuery } from '@/app/queries/useOrder';
 import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
@@ -29,7 +30,7 @@ export default function CartAndOrderDialog() {
   const tOrderStatus = useTranslations('order-status');
 
   const guestOrderMutation = useGuestOrderMutation();
-  const { data, refetch } = useGuestOrdersQuery();
+  const { data, refetch } = useOrderByTableQuery('');
 
   const handleGuestOrder = async () => {
     try {

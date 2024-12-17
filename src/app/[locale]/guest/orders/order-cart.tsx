@@ -5,7 +5,7 @@ import { useEffect, useMemo } from 'react';
 
 import type { OrderDtoDetail } from '@/schemaValidations/order.schema';
 
-import { useGuestOrdersQuery } from '@/app/queries/useGuest';
+import { useOrderByTableQuery } from '@/app/queries/useOrder';
 import { useAppStore } from '@/components/app-provider';
 import TImage from '@/components/t-image';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +14,7 @@ import { toast } from '@/hooks/use-toast';
 import { formatCurrency, getPrice } from '@/lib/utils';
 
 export default function OrderCart() {
-  const { data, refetch } = useGuestOrdersQuery();
+  const { data, refetch } = useOrderByTableQuery('');
 
   const tOrderStatus = useTranslations('order-status');
 

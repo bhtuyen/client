@@ -5,8 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import type { DishesChooseBody } from '@/app/[locale]/manage/dishes/choose-dish-table';
-import type { CreateDishCombo, DishDtoDetailChoose } from '@/schemaValidations/dish.schema';
+import type { CreateDishCombo, DishDtoDetailChoose, DishChooseBody } from '@/schemaValidations/dish.schema';
 
 import AddDishGroup from '@/app/[locale]/manage/dishes/add-dish-group';
 import ChooseDishTable from '@/app/[locale]/manage/dishes/choose-dish-table';
@@ -73,26 +72,26 @@ export default function CreateDishForm() {
   const category = form.watch('category');
   const dishesSelected = form.watch('dishes');
   const combosSelected = form.watch('combos');
-  const dishesChooseBody = useMemo<DishesChooseBody>(() => {
+  const dishChooseBody = useMemo<DishChooseBody>(() => {
     switch (category) {
       case DishCategory.Buffet:
         return {
-          category: DishCategory.ComboBuffet,
+          categories: [DishCategory.ComboBuffet],
           ignores: combosSelected.map(({ comboId }) => comboId)
         };
       case DishCategory.Paid:
         return {
-          category: DishCategory.ComboPaid,
+          categories: [DishCategory.ComboPaid],
           ignores: combosSelected.map(({ comboId }) => comboId)
         };
       case DishCategory.ComboBuffet:
         return {
-          category: DishCategory.Buffet,
+          categories: [DishCategory.Buffet],
           ignores: dishesSelected.map(({ dishId }) => dishId)
         };
       case DishCategory.ComboPaid:
         return {
-          category: DishCategory.Paid,
+          categories: [DishCategory.Paid],
           ignores: dishesSelected.map(({ dishId }) => dishId)
         };
     }
@@ -332,7 +331,7 @@ export default function CreateDishForm() {
             </div>
             <div className='pl-2 pb-2 h-full flex-[2] border-l'>
               <div className='flex items-center justify-between'>
-                <ChooseDishTable dishesChooseBody={dishesChooseBody} getDishSelected={getDishSelected} />
+                <ChooseDishTable dishChooseBody={dishChooseBody} getDishSelected={getDishSelected} />
                 <TButton
                   className='col-span-1 m-0'
                   type='button'

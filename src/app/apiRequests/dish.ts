@@ -1,7 +1,7 @@
-import type { DishCategory } from '@/constants/enum';
 import type {
   CreateDishCombo,
   CreateDishGroup,
+  DishChooseBody,
   DishDtoComboDetailRes,
   DishDtoDetailChooseRes,
   DishGroupRes,
@@ -19,7 +19,7 @@ export const dishApiRequets = {
   // Note: nextjs 14 default cache is 'force-cache'
   getAll: () => http.get<DishesRes>(`${prefix}`, { next: { tags: ['dishes'] } }),
   getById: (id: string) => http.get<DishDtoComboDetailRes>(`${prefix}/${id}`),
-  getToChoose: (body: { category: DishCategory; ignores?: string[] }) => http.post<DishDtoDetailChooseRes>(`${prefix}/choose`, body),
+  getToChoose: (body: DishChooseBody) => http.post<DishDtoDetailChooseRes>(`${prefix}/choose`, body),
   create: (body: CreateDishCombo) => http.post<DishDtoComboDetailRes>(`${prefix}`, body),
   update: (body: UpdateDishCombo) => http.put<DishDtoComboDetailRes>(`${prefix}/${body.id}`, body),
   delete: (id: string) => http.delete<DishDtoComboDetailRes>(`${prefix}/${id}`),

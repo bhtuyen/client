@@ -48,7 +48,8 @@
     "call-staff": "Gọi nhân viên",
     "choose-dish": "Chọn món ăn",
     "increase": "Tăng",
-    "decrease": "Giảm"
+    "decrease": "Giảm",
+    "choose-table": "Chọn bàn"
   },
   "t-alert-dialog": {
     "title": {
@@ -275,6 +276,8 @@
   },
   "t-sheet": {
     "choose-dish-title": "Chọn món ăn",
-    "choose-dish-description": "Chọn món ăn cho combo hoặc combo cho món ăn"
+    "choose-dish-description": "Chọn món ăn cho combo hoặc combo cho món ăn",
+    "choose-table-title": "Chọn bàn",
+    "choose-table-description": "Chọn bàn cho đơn hàng"
   }
 }

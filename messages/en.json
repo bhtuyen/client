@@ -48,7 +48,8 @@
     "call-staff": "Call staff",
     "choose-dish": "Choose dish",
     "increase": "Increase",
-    "decrease": "Decrease"
+    "decrease": "Decrease",
+    "choose-table": "Choose table"
   },
   "t-alert-dialog": {
     "title": {
@@ -275,6 +276,8 @@
   },
   "t-sheet": {
     "choose-dish-title": "Choose dish",
-    "choose-dish-description": "Choose dish for combo or combo for dish"
+    "choose-dish-description": "Choose dish for combo or combo for dish",
+    "choose-table-title": "Choose table",
+    "choose-table-description": "Choose table for order"
   }
 }

@@ -4,30 +4,36 @@ import type { Period } from '@/schemaValidations/common.schema';
 
 import orderApiRequest from '@/app/apiRequests/order';
 
-export const useOrderListQuery = (queryParam: Period) =>
+export const useOrderByPeriodQuery = (queryParam: Period) =>
   useQuery({
     queryKey: ['orders', queryParam],
-    queryFn: () => orderApiRequest.getOrders(queryParam)
+    queryFn: () => orderApiRequest.getByPeriod(queryParam)
   });
 
-export const useOrderQuery = (orderId: string) =>
+export const useOrderByTableQuery = (tableNumber: string) =>
+  useQuery({
+    queryKey: ['orders', tableNumber],
+    queryFn: () => orderApiRequest.getByTable(tableNumber)
+  });
+
+export const useOrderDetailQuery = (orderId: string) =>
   useQuery({
     queryKey: ['order', orderId],
-    queryFn: () => orderApiRequest.getOrderDetail(orderId)
+    queryFn: () => orderApiRequest.getDetail(orderId)
   });
 
 export const useCreateOrderMutation = () =>
   useMutation({
-    mutationFn: orderApiRequest.createOrder
+    mutationFn: orderApiRequest.creates
   });
 
 export const useUpdateOrderMutation = () =>
   useMutation({
-    mutationFn: orderApiRequest.updateOrder
+    mutationFn: orderApiRequest.update
   });
 
 export const usePayOrderMutation = () => {
   return useMutation({
-    mutationFn: orderApiRequest.payOrder
+    mutationFn: orderApiRequest.payForTable
   });
 };

@@ -1,7 +1,6 @@
 import z from 'zod';
 
 import { Role } from '@/constants/enum';
-import { buildSelect } from '@/lib/utils';
 import { buildReply, id, name, updateAndCreate } from '@/schemaValidations/common.schema';
 
 const account = z
@@ -27,15 +26,6 @@ export const accountDto = account.omit({
 export const accountsRes = buildReply(z.array(accountDto));
 
 export const accountRes = buildReply(accountDto);
-
-export type AccountDto = z.TypeOf<typeof accountDto>;
-
-export type AccountsRes = z.TypeOf<typeof accountsRes>;
-
-export type AccountRes = z.TypeOf<typeof accountRes>;
-
-export const selectAccountDto = buildSelect<AccountDto>();
-
 export const createEmployee = accountDto
   .pick({
     name: true,
@@ -56,9 +46,6 @@ export const createEmployee = accountDto
       });
     }
   });
-
-export type CreateEmployee = z.TypeOf<typeof createEmployee>;
-
 export const updateEmployee = accountDto
   .pick({
     name: true,
@@ -90,18 +77,12 @@ export const updateEmployee = accountDto
       }
     }
   });
-
-export type UpdateEmployee = z.TypeOf<typeof updateEmployee>;
-
 export const updateMe = accountDto
   .pick({
     name: true,
     avatar: true
   })
   .strict();
-
-export type UpdateMe = z.TypeOf<typeof updateMe>;
-
 export const changePassword = z
   .object({
     oldPassword: z.string().min(6).max(100),
@@ -119,4 +100,10 @@ export const changePassword = z
     }
   });
 
+export type UpdateMe = z.TypeOf<typeof updateMe>;
+export type AccountRes = z.TypeOf<typeof accountRes>;
+export type AccountDto = z.TypeOf<typeof accountDto>;
+export type AccountsRes = z.TypeOf<typeof accountsRes>;
+export type UpdateEmployee = z.TypeOf<typeof updateEmployee>;
+export type CreateEmployee = z.TypeOf<typeof createEmployee>;
 export type ChangePassword = z.TypeOf<typeof changePassword>;

@@ -5,8 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import type { DishesChooseBody } from '@/app/[locale]/manage/dishes/choose-dish-table';
-import type { DishDtoDetailChoose, UpdateDishCombo } from '@/schemaValidations/dish.schema';
+import type { DishChooseBody, DishDtoDetailChoose, UpdateDishCombo } from '@/schemaValidations/dish.schema';
 
 import AddDishGroup from '@/app/[locale]/manage/dishes/add-dish-group';
 import ChooseDishTable from '@/app/[locale]/manage/dishes/choose-dish-table';
@@ -84,28 +83,27 @@ export default function EditDishForm({ id }: { id: string }) {
   const category = form.watch('category');
   const dishesSelected = form.watch('dishes');
   const combosSelected = form.watch('combos');
-  console.log(dishesSelected);
-  const dishesChooseBody = useMemo<DishesChooseBody>(() => {
+  const dishChooseBody = useMemo<DishChooseBody>(() => {
     switch (category) {
       case DishCategory.Buffet:
         return {
-          category: DishCategory.ComboBuffet,
-          ignores: combosSelected.filter((t) => t.rowMode !== RowMode.Delete && t.rowMode !== RowMode.None).map(({ comboId }) => comboId)
+          categories: [DishCategory.ComboBuffet],
+          ignores: combosSelected.map(({ comboId }) => comboId)
         };
       case DishCategory.Paid:
         return {
-          category: DishCategory.ComboPaid,
-          ignores: combosSelected.filter((t) => t.rowMode !== RowMode.Delete && t.rowMode !== RowMode.None).map(({ comboId }) => comboId)
+          categories: [DishCategory.ComboPaid],
+          ignores: combosSelected.map(({ comboId }) => comboId)
         };
       case DishCategory.ComboBuffet:
         return {
-          category: DishCategory.Buffet,
-          ignores: dishesSelected.filter((t) => t.rowMode !== RowMode.Delete && t.rowMode !== RowMode.None).map(({ dishId }) => dishId)
+          categories: [DishCategory.Buffet],
+          ignores: dishesSelected.map(({ dishId }) => dishId)
         };
       case DishCategory.ComboPaid:
         return {
-          category: DishCategory.Paid,
-          ignores: dishesSelected.filter((t) => t.rowMode !== RowMode.Delete && t.rowMode !== RowMode.None).map(({ dishId }) => dishId)
+          categories: [DishCategory.Paid],
+          ignores: dishesSelected.map(({ dishId }) => dishId)
         };
     }
   }, [category, dishesSelected, combosSelected]);
@@ -350,7 +348,7 @@ export default function EditDishForm({ id }: { id: string }) {
             </div>
             <div className='pl-2 pb-2 h-full flex-[2] border-l'>
               <div className='flex items-center justify-between'>
-                <ChooseDishTable dishesChooseBody={dishesChooseBody} getDishSelected={getDishSelected} />
+                <ChooseDishTable dishChooseBody={dishChooseBody} getDishSelected={getDishSelected} />
                 <TButton
                   className='col-span-1 m-0'
                   type='button'

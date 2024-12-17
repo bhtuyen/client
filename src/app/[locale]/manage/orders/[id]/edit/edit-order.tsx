@@ -9,7 +9,7 @@ import type { DishDtoDetail, DishSnapshotDto } from '@/schemaValidations/dish.sc
 import type { UpdateOrder } from '@/schemaValidations/order.schema';
 
 import { DishesDialog } from '@/app/[locale]/manage/orders/dishes-dialog';
-import { useOrderQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
+import { useOrderDetailQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
 import TButton from '@/components/t-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -33,7 +33,7 @@ export default function EditOrder({
 }) {
   const [selectedDish, setSelectedDish] = useState<DishSnapshotDto | null>(null);
   const updateOrderMutation = useUpdateOrderMutation();
-  const { data } = useOrderQuery(id!);
+  const { data } = useOrderDetailQuery(id!);
 
   const form = useForm<UpdateOrder>({
     resolver: zodResolver(updateOrder),

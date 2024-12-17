@@ -4,10 +4,11 @@ import type { UpdateTable } from '@/schemaValidations/table.schema';
 
 import { tableApiRequets } from '@/app/apiRequests/table';
 
-export const useTableListQuery = () => {
+export const useTableListQuery = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ['tables'],
-    queryFn: tableApiRequets.getAll
+    queryFn: tableApiRequets.getAll,
+    enabled
   });
 };
 
