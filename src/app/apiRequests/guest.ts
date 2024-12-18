@@ -3,9 +3,9 @@ import { stringify } from 'querystring';
 import type { Logout, RefreshToken, RefreshTokenRes } from '@/schemaValidations/auth.schema';
 import type { MessageRes, Period } from '@/schemaValidations/common.schema';
 import type { GuestCreateOrders, GuestLogin, GuestLoginRes, GuestsRes } from '@/schemaValidations/guest.schema';
+import type { OrdersDtoDetailRes } from '@/schemaValidations/order.schema';
 
 import http from '@/lib/http';
-import { OrdersDtoDetailRes } from '@/schemaValidations/order.schema';
 
 const prefix = 'guest';
 

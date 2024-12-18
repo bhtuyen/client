@@ -1,14 +1,12 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { omit } from 'lodash';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import type { DishDtoDetail, DishSnapshotDto } from '@/schemaValidations/dish.schema';
+import type { DishSnapshotDto } from '@/schemaValidations/dish.schema';
 import type { UpdateOrder } from '@/schemaValidations/order.schema';
 
-import { DishesDialog } from '@/app/[locale]/manage/orders/dishes-dialog';
 import { useOrderDetailQuery, useUpdateOrderMutation } from '@/app/queries/useOrder';
 import TButton from '@/components/t-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -121,14 +119,6 @@ export default function EditOrder({
                       </Avatar>
                       <div>{selectedDish?.name}</div>
                     </div>
-
-                    <DishesDialog
-                      onChoose={(dish) => {
-                        field.onChange(dish.id);
-                        const newDish = omit<DishDtoDetail, keyof DishDtoDetail>(dish, ['groupId', 'group']) as DishSnapshotDto;
-                        setSelectedDish(newDish);
-                      }}
-                    />
                   </FormItem>
                 )}
               />

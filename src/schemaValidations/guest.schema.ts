@@ -2,7 +2,6 @@ import z from 'zod';
 
 import { token } from '@/schemaValidations/auth.schema';
 import { buildReply, id, updateAndCreate } from '@/schemaValidations/common.schema';
-import { orderDtoDetail } from '@/schemaValidations/order.schema';
 
 const guest = z
   .object({

@@ -1,6 +1,7 @@
 import { Minus, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import type { DishDtoDetailChoose, DishChooseBody } from '@/schemaValidations/dish.schema';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -14,7 +15,6 @@ import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
 import { getDishOptions, getPrice, removeAccents } from '@/lib/utils';
-import { v4 as uuidv4 } from 'uuid';
 type ChooseDishTableProps = {
   dishChooseBody: DishChooseBody;
   getDishSelected: (dishes: DishDtoDetailChoose[]) => void;

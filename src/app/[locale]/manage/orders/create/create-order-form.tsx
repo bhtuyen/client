@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import type { DishChooseBody, DishDtoDetailChoose } from '@/schemaValidations/dish.schema';
+import type { DishChooseBody } from '@/schemaValidations/dish.schema';
 import type { DishToOrder, CreateOrdersTable, CreateOrdersTableForm } from '@/schemaValidations/order.schema';
 import type { TableDto } from '@/schemaValidations/table.schema';
 
@@ -15,15 +15,15 @@ import { useDishListQuery } from '@/app/queries/useDish';
 import { useCreateOrderMutation } from '@/app/queries/useOrder';
 import QRCodeTable from '@/components/qrcode-table';
 import TButton from '@/components/t-button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import TImage from '@/components/t-image';
+import { Badge } from '@/components/ui/badge';
+import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import { DishCategory } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { getTableLink, handleErrorApi } from '@/lib/utils';
 import { createOrdersTableForm } from '@/schemaValidations/order.schema';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
-import TImage from '@/components/t-image';
-import { Separator } from '@/components/ui/separator';
 
 export default function CreateOrdersForm() {
   const [createOrders, setCreateOrders] = useState<DishToOrder[]>([]);
