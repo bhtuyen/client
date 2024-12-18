@@ -15,6 +15,12 @@ const nextConfig = {
         pathname: '/**',
         port: '4000',
         protocol: 'http'
+      },
+      {
+        protocol: 'https',
+        hostname: 'meapi.bhtuyen9912.id.vn',
+        port: '',
+        pathname: '/**'
       }
     ]
   }

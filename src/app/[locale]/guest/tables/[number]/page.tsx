@@ -3,7 +3,7 @@ import TImage from '@/components/t-image';
 
 export default function page() {
   return (
-    <div className='h-full relative'>
+    <div className='h-dvh relative'>
       <TImage src={'/restaurant.jpg'} alt='' fill style={{ objectFit: 'cover' }} quality={100} />
       <ChooseLanguage />
     </div>
