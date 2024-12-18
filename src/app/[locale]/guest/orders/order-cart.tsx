@@ -14,7 +14,7 @@ import { toast } from '@/hooks/use-toast';
 import { formatCurrency, getPrice } from '@/lib/utils';
 
 export default function OrderCart() {
-  const { data, refetch } = useOrderByTableQuery('');
+  const { data, refetch } = useOrderByTableQuery('', true);
 
   const tOrderStatus = useTranslations('order-status');
 

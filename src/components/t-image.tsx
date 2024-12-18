@@ -8,16 +8,18 @@ export default function TImage({
   height,
   src,
   alt,
+  fill,
   ...rest
 }: Omit<ImageProps, 'src'> & {
   src: string | undefined | StaticImport;
 }) {
   return (
     <Image
-      width={width ?? 100}
-      height={height ?? 100}
+      width={fill ? undefined : (width ?? 100)}
+      height={fill ? undefined : (height ?? 100)}
       src={src ?? '/60000155_kem_sua_chua_1.jpg'}
       alt={alt}
+      fill={fill}
       {...rest}
       loading='lazy'
       placeholder='blur'

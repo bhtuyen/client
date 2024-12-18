@@ -22,7 +22,7 @@ export default function ChooseLanguage() {
   const searchParam = useSearchParams();
   const params = useParams();
 
-  const { setRole } = useAppStore();
+  const { setRole, setTableNumber } = useAppStore();
 
   const tableNumber = params.number as string;
   const token = searchParam.get('token');
@@ -35,7 +35,8 @@ export default function ChooseLanguage() {
         token: token ?? '',
         tableNumber
       });
-      console.log(result);
+
+      setTableNumber(tableNumber);
 
       setRole(Role.Guest);
 

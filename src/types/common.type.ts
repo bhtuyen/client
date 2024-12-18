@@ -32,4 +32,6 @@ export type StoreType = {
   optionAlertDialog: ShowAlertDialogOption;
   showAlertDialog: (option: ShowAlertDialogOption) => void;
   closeAlertDialog: () => void;
+  tableNumber: string;
+  setTableNumber: (tableNumber: string) => void;
 };

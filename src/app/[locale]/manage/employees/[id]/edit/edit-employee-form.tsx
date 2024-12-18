@@ -32,7 +32,10 @@ export default function EditEmployeeForm({ id }: { id: string }) {
 
   const form = useForm<UpdateEmployee>({
     resolver: zodResolver(updateEmployee),
-    values: account
+    values: {
+      ...account,
+      avatar: account?.avatar || undefined
+    } as UpdateEmployee
   });
 
   const tRole = useTranslations('role');

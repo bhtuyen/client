@@ -7,11 +7,11 @@ const account = z
   .object({
     email: z.string().email(),
     password: z.string().min(6).max(100),
-    avatar: z.string().url().optional(),
+    avatar: z.string().url().nullable(),
     role: z.nativeEnum(Role),
     phone: z.string().min(10).max(15),
     isVerified: z.boolean().optional(),
-    ownerId: z.string().uuid().optional()
+    ownerId: z.string().uuid().nullable()
   })
   .merge(updateAndCreate)
   .merge(id)
@@ -30,12 +30,12 @@ export const createEmployee = accountDto
   .pick({
     name: true,
     email: true,
-    phone: true,
-    avatar: true
+    phone: true
   })
   .extend({
     confirmPassword: z.string().min(6).max(100),
-    password: z.string().min(6).max(100)
+    password: z.string().min(6).max(100),
+    avatar: z.string().url().optional()
   })
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {
@@ -51,14 +51,14 @@ export const updateEmployee = accountDto
     name: true,
     email: true,
     phone: true,
-    avatar: true,
     id: true,
     role: true
   })
   .extend({
     changePassword: z.boolean().optional(),
     password: z.string().min(6).max(100).optional(),
-    confirmPassword: z.string().min(6).max(100).optional()
+    confirmPassword: z.string().min(6).max(100).optional(),
+    avatar: z.string().url().optional()
   })
   .superRefine(({ confirmPassword, password, changePassword }, ctx) => {
     if (changePassword) {
@@ -79,8 +79,10 @@ export const updateEmployee = accountDto
   });
 export const updateMe = accountDto
   .pick({
-    name: true,
-    avatar: true
+    name: true
+  })
+  .extend({
+    avatar: z.string().url().optional()
   })
   .strict();
 export const changePassword = z

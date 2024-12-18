@@ -23,14 +23,14 @@ const tabs = [
 
 export default function CartAndOrderDialog() {
   const [activeTab, setActiveTab] = useState<TabsKeyType<typeof tabs>>('cart');
-  const { cart, changeQuantity, removeDishesFromCart: removeDishFromCart, removeAllCart } = useAppStore();
+  const { cart, changeQuantity, removeDishesFromCart: removeDishFromCart, removeAllCart, tableNumber } = useAppStore();
 
   const sumPrice = cart.reduce((sum, dish) => sum + (dish.category === DishCategory.Buffet ? 0 : dish.price * dish.quantity), 0);
 
   const tOrderStatus = useTranslations('order-status');
 
   const guestOrderMutation = useGuestOrderMutation();
-  const { data, refetch } = useOrderByTableQuery('');
+  const { data, refetch } = useOrderByTableQuery(tableNumber, !!tableNumber);
 
   const handleGuestOrder = async () => {
     try {

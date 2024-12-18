@@ -23,7 +23,15 @@ export default function CreateEmployeeForm() {
   const router = useRouter();
 
   const form = useForm<CreateEmployee>({
-    resolver: zodResolver(createEmployee)
+    resolver: zodResolver(createEmployee),
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+      avatar: undefined
+    }
   });
 
   const adddEmployeeMutation = useAddEmployeeMutation();

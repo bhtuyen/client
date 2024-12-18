@@ -98,6 +98,10 @@ export const useStore = create<StoreType>((set) => ({
   },
   showAlertDialog: (option) => {
     set({ isShowAlertDialog: true, optionAlertDialog: option });
+  },
+  tableNumber: '',
+  setTableNumber: (tableNumber) => {
+    set({ tableNumber });
   }
 }));
 
