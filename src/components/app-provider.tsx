@@ -37,7 +37,7 @@ export const useStore = create<StoreType>((set) => ({
   createConnectSocket: (accessToken: string) => {
     if (accessToken) {
       set({
-        socket: io(envConfig.NEXT_PUBLIC_SOCKET_URL, {
+        socket: io(envConfig.NEXT_PUBLIC_API_ENDPOINT, {
           auth: {
             Authorization: `Bearer ${accessToken}`
           }
