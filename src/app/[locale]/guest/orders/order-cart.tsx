@@ -1,24 +1,18 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useEffect, useMemo } from 'react';
-
-import type { OrderDtoDetail } from '@/schemaValidations/order.schema';
+import { useMemo } from 'react';
 
 import { useOrderByTableQuery } from '@/app/queries/useOrder';
-import { useAppStore } from '@/components/app-provider';
 import TImage from '@/components/t-image';
 import { Badge } from '@/components/ui/badge';
 import { DishCategory, OrderStatus } from '@/constants/enum';
-import { toast } from '@/hooks/use-toast';
 import { formatCurrency, getPrice } from '@/lib/utils';
 
 export default function OrderCart() {
   const { data, refetch } = useOrderByTableQuery('', true);
 
   const tOrderStatus = useTranslations('order-status');
-
-  const { socket } = useAppStore();
 
   const orders = useMemo(() => data?.payload.data || [], [data]);
 
@@ -64,35 +58,6 @@ export default function OrderCart() {
       ),
     [orders]
   );
-
-  useEffect(() => {
-    function onUpadteOrder(data: OrderDtoDetail) {
-      const {
-        dishSnapshot: { name },
-        quantity,
-        status
-      } = data;
-
-      toast({
-        description: `Món ${name} (SL: ${quantity}) đã được cập nhật sang trạng thái ${tOrderStatus(status)}`
-      });
-      refetch();
-    }
-    function onPayment(data: OrderDtoDetail[]) {
-      toast({
-        description: `Bạn đã thanh toán thành công ${data.length} đơn`
-      });
-      refetch();
-    }
-
-    socket?.on('update-order', onUpadteOrder);
-    socket?.on('payment', onPayment);
-
-    return () => {
-      socket?.off('update-order', onUpadteOrder);
-      socket?.off('payment', onPayment);
-    };
-  }, [refetch, socket, tOrderStatus]);
 
   return (
     <>
