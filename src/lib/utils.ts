@@ -217,7 +217,7 @@ export const periodDefault: Period = {
   fromDate: startOfDay(new Date('2024-01-01')),
   toDate: endOfDay(new Date())
 };
-export const getDishOptions = (options: string | undefined) => {
+export const getDishOptions = (options: string | null | undefined) => {
   if (!options) return [];
   return options
     .replace(';', ',')

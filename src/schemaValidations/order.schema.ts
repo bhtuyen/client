@@ -13,9 +13,9 @@ const order = z
     tableNumber: z.string().trim().min(1).max(50),
     token: z.string(),
     dishSnapshotId: z.string().uuid(),
-    options: z.string().optional(),
+    options: z.string().nullable(),
     quantity: z.number().min(1).max(20),
-    orderHandlerId: z.string().uuid().optional(),
+    orderHandlerId: z.string().uuid().nullable(),
     status: z.nativeEnum(OrderStatus)
   })
   .merge(updateAndCreate)

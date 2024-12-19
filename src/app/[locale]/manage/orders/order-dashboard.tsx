@@ -32,7 +32,7 @@ export default function OrderDashboard() {
   const tOrderStatus = useTranslations('order-status');
 
   useEffect(() => {
-    function refetch() {
+    function refetchOrders() {
       const now = new Date();
       if (now >= dateRange.fromDate && now <= dateRange.toDate) {
         refetch();
@@ -40,7 +40,7 @@ export default function OrderDashboard() {
     }
 
     function onUpadteOrder(data: OrderDtoDetail) {
-      refetch();
+      refetchOrders();
       const {
         dishSnapshot: { name },
         quantity,

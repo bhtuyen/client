@@ -93,7 +93,9 @@ export default function OrderTable({ orders }: { orders: OrderDtoDetail[] }) {
                   id: original.id,
                   dishId: original.dishSnapshot.dishId,
                   status,
-                  quantity: original.quantity
+                  quantity: original.quantity,
+                  options: original.options,
+                  orderHandlerId: original.orderHandlerId
                 });
               } catch (error) {
                 handleErrorApi({ error });
