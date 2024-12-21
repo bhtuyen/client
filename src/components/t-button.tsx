@@ -44,6 +44,7 @@ const TButton = React.forwardRef<HTMLButtonElement, TButtonProps>(({ tooltip, as
             asChild={isLinkButton}
             ref={ref}
             className={clsx(
+              'active:scale-95',
               {
                 hidden: props.hidden
               },

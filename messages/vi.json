@@ -49,7 +49,8 @@
     "choose-dish": "Chọn món ăn",
     "increase": "Tăng",
     "decrease": "Giảm",
-    "choose-table": "Chọn bàn"
+    "choose-table": "Chọn bàn",
+    "order-now": "Đặt món ngay"
   },
   "t-alert-dialog": {
     "title": {
@@ -272,12 +273,18 @@
       "dish-description": "Mô tả sản phẩm",
       "options": "Tùy chọn",
       "your-request": "Yêu cầu của bạn"
-    }
+    },
+    "table-number": "Bàn {number}",
+    "choose-language": "Chọn ngôn ngữ để tiếp tục"
   },
   "t-sheet": {
     "choose-dish-title": "Chọn món ăn",
     "choose-dish-description": "Chọn món ăn cho combo hoặc combo cho món ăn",
     "choose-table-title": "Chọn bàn",
     "choose-table-description": "Chọn bàn cho đơn hàng"
+  },
+  "t-message": {
+    "update-order": "Món {name} (SL: {quantity}) đã được cập nhật sang trạng thái {status}",
+    "payment": "Bạn đã thanh toán thành công {orders} đơn hàng"
   }
 }

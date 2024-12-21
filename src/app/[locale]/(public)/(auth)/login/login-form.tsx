@@ -1,5 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -9,7 +10,6 @@ import type { TMessageKeys } from '@/types/message.type';
 
 import { useLoginMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
-import SearchParamsLoader, { useSearchParamsLoader } from '@/components/search-params-loader';
 import TButton from '@/components/t-button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
@@ -33,7 +33,7 @@ export default function LoginForm() {
     }
   });
 
-  const { searchParams, setSearchParams } = useSearchParamsLoader();
+  const searchParams = useSearchParams();
 
   const tLoginForm = useTranslations('login-form');
   const tButton = useTranslations('t-button');
@@ -71,7 +71,6 @@ export default function LoginForm() {
 
   return (
     <Card className='mx-auto max-w-sm'>
-      <SearchParamsLoader onParamsReceived={setSearchParams} />
       <CardHeader>
         <CardTitle className='text-2xl'>{tLoginForm('title')}</CardTitle>
         <CardDescription>{tLoginForm('description')}</CardDescription>

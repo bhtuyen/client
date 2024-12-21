@@ -2,6 +2,7 @@
 import { ChevronsUpDown, HomeIcon, LogOut, Package2, Salad, Settings, ShoppingCart, Table, User2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
+import type { GuestOrderRole } from '@/constants/const';
 import type { LucideProps } from 'lucide-react';
 import type { MessageKeys } from 'next-intl';
 import type { ComponentProps, ForwardRefExoticComponent, RefAttributes } from 'react';
@@ -38,7 +39,7 @@ export type MenuItemType = {
   key: string;
   Icon: ForwardRefExoticComponent<Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>>;
   href: string;
-  roles: Role[];
+  roles: Array<Role | typeof GuestOrderRole>;
 };
 
 const menuItems: {

@@ -1,7 +1,8 @@
 import '@/app/globals.css';
 import { Inter as FontSans } from 'next/font/google';
+import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, unstable_setRequestLocale } from 'next-intl/server';
+import { getMessages } from 'next-intl/server';
 import NextTopLoader from 'nextjs-toploader';
 
 import type { Metadata } from 'next';
@@ -37,7 +38,10 @@ export default async function RootLayout({
     locale: string;
   };
 }>) {
-  unstable_setRequestLocale(locale);
+  // Ensure that the incoming `locale` is valid
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
   const message = await getMessages();
 
   return (

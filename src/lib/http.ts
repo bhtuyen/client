@@ -1,3 +1,5 @@
+import { getLocale } from 'next-intl/server';
+
 import type { LoginRes, Token } from '@/schemaValidations/auth.schema';
 import type { RequestInit } from 'next/dist/server/web/spec-extension/request';
 
@@ -135,6 +137,7 @@ const request = async <Response>(url: string, options?: customOptions | undefine
         payload: data.payload as EntityErrorPayload
       });
     } else if (res.status === UNAUTHORIZED_STATUS) {
+      const locale = await getLocale();
       // Nếu là client thì xử lý logout ngay
       if (isClient) {
         if (!clientLogoutRequest) {
@@ -153,7 +156,10 @@ const request = async <Response>(url: string, options?: customOptions | undefine
           } finally {
             removeAuthTokens();
             clientLogoutRequest = null;
-            redirect('/login');
+            redirect({
+              href: '/login',
+              locale
+            });
           }
         }
       } else {
@@ -161,7 +167,15 @@ const request = async <Response>(url: string, options?: customOptions | undefine
         const accessToken = (options?.headers as any)?.Authorization.split('Bearer ')[1];
 
         // This Func is default throw an error, so we don't need to catch it
-        redirect(`/logout?accessToken=${accessToken}`);
+        redirect({
+          href: {
+            pathname: '/logout',
+            query: {
+              accessToken
+            }
+          },
+          locale
+        });
       }
     } else {
       throw new HttpError(data);

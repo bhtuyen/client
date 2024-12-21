@@ -100,6 +100,7 @@ export const dishDtoDetailChooseRes = buildReply(z.array(dishDtoDetailChoose));
 export const dishGroupRes = buildReply(dishGroupDto);
 export const dishGroupsRes = buildReply(z.array(dishGroupDto));
 export const dishDtoComboDetailRes = buildReply(dishDtoComboDetail);
+export const dishDtoComboDetailsRes = buildReply(z.array(dishDtoComboDetail));
 export const dishSnapshotDto = baseDishDto
   .extend({
     dishId: z.string().uuid()
@@ -132,7 +133,10 @@ export type DishInCart = z.TypeOf<typeof dishInCart>;
 export type DishSnapshotDto = z.TypeOf<typeof dishSnapshotDto>;
 export type CreateDishCombo = z.TypeOf<typeof createDishCombo>;
 export type UpdateDishCombo = z.TypeOf<typeof updateDishCombo>;
+export type DishDtoComboDetail = z.TypeOf<typeof dishDtoComboDetail>;
 export type DishDtoComboDetailRes = z.TypeOf<typeof dishDtoComboDetailRes>;
 export type DishDtoDetailChoose = z.TypeOf<typeof dishDtoDetailChoose>;
 export type DishDtoDetailChooseRes = z.TypeOf<typeof dishDtoDetailChooseRes>;
+export type DishDtoComboDetailsRes = z.TypeOf<typeof dishDtoComboDetailsRes>;
+
 export type DishChooseBody = z.TypeOf<typeof dishChooseBody>;
