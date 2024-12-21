@@ -26,6 +26,13 @@ export const useDishesChooseQuery = (body: DishChooseBody, enabled: boolean) => 
   });
 };
 
+export const useDishesOrderQuery = () => {
+  return useQuery({
+    queryKey: ['dishes-order'],
+    queryFn: dishApiRequets.getToOrder
+  });
+};
+
 export const useCreateDishMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({

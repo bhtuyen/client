@@ -2,9 +2,9 @@
 import clsx from 'clsx';
 import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import type { TabsKeyType } from '@/components/tabs';
+import type { OrderDtoDetail } from '@/schemaValidations/order.schema';
 
 import { useGuestOrderMutation } from '@/app/queries/useGuest';
 import { useOrderByTableQuery } from '@/app/queries/useOrder';
@@ -14,6 +14,7 @@ import TImage from '@/components/t-image';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DishCategory } from '@/constants/enum';
+import { toast } from '@/hooks/use-toast';
 import { formatCurrency, getPrice, handleErrorApi } from '@/lib/utils';
 
 const tabs = [
@@ -21,16 +22,19 @@ const tabs = [
   { key: 'ordered', label: 'Món đã gọi' }
 ] as const;
 
-export default function CartAndOrderDialog() {
-  const [activeTab, setActiveTab] = useState<TabsKeyType<typeof tabs>>('cart');
-  const { cart, changeQuantity, removeDishesFromCart: removeDishFromCart, removeAllCart, tableNumber } = useAppStore();
+type TabsKeyType = (typeof tabs)[number]['key'];
+
+export default function CartAndOrderDialog({ number }: { number: string }) {
+  const [activeTab, setActiveTab] = useState<TabsKeyType>('cart');
+  const { cart, changeQuantity, removeDishesFromCart: removeDishFromCart, removeAllCart, socket } = useAppStore();
 
   const sumPrice = cart.reduce((sum, dish) => sum + (dish.category === DishCategory.Buffet ? 0 : dish.price * dish.quantity), 0);
 
   const tOrderStatus = useTranslations('order-status');
+  const tMessage = useTranslations('t-message');
 
   const guestOrderMutation = useGuestOrderMutation();
-  const { data, refetch } = useOrderByTableQuery(tableNumber, !!tableNumber);
+  const { data, refetch } = useOrderByTableQuery(number, activeTab === 'ordered');
 
   const handleGuestOrder = async () => {
     try {
@@ -55,6 +59,35 @@ export default function CartAndOrderDialog() {
     0
   );
 
+  useEffect(() => {
+    function onUpadteOrder(data: OrderDtoDetail) {
+      const {
+        dishSnapshot: { name },
+        quantity,
+        status
+      } = data;
+
+      toast({
+        description: tMessage('update-order', { name, quantity, status: tOrderStatus(status) })
+      });
+      refetch();
+    }
+    function onPayment(data: OrderDtoDetail[]) {
+      toast({
+        description: tMessage('payment', { orders: data.length })
+      });
+      refetch();
+    }
+
+    socket?.on('update-order', onUpadteOrder);
+    socket?.on('payment', onPayment);
+
+    return () => {
+      socket?.off('update-order', onUpadteOrder);
+      socket?.off('payment', onPayment);
+    };
+  }, [refetch, socket, tMessage, tOrderStatus]);
+
   return (
     <Dialog modal={false}>
       <DialogTrigger asChild>
@@ -76,7 +109,7 @@ export default function CartAndOrderDialog() {
           <DialogDescription />
         </DialogHeader>
 
-        <Tabs value={activeTab} className='w-full h-[calc(100%_-_3rem)]' onValueChange={(value) => setActiveTab(value as TabsKeyType<typeof tabs>)}>
+        <Tabs value={activeTab} className='w-full h-[calc(100%_-_3rem)]' onValueChange={(value) => setActiveTab(value as TabsKeyType)}>
           <TabsList className='w-full bg-white p-0 h-11 shadow-sm'>
             {tabs.map((tab) => (
               <TabsTrigger

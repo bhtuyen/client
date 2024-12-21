@@ -14,7 +14,8 @@ import type { UseFormSetError } from 'react-hook-form';
 import authApiRequest from '@/app/apiRequests/auth';
 import guestApiRequest from '@/app/apiRequests/guest';
 import envConfig from '@/config';
-import { DishCategory, OrderStatus, Role } from '@/constants/enum';
+import { GuestOrderRole } from '@/constants/const';
+import { DishCategory, OrderStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { EntityError } from '@/lib/http';
 
@@ -103,7 +104,7 @@ export const checkAndRefreshToken = async (param?: ParamType) => {
     // refresh token
     try {
       const role = accessTokenPayload.role;
-      const res = role === Role.Guest ? await guestApiRequest.refreshToken() : await authApiRequest.refreshToken();
+      const res = role === GuestOrderRole ? await guestApiRequest.refreshToken() : await authApiRequest.refreshToken();
       const { accessToken, refreshToken } = res.payload.data;
       setAccessTokenToLocalStorage(accessToken);
       setRefreshTokenToLocalStorage(refreshToken);

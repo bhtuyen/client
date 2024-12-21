@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 
+import type { GuestOrderRole } from '@/constants/const';
 import type { TMessageKeys } from '@/types/message.type';
 
 import { useLogoutMutation } from '@/app/queries/useAuth';
@@ -25,7 +26,7 @@ import { cn, handleErrorApi } from '@/lib/utils';
 const menuItems: {
   titleKey: string;
   href: string;
-  roles?: Role[];
+  roles?: Array<Role | typeof GuestOrderRole>;
   hiddenWhenLogin?: boolean;
 }[] = [
   {

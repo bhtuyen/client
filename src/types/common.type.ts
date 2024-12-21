@@ -1,7 +1,9 @@
+import type { GuestOrderRole } from '@/constants/const';
 import type { Role } from '@/constants/enum';
 import type { DishInCart } from '@/schemaValidations/dish.schema';
 import type { TMessKey } from '@/types/message.type';
 import type { Socket } from 'socket.io-client';
+
 export interface ShowAlertDialogOption {
   onAction: () => void;
   onCancel?: () => void;
@@ -18,8 +20,8 @@ export interface EditOption {
 }
 
 export type StoreType = {
-  role: Role | null;
-  setRole: (role: Role | null) => void;
+  role: Role | null | typeof GuestOrderRole;
+  setRole: (role: Role | null | typeof GuestOrderRole) => void;
   socket: Socket | null;
   createConnectSocket: (accessToken: string) => void;
   disconnectSocket: () => void;
@@ -32,6 +34,4 @@ export type StoreType = {
   optionAlertDialog: ShowAlertDialogOption;
   showAlertDialog: (option: ShowAlertDialogOption) => void;
   closeAlertDialog: () => void;
-  tableNumber: string;
-  setTableNumber: (tableNumber: string) => void;
 };

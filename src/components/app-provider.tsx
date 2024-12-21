@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { create } from 'zustand';
 
+import type { GuestOrderRole } from '@/constants/const';
 import type { Role } from '@/constants/enum';
 import type { StoreType } from '@/types/common.type';
 import type { ReactNode } from 'react';
@@ -28,7 +29,7 @@ const queryClient = new QueryClient({
 export const useStore = create<StoreType>((set) => ({
   role: null,
   socket: null,
-  setRole: (role: Role | null) => {
+  setRole: (role: Role | null | typeof GuestOrderRole) => {
     set({ role });
     if (role === null) {
       removeAuthTokens();
@@ -98,10 +99,6 @@ export const useStore = create<StoreType>((set) => ({
   },
   showAlertDialog: (option) => {
     set({ isShowAlertDialog: true, optionAlertDialog: option });
-  },
-  tableNumber: '',
-  setTableNumber: (tableNumber) => {
-    set({ tableNumber });
   }
 }));
 
