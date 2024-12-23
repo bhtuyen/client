@@ -130,6 +130,7 @@ export default function DishTable() {
           <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>{tButton('create-dish')}</span>
         </TButton>
       }
+      className='pr-2'
       filter={{ placeholder: { key: 'input-placeholder-dish' }, columnId: 'name' }}
     />
   );

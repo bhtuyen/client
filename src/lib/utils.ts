@@ -126,8 +126,8 @@ export const formatCurrency = (number: number) => {
   }).format(number);
 };
 
-export const getPrice = (dish: DishSnapshotDto | DishDto) => {
-  return dish.category === DishCategory.Buffet ? DishCategory.Buffet : formatCurrency(dish.price);
+export const getPrice = (dish: DishSnapshotDto | DishDto | { price: number | undefined; category: DishCategory }) => {
+  return dish.category === DishCategory.Buffet ? DishCategory.Buffet : formatCurrency(dish.price ?? 0);
 };
 
 export const getTableLink = ({ token, tableNumber, locale }: { token: string; tableNumber: string; locale: string }) => {

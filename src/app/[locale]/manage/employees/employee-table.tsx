@@ -106,6 +106,7 @@ export default function EmployeeTable() {
           <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>{tButton('create-employee')}</span>
         </TButton>
       }
+      className='pr-2'
       filter={{ placeholder: { key: 'input-placeholder-employee' }, columnId: 'email' }}
     />
   );

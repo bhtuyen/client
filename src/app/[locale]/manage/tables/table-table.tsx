@@ -111,6 +111,7 @@ export default function TableTable() {
           <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>{tButton('create-table')}</span>
         </TButton>
       }
+      className='pr-2'
       filter={{ placeholder: { key: 'input-placeholder-table' }, columnId: 'table-number' }}
     />
   );

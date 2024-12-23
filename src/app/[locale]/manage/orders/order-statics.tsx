@@ -5,11 +5,12 @@ import { Fragment, useState } from 'react';
 import type { ServingGuestByTableNumber, Statics, StatusCountObject } from '@/app/[locale]/manage/orders/order-table';
 import type { TableDto } from '@/schemaValidations/table.schema';
 
+import { useGetTablesDetailNowQuery } from '@/app/queries/useTable';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { OrderStatus } from '@/constants/enum';
+import { Link } from '@/i18n/routing';
 import { OrderStatusIcon, cn, getEnumValues } from '@/lib/utils';
 export default function OrderStatics({
   statics,
@@ -23,45 +24,13 @@ export default function OrderStatics({
   const [selectedTableNumber, setSelectedTableNumber] = useState<string>('');
   const selectedServingGuest = servingGuestByTableNumber[selectedTableNumber];
 
+  const data = useGetTablesDetailNowQuery();
+
   const tOrderStatus = useTranslations('order-status');
 
   return (
-    <Fragment>
-      <Dialog
-        open={Boolean(selectedTableNumber)}
-        onOpenChange={(open) => {
-          if (!open) {
-            setSelectedTableNumber('');
-          }
-        }}
-      >
-        <DialogContent className='max-h-full overflow-auto'>
-          {selectedServingGuest && (
-            <DialogHeader>
-              <DialogTitle>Khách đang ngồi tại bàn {selectedTableNumber}</DialogTitle>
-            </DialogHeader>
-          )}
-          <div>
-            {selectedServingGuest &&
-              Object.keys(selectedServingGuest).map((guestId, index) => {
-                const orders = selectedServingGuest[guestId];
-                return (
-                  <div key={guestId}>
-                    {/* <OrdersTableDetail
-                      guest={orders[0].guest}
-                      orders={orders}
-                      onPaySuccess={() => {
-                        setSelectedTableNumber('');
-                      }}
-                    /> */}
-                    {index !== Object.keys(selectedServingGuest).length - 1 && <Separator className='my-5' />}
-                  </div>
-                );
-              })}
-          </div>
-        </DialogContent>
-      </Dialog>
-      <div className='flex justify-start items-stretch gap-4 flex-wrap py-4'>
+    <>
+      <div className='flex justify-start items-stretch gap-4 flex-wrap'>
         {tableList.map((table) => {
           const tableNumber = table.number;
           const tableStatics: Record<string, StatusCountObject> | undefined = statics.table[tableNumber];
@@ -90,9 +59,10 @@ export default function OrderStatics({
             }
           }
           return (
-            <div
+            <Link
+              href={`/manage/orders/table/${tableNumber}`}
               key={tableNumber}
-              className={cn('text-sm flex items-stretch gap-2 border p-2 rounded-md', {
+              className={cn('text-sm flex items-stretch gap-2 border p-2 rounded-md cursor-pointer', {
                 'bg-secondary': !isEmptyTable,
                 'border-transparent': !isEmptyTable
               })}
@@ -161,7 +131,7 @@ export default function OrderStatics({
                   </TooltipProvider>
                 </div>
               )}
-            </div>
+            </Link>
           );
         })}
       </div>
@@ -172,6 +142,6 @@ export default function OrderStatics({
           </Badge>
         ))}
       </div>
-    </Fragment>
+    </>
   );
 }

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Period } from '@/schemaValidations/common.schema';
 import type { OrderDtoDetail } from '@/schemaValidations/order.schema';
 
+import OrderStatics from '@/app/[locale]/manage/orders/order-statics';
 import OrderTable from '@/app/[locale]/manage/orders/order-table';
 import { useOrderService } from '@/app/[locale]/manage/orders/order.service';
 import { useOrderByPeriodQuery } from '@/app/queries/useOrder';
@@ -12,6 +13,7 @@ import { useTableListQuery } from '@/app/queries/useTable';
 import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
 import { TDateRange } from '@/components/t-date-range';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/hooks/use-toast';
 import { periodDefault } from '@/lib/utils';
 
@@ -81,14 +83,17 @@ export default function OrderDashboard() {
   }, [refetch, socket, tOrderStatus, dateRange]);
 
   return (
-    <>
-      <div className='flex gap-2 pb-0'>
-        <TDateRange dateRange={dateRange} setDateRange={setDateRange} />
-        <TButton size='sm' variant={'outline'} onClick={() => setDateRange(periodDefault)}>
-          {tButton('reset')}
-        </TButton>
+    <ScrollArea className='h-full'>
+      <div className='flex flex-col gap-2 pr-2'>
+        <OrderStatics statics={statics} tableList={tables} servingGuestByTableNumber={servingGuestByTableNumber} />
+        <div className='flex gap-2 pb-0'>
+          <TDateRange dateRange={dateRange} setDateRange={setDateRange} />
+          <TButton size='sm' variant={'outline'} onClick={() => setDateRange(periodDefault)}>
+            {tButton('reset')}
+          </TButton>
+        </div>
+        <OrderTable orders={orders} />
       </div>
-      <OrderTable orders={orders} />
-    </>
+    </ScrollArea>
   );
 }

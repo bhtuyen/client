@@ -1,6 +1,8 @@
 'use client';
 import { useTranslations } from 'next-intl';
-import { Fragment, useMemo } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
+
+import type { TMessageKeys } from '../../../types/message.type';
 
 import { SwitchLanguage } from '@/components/switch-language';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
@@ -9,15 +11,29 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Link, usePathname } from '@/i18n/routing';
 
 const uuidRegex = /\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[4][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/;
+const pathTableNumberRegex = /^(\/manage\/orders\/table)\/([a-zA-Z0-9]{1,50})$/;
 export default function ManageHeader() {
   const pathname = usePathname();
+
+  const [tableNumber, setTableNumber] = useState<string | null>(null);
+
+  useEffect(() => {
+    const match = pathname.match(pathTableNumberRegex);
+    if (match) {
+      setTableNumber(match[2]);
+    }
+  }, [pathname]);
 
   const slugs = useMemo(() => {
     return pathname
       .replace(uuidRegex, '')
+      .replace(pathTableNumberRegex, '$1')
       .replace('/manage', '')
       .split('/')
       .filter(Boolean)
+      .filter((t) => {
+        return true;
+      })
       .map((slug, index, arr) => {
         return index == 0
           ? {
@@ -43,10 +59,10 @@ export default function ManageHeader() {
               <Fragment key={index}>
                 <BreadcrumbItem className='text-base'>
                   {index == slugs.length - 1 ? (
-                    <BreadcrumbPage className='font-semibold'>{tManage(slug.key as any)}</BreadcrumbPage>
+                    <BreadcrumbPage className='font-semibold'>{tManage(slug.key as TMessageKeys<'manage'>, { number: tableNumber })}</BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink asChild>
-                      <Link href={slug.href!}>{tManage(slug.key as any)}</Link>
+                      <Link href={slug.href!}>{tManage(slug.key as TMessageKeys<'manage'>)}</Link>
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>

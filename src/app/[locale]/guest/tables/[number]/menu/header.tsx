@@ -18,7 +18,7 @@ export default function Header({ number }: { number: string }) {
         <TImage src='/vietnam.png' alt='logo' width={30} height={30} />
         <Separator orientation='vertical' className='mx-2 h-[60%] w-[0.5px] bg-[#cecece]' />
         <Badge className='bg-[#f2f2f2] h-[60%] rounded-3xl mr-2 text-black'>{tGuest('table-number', { number })}</Badge>
-        <TButton className='bg-[#f2f2f2] h-[60%] rounded-3xl flex items-center gap-1 text-black'>
+        <TButton className='bg-[#f2f2f2] h-[60%] rounded-3xl flex items-center gap-1 text-black' variant={'ghost'} tooltip='call-staff'>
           <BellRing width={'20px'} height={'20px'} />
           {tButton('call-staff')}
         </TButton>

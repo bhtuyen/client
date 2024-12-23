@@ -1,6 +1,5 @@
 'use client';
 
-import clsx from 'clsx';
 import { Check } from 'lucide-react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
@@ -14,6 +13,7 @@ import TImage from '@/components/t-image';
 import { locales } from '@/config';
 import { Role } from '@/constants/enum';
 import { usePathname, useRouter } from '@/i18n/routing';
+import { cn } from '@/lib/utils';
 
 export default function ChooseLanguage() {
   const locale = useLocale();
@@ -68,7 +68,7 @@ export default function ChooseLanguage() {
         {locales.map((t) => (
           <TButton
             key={t}
-            className={clsx(
+            className={cn(
               'w-full flex justify-center items-center gap-2 h-[50px] text-[16px] border-[1px] relative border-[#dddddd]',
               locale === t && 'border-black'
             )}

@@ -47,7 +47,7 @@ export default function CreateDishForm() {
       options: '',
       combos: [],
       dishes: [],
-      category: DishCategory.Paid,
+      category: DishCategory.Buffet,
       status: DishStatus.Available
     }
   });
@@ -448,49 +448,51 @@ export default function CreateDishForm() {
                                 <p className='text-muted-foreground text-xs'>{description}</p>
                               </div>
                               <div className='flex items-center ml-auto gap-2'>
-                                <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
-                                  <TButton
-                                    size='icon'
-                                    className='size-4'
-                                    variant='ghost'
-                                    type='button'
-                                    tooltip='delete'
-                                    onClick={() => {
-                                      if (quantity === 1) return;
-                                      field.onChange(
-                                        field.value.map((item) => {
-                                          if (item.dishId === dishId) {
-                                            return { ...item, quantity: quantity - 1 };
-                                          }
-                                          return item;
-                                        })
-                                      );
-                                    }}
-                                  >
-                                    <Minus />
-                                  </TButton>
-                                  <p className='w-4 text-center'>{quantity}</p>
-                                  <TButton
-                                    size='icon'
-                                    className='size-4'
-                                    variant='ghost'
-                                    type='button'
-                                    tooltip='delete'
-                                    onClick={() => {
-                                      if (quantity === 20) return;
-                                      field.onChange(
-                                        field.value.map((item) => {
-                                          if (item.dishId === dishId) {
-                                            return { ...item, quantity: quantity + 1 };
-                                          }
-                                          return item;
-                                        })
-                                      );
-                                    }}
-                                  >
-                                    <Plus />
-                                  </TButton>
-                                </div>
+                                {category === DishCategory.ComboPaid && (
+                                  <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
+                                    <TButton
+                                      size='icon'
+                                      className='size-4'
+                                      variant='ghost'
+                                      type='button'
+                                      tooltip='delete'
+                                      onClick={() => {
+                                        if (quantity === 1) return;
+                                        field.onChange(
+                                          field.value.map((item) => {
+                                            if (item.dishId === dishId) {
+                                              return { ...item, quantity: quantity - 1 };
+                                            }
+                                            return item;
+                                          })
+                                        );
+                                      }}
+                                    >
+                                      <Minus />
+                                    </TButton>
+                                    <p className='w-4 text-center'>{quantity}</p>
+                                    <TButton
+                                      size='icon'
+                                      className='size-4'
+                                      variant='ghost'
+                                      type='button'
+                                      tooltip='delete'
+                                      onClick={() => {
+                                        if (quantity === 20) return;
+                                        field.onChange(
+                                          field.value.map((item) => {
+                                            if (item.dishId === dishId) {
+                                              return { ...item, quantity: quantity + 1 };
+                                            }
+                                            return item;
+                                          })
+                                        );
+                                      }}
+                                    >
+                                      <Plus />
+                                    </TButton>
+                                  </div>
+                                )}
                                 <Separator orientation='vertical' className='h-6' />
                                 <TButton
                                   size='icon'

@@ -134,7 +134,7 @@ export default function CreateOrdersForm() {
             control={form.control}
             name='dishes'
             render={({ field }) => (
-              <FormItem className='border-l-red-600 border-l h-full pl-2'>
+              <FormItem className='border-l-border border-l h-full pl-2'>
                 <ChooseDishTable
                   dishChooseBody={dishChooseBody}
                   getDishSelected={(dishes) => {

@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import QRCode from 'qrcode';
 import { useEffect, useRef } from 'react';
 
-import { getTableLink } from '@/lib/utils';
+import { cn, getTableLink } from '@/lib/utils';
 
 interface QRCodeTableProps {
   token: string;
@@ -12,9 +12,10 @@ interface QRCodeTableProps {
   size?: number;
 
   isFillText?: boolean;
+  className?: string;
 }
 
-export default function QRCodeTable({ token, tableNumber, size = 200, isFillText = true }: QRCodeTableProps) {
+export default function QRCodeTable({ token, tableNumber, size = 200, isFillText = true, className }: QRCodeTableProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const locale = useLocale();
   const url = getTableLink({
@@ -59,13 +60,5 @@ export default function QRCodeTable({ token, tableNumber, size = 200, isFillText
       );
     }
   }, [url, size, tableNumber, tManageTable, isFillText]);
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        marginLeft: 'auto',
-        marginRight: 'auto'
-      }}
-    />
-  );
+  return <canvas ref={canvasRef} className={cn('mx-auto', className)} />;
 }

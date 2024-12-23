@@ -40,6 +40,7 @@ export type MenuItemType = {
   Icon: ForwardRefExoticComponent<Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>>;
   href: string;
   roles: Array<Role | typeof GuestOrderRole>;
+  children?: MenuItemType[];
 };
 
 const menuItems: {
@@ -57,7 +58,15 @@ const menuItems: {
       key: 'orders',
       Icon: ShoppingCart,
       href: '/manage/orders',
-      roles: [Role.Owner, Role.Employee]
+      roles: [Role.Owner, Role.Employee],
+      children: [
+        {
+          key: 'orders-dashboard',
+          Icon: ShoppingCart,
+          href: '/manage/orders',
+          roles: [Role.Owner, Role.Employee]
+        }
+      ]
     },
     {
       key: 'tables',

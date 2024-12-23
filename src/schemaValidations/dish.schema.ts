@@ -25,7 +25,12 @@ const baseDishCategory = z.discriminatedUnion('category', [
   })
 ]);
 export const baseDishDto = baseDish.omit({ createdAt: true, updatedAt: true });
-export const dishGroup = name.merge(updateAndCreate).merge(id);
+export const dishGroup = name
+  .merge(updateAndCreate)
+  .merge(id)
+  .extend({
+    sortOrder: z.number().int().min(0).max(1000).optional()
+  });
 export const dishGroupDto = dishGroup.omit({ createdAt: true, updatedAt: true });
 export const dishDtoDetail = baseDishDto
   .extend({

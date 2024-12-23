@@ -1,7 +1,4 @@
 {
-  "home-page": {
-    "title": "Chào bạn"
-  },
   "switch-language": {
     "title": "Chuyển ngôn ngữ",
     "vi": "Tiếng Việt",
@@ -50,7 +47,9 @@
     "increase": "Tăng",
     "decrease": "Giảm",
     "choose-table": "Chọn bàn",
-    "order-now": "Đặt món ngay"
+    "order-now": "Đặt món ngay",
+    "cart": "Giỏ hàng",
+    "search": "Tìm kiếm"
   },
   "t-alert-dialog": {
     "title": {
@@ -60,7 +59,8 @@
       "delete-order": "Xóa đơn hàng",
       "delete-table": "Xóa bàn ăn",
       "delete-account": "Xóa nhân viên",
-      "logout": "Đăng xuất"
+      "logout": "Đăng xuất",
+      "payment": "Thanh toán"
     },
     "description": {
       "default": "Mô tả",
@@ -69,7 +69,8 @@
       "delete-order": "Bạn có chắc chắn muốn xóa đơn hàng {id} không?",
       "delete-table": "Bạn có chắc chắn muốn xóa bàn {name} không?",
       "delete-account": "Bạn có chắc chắn muốn xóa nhân viên {name} không?",
-      "logout": "Bạn có chắc chắn muốn đăng xuất không?"
+      "logout": "Bạn có chắc chắn muốn đăng xuất không?",
+      "payment": "Bạn có chắc chắn muốn thanh toán cho bàn {number} không?"
     }
   },
   "message-validation": {
@@ -171,6 +172,9 @@
       "edit": {
         "title": "Chỉnh sửa đơn hàng",
         "description": "Chỉnh sửa thông tin đơn hàng"
+      },
+      "table": {
+        "title": "Bàn {number}"
       }
     },
 
@@ -230,7 +234,7 @@
     "no-result": "Không tìm thấy kết quả phù hợp.",
     "pagination": {
       "rows-per-page": "Dòng trên trang",
-      "page-info": "Trang {page} của {total}",
+      "page-info": "Trang {page}/{total}",
       "row-selected-info": "Đã chọn {selected}/{count} bản ghi",
       "total-row": "Tổng số {count} bản ghi"
     }
@@ -286,5 +290,12 @@
   "t-message": {
     "update-order": "Món {name} (SL: {quantity}) đã được cập nhật sang trạng thái {status}",
     "payment": "Bạn đã thanh toán thành công {orders} đơn hàng"
+  },
+  "dish-menu": {
+    "dish-category": {
+      "Paid": "Gọi món",
+      "ComboBuffet": "Buffet",
+      "ComboPaid": "Combo"
+    }
   }
 }

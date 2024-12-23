@@ -30,20 +30,6 @@ const menuItems: {
   hiddenWhenLogin?: boolean;
 }[] = [
   {
-    titleKey: 'home',
-    href: '/'
-  },
-  {
-    titleKey: 'menu',
-    href: '/guest/menu',
-    roles: [Role.Guest]
-  },
-  {
-    titleKey: 'orders',
-    href: '/guest/orders',
-    roles: [Role.Guest]
-  },
-  {
     titleKey: 'login',
     href: '/login',
     hiddenWhenLogin: true

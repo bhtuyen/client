@@ -1,12 +1,24 @@
 import z from 'zod';
 
-import { OrderStatus } from '@/constants/enum';
+import { OrderStatus, TableStatus } from '@/constants/enum';
 import { accountDto } from '@/schemaValidations/account.schema';
 import { buildReply, id, updateAndCreate } from '@/schemaValidations/common.schema';
 import { dishDtoDetailChoose, dishSnapshotDto } from '@/schemaValidations/dish.schema';
 import { guestDto } from '@/schemaValidations/guest.schema';
-import { tableDto } from '@/schemaValidations/table.schema';
 
+const table = z
+  .object({
+    number: z.string().trim().min(1).max(50),
+    capacity: z.coerce.number().positive().min(1).max(20),
+    status: z.nativeEnum(TableStatus),
+    token: z.string()
+  })
+  .merge(updateAndCreate)
+  .merge(id);
+export const tableDto = table.omit({
+  createdAt: true,
+  updatedAt: true
+});
 const order = z
   .object({
     guestId: z.string().uuid().nullable(),

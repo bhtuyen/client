@@ -1,5 +1,4 @@
 'use client';
-import clsx from 'clsx';
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useMemo, useRef, useState } from 'react';
@@ -16,7 +15,7 @@ import TImage from '@/components/t-image';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DishCategory } from '@/constants/enum';
-import { formatCurrency } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 
 type MenuTabsType = {
   value: DishCategory.Paid | DishCategory.Buffet;
@@ -88,7 +87,7 @@ export default function MenuTabs({ number }: { number: string }) {
                 {data.map(({ href, groupName }) => (
                   <div
                     key={href}
-                    className={clsx('flex items-center whitespace-nowrap px-2 cursor-pointer', {
+                    className={cn('flex items-center whitespace-nowrap px-2 cursor-pointer', {
                       'bg-red-700/95 text-white rounded-3xl': href === groupActive
                     })}
                     onClick={() => scrollToGroup(href, viewRef)}
@@ -99,7 +98,7 @@ export default function MenuTabs({ number }: { number: string }) {
               </div>
               <ScrollBar orientation='horizontal' className='h-2' />
             </ScrollArea>
-            <TButton variant='secondary' className='w-11 h-11 bg-white px-2'>
+            <TButton variant='ghost' className='w-11 h-11 bg-white px-2' tooltip='search'>
               <Search className='!size-6' />
             </TButton>
           </div>

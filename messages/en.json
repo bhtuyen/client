@@ -1,7 +1,4 @@
 {
-  "home-page": {
-    "title": "Hello world!"
-  },
   "switch-language": {
     "title": "Switch language",
     "vi": "Vietnamese",
@@ -50,7 +47,9 @@
     "increase": "Increase",
     "decrease": "Decrease",
     "choose-table": "Choose table",
-    "order-now": "Order now"
+    "order-now": "Order now",
+    "cart": "Cart",
+    "search": "Search"
   },
   "t-alert-dialog": {
     "title": {
@@ -60,7 +59,8 @@
       "delete-order": "Delete order",
       "delete-table": "Delete table",
       "delete-account": "Delete employee",
-      "logout": "Logout"
+      "logout": "Logout",
+      "payment": "Payment"
     },
     "description": {
       "default": "Description",
@@ -69,7 +69,8 @@
       "delete-order": "Are you sure you want to delete order {id}?",
       "delete-table": "Are you sure you want to delete table {name}?",
       "delete-account": "Are you sure you want to delete account {name}?",
-      "logout": "Are you sure you want to logout?"
+      "logout": "Are you sure you want to logout?",
+      "payment": "Are you sure you want to payment for table {number}?"
     }
   },
 
@@ -171,6 +172,9 @@
       "edit": {
         "title": "Edit order",
         "description": "Edit the information of the order"
+      },
+      "table": {
+        "title": "Table {number}"
       }
     },
 
@@ -230,7 +234,7 @@
     "no-result": "No matching records found.",
     "pagination": {
       "rows-per-page": "Rows per page",
-      "page-info": "Page {page} of {total}",
+      "page-info": "Page {page}/{total}",
       "row-selected-info": "{selected}/{count} rows selected",
       "total-row": "Total {count} rows"
     }
@@ -286,5 +290,12 @@
   "t-message": {
     "update-order": "Dish {name} (SL: {quantity}) has been updated to {status}",
     "payment": "You have paid successfully {orders} orders"
+  },
+  "dish-menu": {
+    "dish-category": {
+      "Paid": "Paid",
+      "ComboBuffet": "Buffet",
+      "ComboPaid": "Combo"
+    }
   }
 }

@@ -1,5 +1,4 @@
 'use client';
-import clsx from 'clsx';
 import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
@@ -15,7 +14,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, Di
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DishCategory } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
-import { formatCurrency, getPrice, handleErrorApi } from '@/lib/utils';
+import { cn, formatCurrency, getPrice, handleErrorApi } from '@/lib/utils';
 
 const tabs = [
   { key: 'cart', label: 'Giỏ đồ ăn' },
@@ -91,12 +90,16 @@ export default function CartAndOrderDialog({ number }: { number: string }) {
   return (
     <Dialog modal={false}>
       <DialogTrigger asChild>
-        <div className='rounded-full bg-[#f2f2f2] h-[60%] aspect-square flex items-center justify-center relative'>
+        <TButton
+          variant={'ghost'}
+          tooltip='cart'
+          className='rounded-full bg-[#f2f2f2] h-[60%] aspect-square flex items-center justify-center relative p-0'
+        >
           <ShoppingCart color='#000000' />
           <span className='text-white absolute top-[-4px] right-[-4px] rounded-full flex justify-center items-center bg-red-500 h-[45%] aspect-square text-[12px]'>
             {cart.length}
           </span>
-        </div>
+        </TButton>
       </DialogTrigger>
       <DialogContent className='w-full h-full p-0 bg-white text-black flex flex-col' isHiddenClose>
         <DialogHeader className='p-4 pb-2 z-10 h-12'>
@@ -124,7 +127,7 @@ export default function CartAndOrderDialog({ number }: { number: string }) {
 
           <TabsContent value='cart' className='mt-0 h-[calc(100%_-_2.75rem)]'>
             <div
-              className={clsx({
+              className={cn({
                 'bg-white p-0 h-[calc(100%_-_5rem)]': cart.length == 0,
                 'bg-[#e6e6e6] p-3 flex-1 h-[calc(100%_-_9rem)] overflow-y-auto space-y-3': cart.length > 0
               })}
@@ -163,7 +166,7 @@ export default function CartAndOrderDialog({ number }: { number: string }) {
             </div>
 
             <div
-              className={clsx({
+              className={cn({
                 'shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_-2px_4px_-2px_rgba(0,0,0,0.1)] z-10 p-4 h-36': cart.length > 0,
                 'p-4 h-auto': cart.length === 0
               })}

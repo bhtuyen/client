@@ -54,3 +54,17 @@ export const useDeleteTableMutation = () => {
     }
   });
 };
+
+export const useGetTablesDetailNowQuery = () => {
+  return useQuery({
+    queryKey: ['tables-detail-now'],
+    queryFn: tableApiRequets.getTablesDetailNow
+  });
+};
+
+export const useGetTableDetailNowQuery = (number: string) => {
+  return useQuery({
+    queryKey: ['table-detail-now', number],
+    queryFn: () => tableApiRequets.getTableDetailNow(number)
+  });
+};

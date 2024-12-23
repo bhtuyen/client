@@ -1,5 +1,4 @@
 'use client';
-import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import React from 'react';
 
@@ -9,7 +8,7 @@ import type { UrlObject } from 'url';
 import { Button, type ButtonProps } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Link } from '@/i18n/routing';
-import { getArguments } from '@/lib/utils';
+import { cn, getArguments } from '@/lib/utils';
 
 interface TButtonProps extends ButtonProps {
   tooltip?: TMessKey<'t-button'>;
@@ -43,7 +42,7 @@ const TButton = React.forwardRef<HTMLButtonElement, TButtonProps>(({ tooltip, as
             {...props}
             asChild={isLinkButton}
             ref={ref}
-            className={clsx(
+            className={cn(
               'active:scale-95',
               {
                 hidden: props.hidden

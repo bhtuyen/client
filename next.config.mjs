@@ -21,8 +21,15 @@ const nextConfig = {
         hostname: 'meapi.bhtuyen9912.id.vn',
         port: '',
         pathname: '/**'
+      },
+      {
+        protocol: 'https',
+        hostname: 'https://storage.googleapis.com/restaurant-store',
+        port: '',
+        pathname: '/**'
       }
-    ]
+    ],
+    unoptimized: true // Không tối ưu hóa ảnh
   }
 };
 

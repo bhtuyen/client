@@ -21,8 +21,10 @@ export const useOrderService = (orderList: OrderDtoDetail[]) => {
     const orderObjectByGuestId: OrderObjectByGuestID = {};
 
     const guestByTableNumber: ServingGuestByTableNumber = {};
+
     orderList.forEach((order) => {
       statics.status[order.status] = statics.status[order.status] + 1;
+
       // Nếu table và guest chưa bị xóa
       if (order.tableNumber !== null && order.guestId !== null) {
         if (!statics.table[order.tableNumber]) {
@@ -70,6 +72,9 @@ export const useOrderService = (orderList: OrderDtoDetail[]) => {
         servingGuestByTableNumber[tableNumber] = servingGuestObject;
       }
     }
+
+    console.log(statics);
+
     return {
       statics,
       orderObjectByGuestId,
