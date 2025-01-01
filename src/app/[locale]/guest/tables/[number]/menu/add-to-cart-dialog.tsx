@@ -25,7 +25,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DishCategory, DishStatus } from '@/constants/enum';
-import { capitalize, formatCurrency, getDishOptions, removeAccents } from '@/lib/utils';
+import { capitalize, formatCurrency, getOptions, removeAccents } from '@/lib/utils';
 
 export default function AddToCartDialog({ dish }: { dish: DishDto }) {
   const [quantity, setQuantity] = useState(0);
@@ -35,7 +35,7 @@ export default function AddToCartDialog({ dish }: { dish: DishDto }) {
       option: string;
       checked: boolean;
     }[]
-  >(dish.options ? getDishOptions(dish.options).map((option) => ({ id: removeAccents(option), option, checked: false })) : []);
+  >(dish.options ? getOptions(dish.options).map((option) => ({ id: removeAccents(option), option, checked: false })) : []);
 
   const [guestOption, setGuestOption] = useState<string>('');
 

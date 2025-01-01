@@ -1,17 +1,14 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link, Minus, Plus, X } from 'lucide-react';
+import { Minus, Plus, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { DishChooseBody } from '@/schemaValidations/dish.schema';
-import type { DishToOrder, CreateOrdersTable, CreateOrdersTableForm } from '@/schemaValidations/order.schema';
-import type { TableDto } from '@/schemaValidations/table.schema';
 
 import ChooseDishTable from '@/app/[locale]/manage/dishes/choose-dish-table';
 import { ChooseTable } from '@/app/[locale]/manage/orders/choose-table';
-import { useDishListQuery } from '@/app/queries/useDish';
 import { useCreateOrderMutation } from '@/app/queries/useOrder';
 import QRCodeTable from '@/components/qrcode-table';
 import TButton from '@/components/t-button';
@@ -20,24 +17,25 @@ import { Badge } from '@/components/ui/badge';
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { DishCategory } from '@/constants/enum';
+import { DishCategory, TableStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
-import { getTableLink, handleErrorApi } from '@/lib/utils';
-import { createOrdersTableForm } from '@/schemaValidations/order.schema';
+import { getPrice, handleErrorApi } from '@/lib/utils';
+import { type DishToOrder, type CreateOrdersTable, type CreateOrdersTableForm, createOrdersTableForm } from '@/schemaValidations/order.schema';
 
 export default function CreateOrdersForm() {
-  const [createOrders, setCreateOrders] = useState<DishToOrder[]>([]);
-  const [table, setTable] = useState<TableDto | null>(null);
   const locale = useLocale();
-  const { data } = useDishListQuery();
-  const dishes = useMemo(() => data?.payload.data ?? [], [data?.payload.data]);
-
   const createOrderMutation = useCreateOrderMutation();
 
   const form = useForm<CreateOrdersTableForm>({
     resolver: zodResolver(createOrdersTableForm),
-    defaultValues: {
-      tableNumber: '',
+    values: {
+      table: {
+        capacity: 0,
+        number: '',
+        token: '',
+        status: TableStatus.Available,
+        id: ''
+      },
       dishes: []
     }
   });
@@ -79,11 +77,11 @@ export default function CreateOrdersForm() {
   //   }, 0);
   // }, [dishes, createOrders]);
 
-  const onSubmit = async ({ tableNumber, dishes }: CreateOrdersTableForm) => {
+  const onSubmit = async ({ table: { number }, dishes }: CreateOrdersTableForm) => {
     if (createOrderMutation.isPending) return;
     try {
       const newBody: CreateOrdersTable = {
-        tableNumber,
+        tableNumber: number,
         dishes: dishes.map<DishToOrder>(({ id: dishId, options, quantity }) => ({ dishId, options, quantity }))
       };
       const result = await createOrderMutation.mutateAsync(newBody);
@@ -101,29 +99,16 @@ export default function CreateOrdersForm() {
         <div className='h-[calc(100%_-_3rem)] grid grid-cols-[2fr,3fr] gap-4'>
           <FormField
             control={form.control}
-            name='tableNumber'
-            render={({ field }) => (
+            name='table'
+            render={({
+              field: {
+                value: { id, token, number },
+                onChange
+              }
+            }) => (
               <FormItem className='h-full'>
-                <p>{tForm('table-number')}</p>
-                <ChooseTable setTable={setTable} />
-                {table && (
-                  <Link
-                    href={getTableLink({
-                      token: table.token,
-                      tableNumber: table.number,
-                      locale
-                    })}
-                    target='_blank'
-                    className='break-all'
-                  >
-                    {getTableLink({
-                      token: table.token,
-                      tableNumber: table.number,
-                      locale
-                    })}
-                  </Link>
-                )}
-                {table && <QRCodeTable token={table.token} tableNumber={table.number} size={300} />}
+                <ChooseTable setTable={onChange} />
+                {id && <QRCodeTable token={token} tableNumber={number} size={300} />}
                 <div className='h-5'>
                   <FormMessage />
                 </div>
@@ -134,23 +119,24 @@ export default function CreateOrdersForm() {
             control={form.control}
             name='dishes'
             render={({ field }) => (
-              <FormItem className='border-l-border border-l h-full pl-2'>
+              <FormItem className='border-l-border border-l h-full overflow-hidden pl-2'>
                 <ChooseDishTable
                   dishChooseBody={dishChooseBody}
-                  getDishSelected={(dishes) => {
+                  submit={(dishes) => {
                     field.onChange(field.value.concat(dishes));
                   }}
                 />
-                <ScrollArea className='w-full h-[calc(100%_-_3rem)]'>
-                  <div className='space-y-2'>
+                <ScrollArea className='w-full h-[calc(100%_-_2.75rem)]'>
+                  <div className='space-y-2 pb-2 pr-2'>
                     {field.value &&
-                      field.value.map(({ key, price, image, name, description, quantity }) => {
+                      field.value.map(({ key, price, image, name, description, quantity, category }) => {
                         return (
                           <Badge key={key} variant='secondary' className='w-full flex items-center'>
                             <TImage src={image} alt={name} className='size-20 rounded-full mr-4' />
                             <div>
                               <h3 className='text-sm'>{name}</h3>
                               <p className='text-muted-foreground text-xs'>{description}</p>
+                              <span className='text-sm'>{getPrice({ price, category })}</span>
                             </div>
                             <div className='flex items-center ml-auto gap-2'>
                               <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>

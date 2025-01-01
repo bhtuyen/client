@@ -1,133 +1,119 @@
-import { Users } from 'lucide-react';
+import { BellRing, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { Fragment, useState } from 'react';
-
-import type { ServingGuestByTableNumber, Statics, StatusCountObject } from '@/app/[locale]/manage/orders/order-table';
-import type { TableDto } from '@/schemaValidations/table.schema';
+import { useEffect } from 'react';
 
 import { useGetTablesDetailNowQuery } from '@/app/queries/useTable';
-import { Badge } from '@/components/ui/badge';
+import { useAppStore } from '@/components/app-provider';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { OrderStatus } from '@/constants/enum';
 import { Link } from '@/i18n/routing';
-import { OrderStatusIcon, cn, getEnumValues } from '@/lib/utils';
-export default function OrderStatics({
-  statics,
-  tableList,
-  servingGuestByTableNumber
-}: {
-  statics: Statics;
-  tableList: TableDto[];
-  servingGuestByTableNumber: ServingGuestByTableNumber;
-}) {
-  const [selectedTableNumber, setSelectedTableNumber] = useState<string>('');
-  const selectedServingGuest = servingGuestByTableNumber[selectedTableNumber];
+import { OrderStatusIcon, cn } from '@/lib/utils';
 
-  const data = useGetTablesDetailNowQuery();
+type OrderStatusCount = Record<OrderStatus, number>;
+export default function OrderStatics() {
+  const { socket } = useAppStore();
+  const { data, refetch } = useGetTablesDetailNowQuery();
+  const tableDetails = data.payload.data;
 
-  const tOrderStatus = useTranslations('order-status');
+  const tInfo = useTranslations('t-info');
+
+  useEffect(() => {
+    function onUpadteOrder() {
+      refetch();
+    }
+
+    socket?.on('update-order', onUpadteOrder);
+
+    return () => {
+      socket?.off('update-order', onUpadteOrder);
+    };
+  }, [refetch, socket]);
 
   return (
-    <>
-      <div className='flex justify-start items-stretch gap-4 flex-wrap'>
-        {tableList.map((table) => {
-          const tableNumber = table.number;
-          const tableStatics: Record<string, StatusCountObject> | undefined = statics.table[tableNumber];
-          let isEmptyTable = true;
-          let countObject: StatusCountObject = {
-            Pending: 0,
-            Processing: 0,
-            Delivered: 0,
-            Paid: 0,
-            Rejected: 0
-          };
-          const servingGuestCount = Object.values(servingGuestByTableNumber[tableNumber] ?? []).length;
-          if (tableStatics) {
-            for (const guestId in tableStatics) {
-              const guestStatics = tableStatics[guestId];
-              if ([guestStatics.Pending, guestStatics.Processing, guestStatics.Delivered].some((status) => status !== 0 && status !== undefined)) {
-                isEmptyTable = false;
-              }
-              countObject = {
-                Pending: countObject.Pending + (guestStatics.Pending ?? 0),
-                Processing: countObject.Processing + (guestStatics.Processing ?? 0),
-                Delivered: countObject.Delivered + (guestStatics.Delivered ?? 0),
-                Paid: countObject.Paid + (guestStatics.Paid ?? 0),
-                Rejected: countObject.Rejected + (guestStatics.Rejected ?? 0)
-              };
-            }
-          }
+    <ScrollArea className='h-full'>
+      <div className='flex flex-col gap-4 h-full pr-3'>
+        {tableDetails.map(({ number, id, guests, orders }) => {
+          const countObject = orders.reduce<OrderStatusCount>((acc, order) => {
+            acc[order.status] = (acc[order.status] || 0) + 1;
+            return acc;
+          }, {} as OrderStatusCount);
+
+          const isEmpty = guests.length == 0;
+
           return (
             <Link
-              href={`/manage/orders/table/${tableNumber}`}
-              key={tableNumber}
-              className={cn('text-sm flex items-stretch gap-2 border p-2 rounded-md cursor-pointer', {
-                'bg-secondary': !isEmptyTable,
-                'border-transparent': !isEmptyTable
+              href={`/manage/orders/table/${number}`}
+              key={id}
+              className={cn('text-sm flex items-stretch gap-2 border p-2 rounded-md cursor-pointer min-h-36', {
+                'bg-secondary': !isEmpty,
+                'border-transparent': !isEmpty
               })}
-              onClick={() => {
-                if (!isEmptyTable) setSelectedTableNumber(tableNumber);
-              }}
             >
-              <div className='flex flex-col items-center justify-center gap-2'>
-                <div className='font-semibold text-center text-lg'>{tableNumber}</div>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <div className='flex items-center gap-2'>
-                        <Users className='h-4 w-4' />
-                        <span>{servingGuestCount}</span>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>Đang phục vụ: {servingGuestCount} khách</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <Separator
-                orientation='vertical'
-                className={cn('flex-shrink-0 flex-grow h-auto', {
-                  'bg-muted-foreground': !isEmptyTable
-                })}
-              />
-              {isEmptyTable && <div className='flex justify-between items-center text-sm'>Ready</div>}
-              {!isEmptyTable && (
-                <div className='flex flex-col gap-2'>
+              <div className='flex flex-col flex-[2] items-center justify-center gap-2 relative'>
+                {!isEmpty && <BellRing className='size-6 absolute top-2 right-2 animate-bounce' />}
+                <div className='font-semibold text-center text-lg'>{tInfo('table-number', { number })}</div>
+                <div className='flex items-center gap-2'>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
-                        <div className='flex gap-2 items-center'>
-                          <OrderStatusIcon.Pending className='w-4 h-4' />
-                          <span>{countObject[OrderStatus.Pending] ?? 0}</span>
-                        </div>
+                        <Users className='size-5' />
                       </TooltipTrigger>
-                      <TooltipContent>
-                        {tOrderStatus(OrderStatus.Pending)}: {countObject[OrderStatus.Pending] ?? 0} đơn
-                      </TooltipContent>
+                      <TooltipContent>{tInfo('serving-guest-tooltip', { guests: guests.length })}</TooltipContent>
                     </Tooltip>
+                    <span>{guests.length}</span>
+                  </TooltipProvider>
+                </div>
+              </div>
+              <Separator
+                orientation='vertical'
+                className={cn('flex-shrink-0 h-auto', {
+                  'bg-muted-foreground': !isEmpty
+                })}
+              />
+              {isEmpty && <div className='flex flex-[1] items-center justify-center text-sm'>{tInfo('table-ready')}</div>}
+              {!isEmpty && (
+                <div className='flex flex-col items-center justify-center flex-[1] gap-2'>
+                  <TooltipProvider>
+                    <div className='flex gap-2 items-center'>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <OrderStatusIcon.Pending className='size-5' />
+                        </TooltipTrigger>
+                        <TooltipContent>{tInfo('pending-order-tooltip', { orders: countObject[OrderStatus.Pending] ?? 0 })}</TooltipContent>
+                      </Tooltip>
+                      <span>{countObject[OrderStatus.Pending] ?? 0}</span>
+                    </div>
 
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <div className='flex gap-2 items-center'>
-                          <OrderStatusIcon.Processing className='w-4 h-4' />
-                          <span>{countObject[OrderStatus.Processing] ?? 0}</span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {tOrderStatus(OrderStatus.Processing)}: {countObject[OrderStatus.Processing] ?? 0} đơn
-                      </TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <div className='flex gap-2 items-center'>
-                          <OrderStatusIcon.Delivered className='w-4 h-4' />
-                          <span>{countObject[OrderStatus.Delivered] ?? 0}</span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {tOrderStatus(OrderStatus.Delivered)}: {countObject[OrderStatus.Delivered] ?? 0} đơn
-                      </TooltipContent>
-                    </Tooltip>
+                    <div className='flex gap-2 items-center'>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <OrderStatusIcon.Processing className='size-5' />
+                        </TooltipTrigger>
+                        <TooltipContent>{tInfo('cooking-order-tooltip', { orders: countObject[OrderStatus.Processing] ?? 0 })}</TooltipContent>
+                      </Tooltip>
+                      <span>{countObject[OrderStatus.Processing] ?? 0}</span>
+                    </div>
+
+                    <div className='flex gap-2 items-center'>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <OrderStatusIcon.Delivered className='size-5' />
+                        </TooltipTrigger>
+                        <TooltipContent>{tInfo('delivered-order-tooltip', { orders: countObject[OrderStatus.Delivered] ?? 0 })}</TooltipContent>
+                        <span>{countObject[OrderStatus.Delivered] ?? 0}</span>
+                      </Tooltip>
+                    </div>
+                    <div className='flex gap-2 items-center'>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <OrderStatusIcon.Rejected className='size-5' />
+                        </TooltipTrigger>
+                        <TooltipContent>{tInfo('rejected-order-tooltip', { orders: countObject[OrderStatus.Rejected] ?? 0 })}</TooltipContent>
+                        <span>{countObject[OrderStatus.Rejected] ?? 0}</span>
+                      </Tooltip>
+                    </div>
                   </TooltipProvider>
                 </div>
               )}
@@ -135,13 +121,6 @@ export default function OrderStatics({
           );
         })}
       </div>
-      <div className='flex justify-start items-end gap-4 flex-wrap py-4'>
-        {getEnumValues(OrderStatus).map((status) => (
-          <Badge variant='secondary' key={status}>
-            {tOrderStatus(status)}:{statics.status[status] ?? 0}
-          </Badge>
-        ))}
-      </div>
-    </>
+    </ScrollArea>
   );
 }

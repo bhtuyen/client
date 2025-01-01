@@ -21,7 +21,7 @@ export default function PublicLayout({
 }>) {
   return (
     <div className='flex h-screen w-full flex-col relative gap-y-2'>
-      <header className='max-w-[1300px] mx-auto w-full sticky z-10 top-0 flex min-h-16 max-h-16 items-center gap-4 border-b bg-background px-4 md:px-6'>
+      <header className='max-w-[1500px] mx-auto w-full sticky z-10 top-0 flex min-h-16 max-h-16 items-center gap-4 border-b bg-background px-4 md:px-6'>
         <nav className='hidden flex-col h-full gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6'>
           <Link href='/' className='flex items-center gap-2 text-lg font-semibold md:text-base'>
             <Package2 className='h-6 w-6' />
@@ -35,7 +35,7 @@ export default function PublicLayout({
           <DarkModeToggle />
         </div>
       </header>
-      <main className='max-w-[1300px] mx-auto w-full h-[calc(100%_-_4rem)]'>
+      <main className='max-w-[1500px] mx-auto w-full h-[calc(100%_-_4rem)]'>
         {children}
         {modal}
       </main>

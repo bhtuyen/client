@@ -50,3 +50,9 @@ export enum RowMode {
   Update,
   Delete
 }
+
+export enum PaymentMethod {
+  Cash = 'Cash',
+  Card = 'Card'
+}
+

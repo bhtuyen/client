@@ -1,13 +1,17 @@
 'use client';
 
-import { PlusCircle, Users } from 'lucide-react';
+import { PencilIcon, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo } from 'react';
 
-import type { OrderDtoDetail } from '@/schemaValidations/order.schema';
+import type { DishChooseBody, DishDtoDetailChoose } from '@/schemaValidations/dish.schema';
+import type { DishToOrder, OrderDtoDetail } from '@/schemaValidations/order.schema';
 import type { ColumnDef } from '@tanstack/react-table';
 
-import { useUpdateOrderMutation } from '@/app/queries/useOrder';
+import ChooseDishTable from '@/app/[locale]/manage/dishes/choose-dish-table';
+import EditOrderForm from '@/app/[locale]/manage/orders/edit-order-form';
+import TablePayment from '@/app/[locale]/manage/orders/table/[number]/table-payment';
+import { useCreateOrderMutation, useUpdateOrderMutation } from '@/app/queries/useOrder';
 import { useGetTableDetailNowQuery } from '@/app/queries/useTable';
 import { useAppStore } from '@/components/app-provider';
 import QRCodeTable from '@/components/qrcode-table';
@@ -15,28 +19,62 @@ import TButton from '@/components/t-button';
 import TDataTable, { TCellActions } from '@/components/t-data-table';
 import TImage from '@/components/t-image';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { OrderStatus } from '@/constants/enum';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { DishCategory, OrderStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
-import { formatDateTimeToLocaleString, getDishOptions, getEnumValues, getPrice, handleErrorApi, removeAccents } from '@/lib/utils';
+import {
+  formatCurrency,
+  formatDateTimeToLocaleString,
+  getOptions,
+  getEnumValues,
+  getPrice,
+  handleErrorApi,
+  OrderStatusIcon,
+  removeAccents
+} from '@/lib/utils';
 
 export default function OrderTableDetail({ number }: { number: string }) {
   const tOrderStatus = useTranslations('order-status');
   const tButton = useTranslations('t-button');
   const tTableColumn = useTranslations('t-data-table.column');
+  const tInfo = useTranslations('t-info');
 
   const updateOrderMutation = useUpdateOrderMutation();
-  const getTableDetailNowQuery = useGetTableDetailNowQuery(number);
-  const tableDetailNow = getTableDetailNowQuery.data?.payload.data;
-  const { refetch } = getTableDetailNowQuery;
+  const createOrderMutation = useCreateOrderMutation();
+  const { data, refetch } = useGetTableDetailNowQuery(number);
+  const tableDetail = data?.payload.data;
 
-  const orders = tableDetailNow?.orders ?? [];
+  const orders = useMemo(() => {
+    return tableDetail?.orders ?? [];
+  }, [tableDetail]);
+
+  const isTablePayment = useMemo(() => {
+    return orders.every((order) => order.status === OrderStatus.Paid);
+  }, [orders]);
+
+  console.log(isTablePayment);
+
+  const { pending, cooking, delivered, rejected, amount } = useMemo(() => {
+    return {
+      pending: orders.filter((order) => order.status === OrderStatus.Pending).length,
+      cooking: orders.filter((order) => order.status === OrderStatus.Processing).length,
+      delivered: orders.filter((order) => order.status === OrderStatus.Delivered).length,
+      rejected: orders.filter((order) => order.status === OrderStatus.Rejected).length,
+      amount: orders.reduce(
+        (acc, { dishSnapshot, quantity, status }) =>
+          acc + (dishSnapshot.category !== DishCategory.Buffet && status !== OrderStatus.Rejected ? dishSnapshot.price : 0) * quantity,
+        0
+      )
+    };
+  }, [orders]);
 
   const columns = useMemo<ColumnDef<OrderDtoDetail>[]>(
     () => [
       {
         id: 'dish-name',
-        header: 'Món ăn',
+        header: () => <div className='text-left'>{tTableColumn('dish-name')}</div>,
         cell: ({ row }) => (
           <div className='flex items-center gap-2'>
             <TImage
@@ -44,7 +82,7 @@ export default function OrderTableDetail({ number }: { number: string }) {
               alt={row.original.dishSnapshot.name}
               width={50}
               height={50}
-              className='rounded-md object-cover w-[50px] h-[50px]'
+              className='rounded-md object-center size-[150px]'
             />
             <div className='space-y-2'>
               <div className='flex items-center gap-2'>
@@ -63,9 +101,9 @@ export default function OrderTableDetail({ number }: { number: string }) {
         header: () => <div className='text-left w-[150px]'>{tTableColumn('options')}</div>,
         cell: ({ row }) => (
           <ul className='text-left w-[150px] space-y-1'>
-            {getDishOptions(row.original.options).map((option) => (
+            {getOptions(row.original.options).map((option) => (
               <li key={removeAccents(option)} className='capitalize'>
-                ➡️ {option}
+                ✅ {option}
               </li>
             ))}
           </ul>
@@ -74,49 +112,56 @@ export default function OrderTableDetail({ number }: { number: string }) {
       {
         accessorKey: 'status',
         header: () => <div className='capitalize text-center'>{tTableColumn('status')}</div>,
-        cell: ({ row: { original } }) => (
-          <Select
-            onValueChange={async (status: OrderStatus) => {
-              try {
-                await updateOrderMutation.mutateAsync({
-                  id: original.id,
-                  dishId: original.dishSnapshot.dishId,
-                  status,
-                  quantity: original.quantity,
-                  options: original.options,
-                  orderHandlerId: original.orderHandlerId
-                });
-              } catch (error) {
-                handleErrorApi({ error });
-              }
-            }}
-            value={original.status}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder='Theme' />
-            </SelectTrigger>
-            <SelectContent>
-              {getEnumValues(OrderStatus).map((status) => (
-                <SelectItem key={status} value={status}>
-                  {tOrderStatus(status)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )
+        cell: ({ row: { original } }) =>
+          original.status !== OrderStatus.Paid ? (
+            <Select
+              onValueChange={async (status: OrderStatus) => {
+                try {
+                  await updateOrderMutation.mutateAsync({
+                    id: original.id,
+                    dishId: original.dishSnapshot.dishId,
+                    status,
+                    quantity: original.quantity,
+                    options: original.options
+                  });
+                } catch (error) {
+                  handleErrorApi({ error });
+                }
+              }}
+              value={original.status}
+              disabled={original.status === OrderStatus.Rejected}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder='Theme' />
+              </SelectTrigger>
+              <SelectContent>
+                {getEnumValues(OrderStatus)
+                  .filter((status) => status !== OrderStatus.Paid)
+                  .map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {tOrderStatus(status)}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <div className='flex items-center justify-center'>
+              <TImage src='/paid.png' alt='paid' width={60} height={60} />
+            </div>
+          )
       },
       {
         id: 'order-handler',
         header: () => <div className='capitalize text-center'>{tTableColumn('order-handler')}</div>,
-        cell: ({ row }) => <div>{row.original.orderHandler?.name ?? ''}</div>
+        cell: ({ row }) => <div className='capitalize text-center'>{row.original.orderHandler?.name ?? ''}</div>
       },
       {
         id: 'create-update',
-        header: () => <div>{tTableColumn('create-update')}</div>,
+        header: () => <div className='text-center'>{tTableColumn('create-update')}</div>,
         cell: ({ row }) => (
-          <div className='space-y-2 text-sm'>
-            <div className='flex items-center space-x-4'>{formatDateTimeToLocaleString(row.original.createdAt)}</div>
-            <div className='flex items-center space-x-4'>{formatDateTimeToLocaleString(row.original.updatedAt)}</div>
+          <div className='space-y-2 text-sm flex flex-col items-center'>
+            <span className='items-center'>{formatDateTimeToLocaleString(row.original.createdAt)}</span>
+            <span className='items-center'>{formatDateTimeToLocaleString(row.original.updatedAt)}</span>
           </div>
         )
       },
@@ -126,7 +171,22 @@ export default function OrderTableDetail({ number }: { number: string }) {
         cell: ({ row }) => (
           <TCellActions
             editOption={{
-              urlEdit: `/manage/orders/${row.original.id}/edit`
+              render: (
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <TButton size='icon' tooltip='edit' variant='outline' disabled={row.original.status !== OrderStatus.Pending}>
+                      <PencilIcon height={16} width={16} />
+                    </TButton>
+                  </SheetTrigger>
+                  <SheetContent side='right' className='w-[500px]'>
+                    <SheetHeader>
+                      <SheetTitle>Edit order</SheetTitle>
+                      <SheetDescription></SheetDescription>
+                    </SheetHeader>
+                    <EditOrderForm orderId={row.original.id} />
+                  </SheetContent>
+                </Sheet>
+              )
             }}
           />
         )
@@ -135,7 +195,7 @@ export default function OrderTableDetail({ number }: { number: string }) {
     [tOrderStatus, tTableColumn, updateOrderMutation]
   );
 
-  const { socket, showAlertDialog } = useAppStore();
+  const { socket } = useAppStore();
 
   useEffect(() => {
     function onUpadteOrder(data: OrderDtoDetail) {
@@ -160,10 +220,9 @@ export default function OrderTableDetail({ number }: { number: string }) {
       refetch();
     }
 
-    function onPayment(data: OrderDtoDetail[]) {
-      const { guest } = data[0];
+    function onPayment() {
       toast({
-        description: `Khách hàng tại bàn ${guest?.tableNumber} đã thanh toán thành công ${data.length} đơn`
+        description: `Khách hàng tại bàn ${number} đã thanh toán thành công`
       });
       refetch();
     }
@@ -179,43 +238,86 @@ export default function OrderTableDetail({ number }: { number: string }) {
     };
   }, [refetch, socket, tOrderStatus]);
 
-  const handlePayment = () => {
-    showAlertDialog({
-      title: 'payment',
-      description: 'payment',
-      onAction: () => {
-        console.log('Thanh toán');
-      }
-    });
+  const handlePayment = () => {};
+
+  const dishChooseBody = useMemo<DishChooseBody>(() => {
+    return {
+      categories: [DishCategory.Paid, DishCategory.ComboBuffet, DishCategory.ComboPaid, DishCategory.Buffet],
+      ignores: []
+    };
+  }, []);
+
+  const createOrders = async (dishes: DishDtoDetailChoose[]) => {
+    if (createOrderMutation.isPending) return;
+    try {
+      const result = await createOrderMutation.mutateAsync({
+        tableNumber: number,
+        dishes: dishes.map<DishToOrder>(({ id: dishId, options, quantity }) => ({ dishId, options, quantity }))
+      });
+      toast({
+        description: result.payload.message
+      });
+      refetch();
+    } catch (error) {
+      handleErrorApi({ error });
+    }
   };
 
   return (
     <>
       <div className='flex items-center gap-4 h-full'>
-        {tableDetailNow && (
-          <div className='flex flex-col h-full items-center gap-2 my-4 flex-1 border-r border-r-red-700'>
-            <QRCodeTable token={tableDetailNow.token} tableNumber={number} className='mx-0' size={300} isFillText={false} />
-            <div className='flex items-center gap-2'>
-              <span className='text-sm font-semibold'>Sức chứa: {tableDetailNow?.capacity}</span> <Users size={18} />
-            </div>
-            <div className='flex items-center gap-2'>
-              <span className='text-sm font-semibold'>Số lượng khách đang tại bàn: {tableDetailNow.guests.length}</span> <Users size={18} />
-            </div>
-            <TButton onClick={handlePayment}>Thanh toán</TButton>
-          </div>
-        )}
+        <div className='flex flex-col h-full items-center gap-2 my-4 flex-1 border-r '>
+          {tableDetail && (
+            <>
+              <QRCodeTable token={tableDetail.token} tableNumber={number} className='mx-0' size={300} isFillText={false} />
+              <div className='flex items-center gap-2'>
+                <span className='text-sm font-semibold'>{tInfo('table-capacity', { capacity: tableDetail?.capacity })}</span> <Users size={18} />
+              </div>
+              <div className='flex items-center gap-2'>
+                <span className='text-sm font-semibold'>{tInfo('guest-of-table', { guest: tableDetail.guests.length })}</span> <Users size={18} />
+              </div>
+              <div className='flex items-center gap-2'>
+                <span className='text-sm font-semibold'>{tInfo('pending-order', { pending })}</span>
+                <OrderStatusIcon.Pending size={18} />
+              </div>
+              <div className='flex items-center gap-2'>
+                <span className='text-sm font-semibold'>{tInfo('cooking-order', { cooking })}</span> <OrderStatusIcon.Processing size={18} />
+              </div>
+              <div className='flex items-center gap-2'>
+                <span className='text-sm font-semibold'>{tInfo('delivered-order', { delivered })}</span> <OrderStatusIcon.Delivered size={18} />
+              </div>
+              <div className='flex items-center gap-2'>
+                <span className='text-sm font-semibold'>{tInfo('rejected-order', { rejected })}</span> <OrderStatusIcon.Rejected size={18} />
+              </div>
+              <div className='flex items-center gap-2'>
+                <span className='text-sm font-semibold text-red-500'>{tInfo('amount', { amount: formatCurrency(amount) })}</span>
+              </div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <TButton onClick={handlePayment}>{tButton('payment')}</TButton>
+                </DialogTrigger>
+                <DialogContent className='w-full h-full max-w-full max-h-full flex flex-col gap-4'>
+                  <TablePayment number={number} />
+                  <DialogFooter className='w-max-[1500px] gap-4 w-[1500px] md:w-[1300px]  mx-auto flex flex-row items-center sm:justify-center justify-center'>
+                    <DialogClose asChild>
+                      <TButton variant='outline'>Hủy</TButton>
+                    </DialogClose>
+                    <TButton>Xác nhận</TButton>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </>
+          )}
+        </div>
         <TDataTable
           columns={columns}
           data={orders}
           childrenToolbar={
-            <TButton size='sm' className='h-7 gap-1' asLink href='/manage/orders/create'>
-              <PlusCircle className='h-3.5 w-3.5' />
-              <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>{tButton('create-order')}</span>
-            </TButton>
+            <ChooseDishTable dishChooseBody={dishChooseBody} submit={createOrders} submitKey='create-order' triggerKey='create-order' />
           }
           className='pr-2 flex-[3]'
           filter={{
-            columnId: 'tableNumber',
+            columnId: 'dish-name',
             placeholder: {
               key: 'input-placeholder-default'
             }

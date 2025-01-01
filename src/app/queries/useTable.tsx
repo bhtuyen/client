@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 
 import type { UpdateTable } from '@/schemaValidations/table.schema';
 
@@ -56,7 +56,7 @@ export const useDeleteTableMutation = () => {
 };
 
 export const useGetTablesDetailNowQuery = () => {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ['tables-detail-now'],
     queryFn: tableApiRequets.getTablesDetailNow
   });
@@ -66,5 +66,12 @@ export const useGetTableDetailNowQuery = (number: string) => {
   return useQuery({
     queryKey: ['table-detail-now', number],
     queryFn: () => tableApiRequets.getTableDetailNow(number)
+  });
+};
+
+export const useGetTableDetailForPaymentQuery = (token: string) => {
+  return useQuery({
+    queryKey: ['table-detail-for-payment', token],
+    queryFn: () => tableApiRequets.getTableDetailForPayment(token)
   });
 };

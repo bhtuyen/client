@@ -73,38 +73,37 @@ interface TTableProps<TData, TValue> {
     placeholder: TMessKey<'t-data-table.filter'>;
     columnId: string;
   };
-
   selected?: TData[];
-
-  setIdsSelected?: (idsSelected: string[]) => void;
-
-  setRowSelected?: (rowSelected: TData) => void;
-
+  setRowsSelected?: (rowsSelected: TData[]) => void;
+  onlyOneSelected?: boolean;
   hasDbClickToSelect?: boolean;
-
-  rowKey?: keyof TData;
+  hideColumn?: string[];
 }
 
 interface DataTablePaginationProps<TData> {
   table: TableType<TData>;
   hasDbClickToSelect?: boolean;
+  onlyOneSelected?: boolean;
 }
 
 export default function TDataTable<TData, TValue>({
   data,
-  rowKey,
   filter,
   columns,
   childrenToolbar,
   className,
   hasDbClickToSelect = false,
-  setIdsSelected,
-  setRowSelected
+  setRowsSelected,
+  onlyOneSelected = false,
+  hideColumn = []
 }: TTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    hideColumn.length > 0 ? hideColumn.reduce((acc, column) => ({ ...acc, [column]: false }), {}) : {}
+  );
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+
   const table = useReactTable({
     data,
     columns,
@@ -115,6 +114,7 @@ export default function TDataTable<TData, TValue>({
       columnFilters
     },
     enableRowSelection: true,
+    autoResetPageIndex: false,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -128,10 +128,18 @@ export default function TDataTable<TData, TValue>({
   });
 
   useEffect(() => {
-    if (setIdsSelected && rowKey) {
-      setIdsSelected(table.getFilteredSelectedRowModel().rows.map((row) => row.original[rowKey] as string));
+    if (onlyOneSelected) {
+      setColumnVisibility({
+        select: false
+      });
     }
-  }, [rowKey, rowSelection, setIdsSelected, table]);
+  }, [onlyOneSelected]);
+
+  useEffect(() => {
+    if (setRowsSelected) {
+      setRowsSelected(table.getSelectedRowModel().rows.map((row) => row.original));
+    }
+  }, [setRowsSelected, table, data, rowSelection]);
 
   const tDataTable = useTranslations('t-data-table');
 
@@ -168,8 +176,9 @@ export default function TDataTable<TData, TValue>({
                   }
                 }}
                 onClick={() => {
-                  if (setRowSelected) {
-                    setRowSelected(row.original);
+                  if (setRowsSelected && onlyOneSelected && !row.getIsSelected()) {
+                    table.toggleAllRowsSelected(false);
+                    row.toggleSelected();
                   }
                 }}
                 className='cursor-pointer'
@@ -181,14 +190,14 @@ export default function TDataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className='h-24'>
+              <TableCell colSpan={columns.length} className='h-24 flex items-center justify-center w-full col-span-7'>
                 {tDataTable('no-data')}
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
-      <TDataTablePagination table={table} hasDbClickToSelect={hasDbClickToSelect} />
+      <TDataTablePagination table={table} hasDbClickToSelect={hasDbClickToSelect} onlyOneSelected={onlyOneSelected} />
     </div>
   );
 }
@@ -275,11 +284,12 @@ export function TCellActions({ editOption, deleteOption }: TCellActionsProps) {
 
   return (
     <div className='flex items-center justify-center gap-4 w-full'>
-      {editOption && (
+      {editOption && !editOption.render && (
         <TButton size='icon' href={editOption.urlEdit} tooltip='edit' variant='outline' asLink>
           <PencilIcon height={16} width={16} />
         </TButton>
       )}
+      {editOption && editOption.render}
       {deleteOption && (
         <TButton size='icon' onClick={handleDeleteRow} variant='outline' tooltip='delete'>
           <TrashIcon />
@@ -289,12 +299,12 @@ export function TCellActions({ editOption, deleteOption }: TCellActionsProps) {
   );
 }
 
-export function TDataTablePagination<TData>({ table, hasDbClickToSelect = false }: DataTablePaginationProps<TData>) {
+export function TDataTablePagination<TData>({ table, hasDbClickToSelect = false, onlyOneSelected = false }: DataTablePaginationProps<TData>) {
   const tDataTablePagination = useTranslations('t-data-table.pagination');
   return (
     <div className='flex items-center justify-between'>
       <div className='flex-1 flex items-center gap-x-4 pl-2'>
-        {hasDbClickToSelect && (
+        {hasDbClickToSelect && !onlyOneSelected && (
           <>
             <Checkbox
               checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
@@ -305,7 +315,7 @@ export function TDataTablePagination<TData>({ table, hasDbClickToSelect = false 
             </span>
           </>
         )}
-        {!hasDbClickToSelect && (
+        {!hasDbClickToSelect && !onlyOneSelected && (
           <span className='text-sm text-muted-foreground'>{tDataTablePagination('total-row', { count: table.getRowCount() })}</span>
         )}
       </div>

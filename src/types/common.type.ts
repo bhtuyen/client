@@ -2,6 +2,7 @@ import type { GuestOrderRole } from '@/constants/const';
 import type { Role } from '@/constants/enum';
 import type { DishInCart } from '@/schemaValidations/dish.schema';
 import type { TMessKey } from '@/types/message.type';
+import type { ReactNode } from 'react';
 import type { Socket } from 'socket.io-client';
 
 export interface ShowAlertDialogOption {
@@ -16,7 +17,8 @@ export interface ShowAlertDialogOption {
 export type DeleteOption = ShowAlertDialogOption;
 
 export interface EditOption {
-  urlEdit: string;
+  urlEdit?: string;
+  render?: ReactNode;
 }
 
 export type StoreType = {

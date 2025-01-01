@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 
 import type { Period } from '@/schemaValidations/common.schema';
 
@@ -18,7 +18,7 @@ export const useOrderByTableQuery = (tableNumber: string, enabled: boolean) =>
   });
 
 export const useOrderDetailQuery = (orderId: string) =>
-  useQuery({
+  useSuspenseQuery({
     queryKey: ['order', orderId],
     queryFn: () => orderApiRequest.getDetail(orderId)
   });

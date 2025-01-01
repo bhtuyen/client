@@ -331,7 +331,7 @@ export default function CreateDishForm() {
             </div>
             <div className='pl-2 pb-2 h-full flex-[2] border-l'>
               <div className='flex items-center justify-between'>
-                <ChooseDishTable dishChooseBody={dishChooseBody} getDishSelected={getDishSelected} />
+                <ChooseDishTable dishChooseBody={dishChooseBody} submit={getDishSelected} />
                 <TButton
                   className='col-span-1 m-0'
                   type='button'

@@ -144,6 +144,10 @@ export function removeAccents(str: string) {
     .replace(/Đ/g, 'D');
 }
 
+export const buildKey = (value: string) => {
+  return removeAccents(value).replace(/ /g, '-');
+};
+
 export const simpleMatchText = (fullText: string, matchText: string) => {
   return removeAccents(fullText).includes(removeAccents(matchText));
 };
@@ -218,7 +222,7 @@ export const periodDefault: Period = {
   fromDate: startOfDay(new Date('2024-01-01')),
   toDate: endOfDay(new Date())
 };
-export const getDishOptions = (options: string | null | undefined) => {
+export const getOptions = (options: string | null | undefined) => {
   if (!options) return [];
   return options
     .replace(';', ',')
@@ -226,5 +230,5 @@ export const getDishOptions = (options: string | null | undefined) => {
     .map((option) => capitalize(option.trim()));
 };
 export const capitalize = (str: string) => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };

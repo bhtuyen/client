@@ -12,7 +12,7 @@ import TButton from '@/components/t-button';
 import TDataTable, { TCellActions } from '@/components/t-data-table';
 import TImage from '@/components/t-image';
 import { toast } from '@/hooks/use-toast';
-import { getDishOptions, getPrice, handleErrorApi, removeAccents } from '@/lib/utils';
+import { getOptions, getPrice, handleErrorApi, removeAccents } from '@/lib/utils';
 
 export default function DishTable() {
   const dishesListQuery = useDishListQuery();
@@ -62,7 +62,7 @@ export default function DishTable() {
         header: () => <div className='text-left w-[150px]'>{tTableColumn('options')}</div>,
         cell: ({ row }) => (
           <ul className='text-left w-[150px] space-y-1'>
-            {getDishOptions(row.original.options).map((option) => (
+            {getOptions(row.original.options).map((option) => (
               <li key={removeAccents(option)} className='capitalize'>
                 ➡️ {option}
               </li>

@@ -49,7 +49,9 @@
     "choose-table": "Choose table",
     "order-now": "Order now",
     "cart": "Cart",
-    "search": "Search"
+    "search": "Search",
+    "payment": "Payment",
+    "change-dish": "Change dish"
   },
   "t-alert-dialog": {
     "title": {
@@ -264,7 +266,11 @@
     "change-token": "Change QR code",
     "change-token-description": "Switch to change QR code",
     "qr-code": "QR code",
-    "choose-combos": "Choose combos"
+    "choose-combos": "Choose combos",
+    "order-status": "Order status",
+    "dish-quantity": "Quantity",
+    "order-options": "Options",
+    "add-option": "Add option"
   },
   "t-tab": {
     "buffet-dish": "Buffet",
@@ -297,5 +303,22 @@
       "ComboBuffet": "Buffet",
       "ComboPaid": "Combo"
     }
+  },
+  "t-info": {
+    "table-capacity": "Capacity: {capacity}",
+    "guest-of-table": "Guest of table: {guest}",
+    "pending-order": "Pending order: {pending}",
+    "cooking-order": "Cooking order: {cooking}",
+    "delivered-order": "Delivered order: {delivered}",
+    "rejected-order": "Rejected order: {rejected}",
+    "amount": "Amount: {amount}",
+    "table-number": "Table {number}",
+    "serving-guest-tooltip": "Serving guest: {guests} guests",
+    "pending-order-tooltip": "Pending order: {orders} orders",
+    "cooking-order-tooltip": "Cooking order: {orders} orders",
+    "delivered-order-tooltip": "Delivered order: {orders} orders",
+    "rejected-order-tooltip": "Rejected order: {orders} orders",
+    "table-ready": "Ready",
+    "price-no-vat": "(Price no VAT)"
   }
 }

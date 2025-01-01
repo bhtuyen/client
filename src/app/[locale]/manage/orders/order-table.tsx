@@ -1,36 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-unused-vars */
 'use client';
-import { PlusCircle } from 'lucide-react';
+import { PencilIcon, PlusCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { createContext, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import type { OrderDtoDetail } from '@/schemaValidations/order.schema';
 import type { ColumnDef } from '@tanstack/react-table';
 
+import EditOrderForm from '@/app/[locale]/manage/orders/edit-order-form';
 import { useUpdateOrderMutation } from '@/app/queries/useOrder';
 import TButton from '@/components/t-button';
 import TDataTable, { TCellActions } from '@/components/t-data-table';
 import TImage from '@/components/t-image';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { OrderStatus } from '@/constants/enum';
-import { formatDateTimeToLocaleString, getDishOptions, getEnumValues, getPrice, handleErrorApi, removeAccents } from '@/lib/utils';
-
-export const OrderTableContext = createContext({
-  setOrderIdEdit: (_value: string | undefined) => {},
-  orderIdEdit: undefined as string | undefined,
-  changeStatus: (_payload: { orderId: string; dishId: string; status: OrderStatus; quantity: number }) => {},
-  orderObjectByGuestId: {} as OrderObjectByGuestID
-});
-
-export type StatusCountObject = Record<OrderStatus, number>;
-export type Statics = {
-  status: StatusCountObject;
-  table: Record<string, Record<string, StatusCountObject>>;
-};
-export type OrderObjectByGuestID = Record<string, OrderDtoDetail[]>;
-export type ServingGuestByTableNumber = Record<string, OrderObjectByGuestID>;
+import { formatDateTimeToLocaleString, getOptions, getEnumValues, getPrice, handleErrorApi, removeAccents } from '@/lib/utils';
 
 export default function OrderTable({ orders }: { orders: OrderDtoDetail[] }) {
   const tOrderStatus = useTranslations('order-status');
@@ -74,9 +61,9 @@ export default function OrderTable({ orders }: { orders: OrderDtoDetail[] }) {
         header: () => <div className='text-left w-[150px]'>{tTableColumn('options')}</div>,
         cell: ({ row }) => (
           <ul className='text-left w-[150px] space-y-1'>
-            {getDishOptions(row.original.options).map((option) => (
+            {getOptions(row.original.options).map((option) => (
               <li key={removeAccents(option)} className='capitalize'>
-                ➡️ {option}
+                ✅ {option}
               </li>
             ))}
           </ul>
@@ -94,8 +81,7 @@ export default function OrderTable({ orders }: { orders: OrderDtoDetail[] }) {
                   dishId: original.dishSnapshot.dishId,
                   status,
                   quantity: original.quantity,
-                  options: original.options,
-                  orderHandlerId: original.orderHandlerId
+                  options: original.options
                 });
               } catch (error) {
                 handleErrorApi({ error });
@@ -136,10 +122,25 @@ export default function OrderTable({ orders }: { orders: OrderDtoDetail[] }) {
       {
         id: 'actions',
         enableHiding: false,
-        cell: ({ row }) => (
+        cell: ({ row, table }) => (
           <TCellActions
             editOption={{
-              urlEdit: `/manage/orders/${row.original.id}/edit`
+              render: (
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <TButton size='icon' tooltip='edit' variant='outline'>
+                      <PencilIcon height={16} width={16} />
+                    </TButton>
+                  </SheetTrigger>
+                  <SheetContent side='left' className='w-[500px]'>
+                    <SheetHeader>
+                      <SheetTitle>Edit order</SheetTitle>
+                      <SheetDescription></SheetDescription>
+                    </SheetHeader>
+                    <EditOrderForm orderId={row.original.id} />
+                  </SheetContent>
+                </Sheet>
+              )
             }}
           />
         )
@@ -158,6 +159,7 @@ export default function OrderTable({ orders }: { orders: OrderDtoDetail[] }) {
           <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>{tButton('create-order')}</span>
         </TButton>
       }
+      className='!h-[calc(100%_-_2.25rem)]'
       filter={{
         columnId: 'tableNumber',
         placeholder: {

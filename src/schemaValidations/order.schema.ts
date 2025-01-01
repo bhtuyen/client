@@ -25,7 +25,7 @@ const order = z
     tableNumber: z.string().trim().min(1).max(50),
     token: z.string(),
     dishSnapshotId: z.string().uuid(),
-    options: z.string().nullable(),
+    options: z.string().optional(),
     quantity: z.number().min(1).max(20),
     orderHandlerId: z.string().uuid().nullable(),
     status: z.nativeEnum(OrderStatus)
@@ -44,7 +44,6 @@ export const updateOrder = orderDto
     status: true,
     quantity: true,
     options: true,
-    orderHandlerId: true,
     id: true
   })
   .merge(
@@ -68,7 +67,7 @@ export const createOrdersTable = z.object({
 });
 
 export const createOrdersTableForm = z.object({
-  tableNumber: z.string().trim().min(1).max(50),
+  table: tableDto,
   dishes: z.array(dishDtoDetailChoose)
 });
 

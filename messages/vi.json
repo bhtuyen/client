@@ -49,7 +49,9 @@
     "choose-table": "Chọn bàn",
     "order-now": "Đặt món ngay",
     "cart": "Giỏ hàng",
-    "search": "Tìm kiếm"
+    "search": "Tìm kiếm",
+    "payment": "Thanh toán",
+    "change-dish": "Đổi món"
   },
   "t-alert-dialog": {
     "title": {
@@ -264,7 +266,11 @@
     "change-token": "Đổi mã QR",
     "change-token-description": "Tích chọn để đổi mã QR",
     "qr-code": "Mã QR",
-    "choose-combos": "Chọn combo"
+    "choose-combos": "Chọn combo",
+    "order-status": "Trạng thái đơn hàng",
+    "dish-quantity": "Số lượng",
+    "order-options": "Tùy chọn",
+    "add-option": "Thêm tùy chọn"
   },
   "t-tab": {
     "buffet-dish": "Món Buffet",
@@ -297,5 +303,22 @@
       "ComboBuffet": "Buffet",
       "ComboPaid": "Combo"
     }
+  },
+  "t-info": {
+    "table-capacity": "Sức chứa: {capacity}",
+    "guest-of-table": "Số lượng khách tại bàn: {guest}",
+    "pending-order": "Số món đang chờ xử lý: {pending}",
+    "cooking-order": "Số món đang nấu: {cooking}",
+    "delivered-order": "Số món đã phục vụ: {delivered}",
+    "rejected-order": "Số món đã từ chối: {rejected}",
+    "amount": "Số tiền: {amount}",
+    "table-number": "Bàn {number}",
+    "serving-guest-tooltip": "Khách đang phục vụ: {guests} khách",
+    "pending-order-tooltip": "Đơn hàng đang chờ: {orders} đơn",
+    "cooking-order-tooltip": "Đơn hàng đang nấu: {orders} đơn",
+    "delivered-order-tooltip": "Đơn hàng đã phục vụ: {orders} đơn",
+    "rejected-order-tooltip": "Đơn hàng đã từ chối: {orders} đơn",
+    "table-ready": "Sẵn sàng",
+    "price-no-vat": "(Giá chưa bao gồm VAT)"
   }
 }

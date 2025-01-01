@@ -1,9 +1,11 @@
+import { capitalize } from 'lodash';
 import { Minus, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { DishDtoDetailChoose, DishChooseBody } from '@/schemaValidations/dish.schema';
+import type { TMessageKeys } from '@/types/message.type';
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { useDishesChooseQuery } from '@/app/queries/useDish';
@@ -14,24 +16,48 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
-import { getDishOptions, getPrice, removeAccents } from '@/lib/utils';
+import { buildKey, getOptions, getPrice } from '@/lib/utils';
 type ChooseDishTableProps = {
   dishChooseBody: DishChooseBody;
-  getDishSelected: (dishes: DishDtoDetailChoose[]) => void;
+  submit?: (dishes: DishDtoDetailChoose[]) => void;
+  submitKey?: TMessageKeys<'t-button'>;
+  triggerKey?: TMessageKeys<'t-button'>;
+  hasOptions?: boolean;
+  hideColumn?: string[];
+  onlyOneSelected?: boolean;
+  side?: 'top' | 'bottom' | 'left' | 'right';
 };
 
-export default function ChooseDishTable({ dishChooseBody, getDishSelected }: ChooseDishTableProps) {
-  const [idsSelected, setIdsSelected] = useState<string[]>([]);
+type DishChoose = DishDtoDetailChoose & {
+  optionsCheckbox: { value: string; enabled: boolean; key: string }[];
+  newOptions: string | undefined;
+};
+export default function ChooseDishTable({
+  dishChooseBody,
+  onlyOneSelected = false,
+  submit,
+  submitKey = 'confirm',
+  triggerKey = 'choose-dish',
+  hideColumn = [],
+  side = 'right'
+}: ChooseDishTableProps) {
+  const [rowsSelected, setRowsSelected] = useState<DishChoose[]>([]);
   const [open, setOpen] = useState(false);
-  const [dishesChoose, setDishesChoose] = useState<DishDtoDetailChoose[]>([]);
-
+  const [dishesChoose, setDishesChoose] = useState<DishChoose[]>([]);
   const { data } = useDishesChooseQuery(dishChooseBody, open);
 
   useEffect(() => {
-    if (data) {
-      setDishesChoose(data.payload.data.map((dish) => ({ ...dish, key: uuidv4() })));
+    if (data && open) {
+      setDishesChoose(
+        data.payload.data.map<DishChoose>((dish) => ({
+          ...dish,
+          key: uuidv4(),
+          optionsCheckbox: getOptions(dish.options).map((option) => ({ value: option, enabled: false, key: buildKey(option) })),
+          newOptions: ''
+        }))
+      );
     }
-  }, [data]);
+  }, [data, open]);
 
   const updateQuantity = useCallback(
     (id: string, quantity: number) => {
@@ -48,7 +74,21 @@ export default function ChooseDishTable({ dishChooseBody, getDishSelected }: Cho
   const tSheet = useTranslations('t-sheet');
   const tDishCategory = useTranslations('dish-category');
 
-  const columns = useMemo<ColumnDef<DishDtoDetailChoose>[]>(
+  const handleUpdateOptions = (id: string, value: string) => {
+    setDishesChoose((prev) => prev.map((dish) => (dish.id === id ? { ...dish, newOptions: value } : dish)));
+  };
+
+  const checkOption = (id: string, key: string, checked: boolean) => {
+    setDishesChoose((prev) =>
+      prev.map((dish) =>
+        dish.id === id
+          ? { ...dish, optionsCheckbox: dish.optionsCheckbox.map((opt) => (opt.key === key ? { ...opt, enabled: checked } : opt)) }
+          : dish
+      )
+    );
+  };
+
+  const columns = useMemo<ColumnDef<DishChoose>[]>(
     () => [
       {
         id: 'select',
@@ -63,15 +103,15 @@ export default function ChooseDishTable({ dishChooseBody, getDishSelected }: Cho
       },
       {
         accessorKey: 'image',
-        header: () => <div className='text-center w-[100px]'>{tTableColumn('image')}</div>,
+        header: () => <div className='text-center w-[150px]'>{tTableColumn('image')}</div>,
         cell: ({ row }) => (
-          <div className='w-[100px]'>
+          <div className='w-[150px]'>
             <TImage
               src={row.getValue('image') ?? '/restaurant.jpg'}
               alt={row.original.name}
-              width={100}
-              height={100}
-              className='aspect-square size-16 rounded-md shadow-md mx-auto'
+              width={150}
+              height={150}
+              className='aspect-square size-21 rounded-md shadow-md mx-auto'
               quality={100}
             />
           </div>
@@ -108,16 +148,29 @@ export default function ChooseDishTable({ dishChooseBody, getDishSelected }: Cho
         header: () => <div className='text-center w-[100px]'>{tTableColumn('options')}</div>,
         cell: ({ row }) => (
           <div className='text-center w-[100px]'>
-            <ul className='space-y-1'>
-              {getDishOptions(row.original.options).map((option) => (
-                <li key={removeAccents(option)} className='flex items-center gap-1'>
-                  <Checkbox id={removeAccents(option)} onDoubleClick={(e) => e.stopPropagation()} />
-                  <Label htmlFor={removeAccents(option)} onDoubleClick={(e) => e.stopPropagation()}>
-                    {option}
+            <ul className='space-y-2'>
+              {row.original.optionsCheckbox.map(({ key, value, enabled }) => (
+                <li key={key} className='flex items-center gap-1'>
+                  <Checkbox
+                    id={key}
+                    onDoubleClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                    checked={enabled}
+                    onCheckedChange={(checked) => checkOption(row.original.id, key, !!checked)}
+                  />
+                  <Label htmlFor={key} onDoubleClick={(e) => e.stopPropagation()}>
+                    {value}
                   </Label>
                 </li>
               ))}
-              <Textarea className='mt-1' />
+              <Textarea
+                className='mt-1 text-xs'
+                value={row.original.newOptions}
+                onChange={(e) => handleUpdateOptions(row.original.id, e.target.value)}
+                onKeyDown={(e) => {}}
+                placeholder='Tùy chọn'
+              />
             </ul>
           </div>
         )
@@ -174,36 +227,48 @@ export default function ChooseDishTable({ dishChooseBody, getDishSelected }: Cho
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <div className='h-12'>
-          <TButton variant='outline' type='button'>
-            {tButton('choose-dish')}
-          </TButton>
-        </div>
+        <TButton variant='outline' type='button'>
+          {tButton(triggerKey)}
+        </TButton>
       </SheetTrigger>
-      <SheetContent className='w-[1000px] sm:max-w-[1000px] p-4'>
+      <SheetContent className='w-[1200px] sm:max-w-[1200px] p-4' side={side}>
         <SheetHeader className='h-14 mb-2'>
           <SheetTitle>{tSheet('choose-dish-title')}</SheetTitle>
           <SheetDescription>{tSheet('choose-dish-description')}</SheetDescription>
         </SheetHeader>
         <TDataTable
-          setIdsSelected={setIdsSelected}
-          rowKey='id'
+          setRowsSelected={setRowsSelected}
           hasDbClickToSelect
           data={dishesChoose}
           className='!h-[calc(100%_-_6.75rem)] mb-2'
           columns={columns}
           filter={{ placeholder: { key: 'input-placeholder-dish' }, columnId: 'name' }}
+          hideColumn={hideColumn}
+          onlyOneSelected={onlyOneSelected}
         />
         <SheetFooter>
           <TButton
             type='button'
-            disabled={idsSelected.length === 0}
+            disabled={rowsSelected.length === 0}
             onClick={() => {
-              getDishSelected(dishesChoose.filter((dish) => idsSelected.includes(dish.id)));
+              if (submit) {
+                submit(
+                  rowsSelected.map((dish) => ({
+                    ...dish,
+                    options: capitalize(
+                      dish.optionsCheckbox
+                        .filter(({ enabled }) => enabled)
+                        .map(({ value }) => value)
+                        .concat([dish.newOptions ?? ''])
+                        .join(', ')
+                    )
+                  }))
+                );
+              }
               setOpen(false);
             }}
           >
-            {tButton('confirm')}
+            {tButton(submitKey)}
           </TButton>
         </SheetFooter>
       </SheetContent>

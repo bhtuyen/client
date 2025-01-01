@@ -14,7 +14,7 @@ import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetT
 
 export function ChooseTable({ setTable }: { setTable: (table: TableDto) => void }) {
   const [open, setOpen] = useState(false);
-  const [tableSelected, setTableSelected] = useState<TableDto | null>(null);
+  const [rowsSelected, setRowsSelected] = useState<TableDto[]>([]);
   const tableListQuery = useTableListQuery(open);
   const tables = useMemo(() => tableListQuery.data?.payload.data ?? [], [tableListQuery.data?.payload.data]);
 
@@ -84,8 +84,9 @@ export function ChooseTable({ setTable }: { setTable: (table: TableDto) => void 
           <SheetDescription>{tSheet('choose-table-description')}</SheetDescription>
         </SheetHeader>
         <TDataTable
-          setRowSelected={setTableSelected}
+          setRowsSelected={setRowsSelected}
           data={tables}
+          onlyOneSelected
           className='!h-[calc(100%_-_6.75rem)] mb-2'
           columns={columns}
           filter={{ placeholder: { key: 'input-placeholder-table' }, columnId: 'number' }}
@@ -93,10 +94,10 @@ export function ChooseTable({ setTable }: { setTable: (table: TableDto) => void 
         <SheetFooter>
           <TButton
             type='button'
-            disabled={!tableSelected}
+            disabled={rowsSelected.length === 0}
             onClick={() => {
-              if (tableSelected) {
-                setTable(tableSelected);
+              if (rowsSelected.length > 0) {
+                setTable(rowsSelected[0]);
                 setOpen(false);
               }
             }}

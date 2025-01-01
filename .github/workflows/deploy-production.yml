@@ -13,17 +13,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js ${{matrix.node-version}}
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.12.0
-          cache: 'npm'
       - name: Create .env file
         run: echo "${{secrets.ENV_PRODUCTION}}" > .env
-      - name: Install dependencies
-        run: npm install
-      - name: Build
-        run: npm run build
+      - name: Build Docker image
+        run: docker build --platform linux/amd64 -t 090920019999/client:v0 .
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Push Docker image
+        run: docker push 090920019999/client:v0
+      - name: Run Docker container
+        run: docker run -d --name client -p 3000:3000 client
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -36,12 +38,8 @@ jobs:
           key: ${{ secrets.SSH_KEY_PRODUCTION }}
           port: ${{ secrets.PORT_PRODUCTION }}
           script: |
-            export NVM_DIR=~/.nvm
-            source ~/.nvm/nvm.sh
-            cd ~/project/client
-            git fetch --all
-            git reset --hard origin/main
-            echo "${{secrets.ENV_PRODUCTION}}" > .env
-            npm install --force
-            npm run build
-            pm2 restart client
+            docker login -u 090920019999 -p ${{ secrets.DOCKERHUB_TOKEN }}
+            docker pull 090920019999/client:v0
+            docker stop client
+            docker rm client
+            docker run -dp 3000:3000 --name client 090920019999/client:v0

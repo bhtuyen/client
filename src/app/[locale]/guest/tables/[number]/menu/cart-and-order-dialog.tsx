@@ -71,11 +71,10 @@ export default function CartAndOrderDialog({ number }: { number: string }) {
       });
       refetch();
     }
-    function onPayment(data: OrderDtoDetail[]) {
+    function onPayment() {
       toast({
-        description: tMessage('payment', { orders: data.length })
+        description: `Bạn đã thanh toán thành công`
       });
-      refetch();
     }
 
     socket?.on('update-order', onUpadteOrder);

@@ -3,6 +3,7 @@
 import createNextIntlPlugin from 'next-intl/plugin';
 
 const nextConfig = {
+  reactStrictMode: false,
   logging: {
     fetches: {
       fullUrl: true

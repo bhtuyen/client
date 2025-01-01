@@ -115,6 +115,7 @@ export default function DishMenu() {
   }, [dishToOrder.data?.payload.data]);
 
   const tDishCategoryMenu = useTranslations('dish-menu.dish-category');
+  const tInfo = useTranslations('t-info');
 
   useEffect(() => {
     if (dishCategoryGroupDetails.length > 0) {
@@ -265,7 +266,7 @@ export default function DishMenu() {
                   <div key={id} className='flex flex-col gap-2 items-center'>
                     <TImage src={image} alt={name} className='w-full object-cover rounded-md' />
                     <div className='text-center'>{name}</div>
-                    <div className='text-muted-foreground'>{getPrice({ price, category })}</div>
+                    {category !== DishCategory.Buffet && <div className='text-muted-foreground'>{getPrice({ price, category })}</div>}
                   </div>
                 ));
               }
@@ -276,7 +277,7 @@ export default function DishMenu() {
                   <div className='flex flex-col gap-3 pr-2'>
                     <h2 className='text-2xl font-bold'>{name}</h2>
                     <p className='text-lg'>{`${getPrice({ price, category })}/người`}</p>
-                    <i className='text-sm text-muted-foreground'>(Giá chưa bao gồm VAT)</i>
+                    <i className='text-sm text-muted-foreground'>{tInfo('price-no-vat')}</i>
                     <Separator />
                   </div>
                 </div>
