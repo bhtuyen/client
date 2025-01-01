@@ -28,6 +28,7 @@ type MenuTabsType = {
 export default function MenuTabs({ number }: { number: string }) {
   const [activeTab, setActiveTab] = useState<MenuTabsType['value']>(DishCategory.Paid);
   const [groupActive, setGroupActive] = useState<string | null>(null);
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const [hasBuffet, setHasBuffet] = useState(false);
 
   // dishes query paid

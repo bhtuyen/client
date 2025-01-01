@@ -1,7 +1,7 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Minus, Plus, X } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -23,7 +23,6 @@ import { getPrice, handleErrorApi } from '@/lib/utils';
 import { type DishToOrder, type CreateOrdersTable, type CreateOrdersTableForm, createOrdersTableForm } from '@/schemaValidations/order.schema';
 
 export default function CreateOrdersForm() {
-  const locale = useLocale();
   const createOrderMutation = useCreateOrderMutation();
 
   const form = useForm<CreateOrdersTableForm>({
@@ -41,7 +40,6 @@ export default function CreateOrdersForm() {
   });
 
   const tButton = useTranslations('t-button');
-  const tForm = useTranslations('t-form');
 
   const dishChooseBody = useMemo<DishChooseBody>(
     () => ({

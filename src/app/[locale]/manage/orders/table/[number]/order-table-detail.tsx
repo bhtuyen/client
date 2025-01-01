@@ -236,7 +236,7 @@ export default function OrderTableDetail({ number }: { number: string }) {
       socket?.off('new-order', onNewOrder);
       socket?.off('payment', onPayment);
     };
-  }, [refetch, socket, tOrderStatus]);
+  }, [number, refetch, socket, tOrderStatus]);
 
   const handlePayment = () => {};
 
