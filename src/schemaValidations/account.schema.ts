@@ -10,7 +10,6 @@ const account = z
     avatar: z.string().url().nullable(),
     role: z.nativeEnum(Role),
     phone: z.string().min(10).max(15),
-    isVerified: z.boolean().optional(),
     ownerId: z.string().uuid().nullable()
   })
   .merge(updateAndCreate)
