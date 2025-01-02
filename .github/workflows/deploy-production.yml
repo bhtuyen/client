@@ -40,4 +40,5 @@ jobs:
             docker pull 090920019999/client:v0
             docker stop client
             docker rm client
-            docker run -dp 3000:3000 --name client 090920019999/client:v0
+            docker run -dp 3000:3000 --name client 090920019999/client:v0 --restart unless-stopped
+            docker image prune -f
