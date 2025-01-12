@@ -1,12 +1,14 @@
 'use client';
 
 import { Loader } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useGetTableDetailForPaymentQuery } from '@/app/queries/useTable';
 import { useAppStore } from '@/components/app-provider';
 import TImage from '@/components/t-image';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import envConfig from '@/config';
 import { DishCategory } from '@/constants/enum';
 import { formatCurrency } from '@/lib/utils';
 
@@ -16,6 +18,8 @@ export default function TablePayment({ number }: { number: string }) {
   const { socket } = useAppStore();
 
   const tableDetail = data?.payload.data;
+
+  const tInfo = useTranslations('t-info');
 
   const orders = useMemo(() => {
     return tableDetail?.orders.filter(({ dishSnapshot: { category } }) => category !== DishCategory.Buffet) ?? [];
@@ -47,14 +51,14 @@ export default function TablePayment({ number }: { number: string }) {
     <div className='w-max-[1500px] w-[1500px] md:w-[1300px] flex mx-auto gap-4 h-[calc(100%_-_2.25rem)]'>
       <div className='flex-[2] h-full flex flex-col gap-4'>
         <div className='flex items-center h-36'>
-          <h2 className='text-5xl font-bold '>Thanh toán cho bàn 01</h2>
+          <h2 className='text-5xl font-bold'>{tInfo('payment-for-table', { number })}</h2>
         </div>
         <div className='border p-4 rounded-sm'>
-          <p className='text-base font-bold text-center'>Hướng dẫn thanh toán qua chuyển khoản ngân hàng</p>
+          <p className='text-base font-bold text-center'>{tInfo('instruction-for-payment')}</p>
         </div>
         <div className='flex'>
           <div className='flex-1 flex flex-col gap-4 items-center border border-r-0 rounded-sm p-4'>
-            <p className='text-base font-bold'>Cách 1: Mở app ngân hàng và quét mã QR</p>
+            <p className='text-base font-bold'>{tInfo('method-1')}</p>
             <div className='flex flex-col items-center gap-2'>
               <TImage
                 src={`https://qr.sepay.vn/img?bank=VietinBank&acc=100870480229&template=compact&amount=${amount}&des=${description}`}
@@ -64,44 +68,44 @@ export default function TablePayment({ number }: { number: string }) {
                 className=''
               />
               <div className='flex items-center gap-2'>
-                <span>Trạng thái: {isPayment ? 'Thanh toán thành công' : 'Chờ thanh toán... '} </span>
+                <span>
+                  {tInfo('status')} {isPayment ? tInfo('payment-success') : tInfo('waiting-for-payment')}{' '}
+                </span>
                 {!isPayment && <Loader className='animate-spin' />}
               </div>
             </div>
           </div>
           <div className='flex-1 flex flex-col gap-4 items-center border rounded-sm p-4'>
-            <p className='text-base font-bold'>Cách 2: Chuyển khoản thủ công theo thông tin</p>
+            <p className='text-base font-bold'>{tInfo('method-1')}</p>
             <div className='flex items-center gap-2'>
               <TImage src='/vietinbank-icon.png' width={40} height={40} alt='vietinbank' />
-              <p className='font-bold'>Ngân hàng VietinBank</p>
+              <p className='font-bold'>{tInfo('vietinbank')}</p>
             </div>
             <div className='flex flex-col gap-2 w-full'>
               <div className='grid grid-cols-2 w-full border-b py-4'>
-                <span>Chủ tài khoản: </span>
-                <span className='font-bold'>Bùi Huy Tuyền</span>
+                <span>{tInfo('account-holder')}</span>
+                <span className='font-bold'>{envConfig.NEXT_PUBLIC_ACCOUNT_NAME}</span>
               </div>
               <div className='grid grid-cols-2 w-full border-b py-4'>
-                <span>Số TK: </span>
-                <span className='font-bold'>0903252427</span>
+                <span>{tInfo('account-number')}</span>
+                <span className='font-bold'>{envConfig.NEXT_PUBLIC_ACCOUNT_NUMBER}</span>
               </div>
               <div className='grid grid-cols-2 w-full border-b py-4'>
-                <span>Số tiền: </span>
+                <span>{tInfo('amount-to-pay')}</span>
                 <span className='font-bold'>{formatCurrency(amount)}</span>
               </div>
               <div className='flex flex-col gap-1 w-full border-b py-1'>
-                <span>Nội dung CK: </span>
+                <span>{tInfo('description-for-payment')}</span>
                 <span className='font-bold'>{description}</span>
               </div>
             </div>
 
-            <div className='bg-[rgba(248,249,250,1)] p-4 rounded-sm'>
-              Lưu ý: Vui lòng giữ nguyên nội dung chuyển khoản để hệ thống tự động xác nhận thanh toán
-            </div>
+            <div className='bg-[rgba(248,249,250,1)] p-4 rounded-sm'>{tInfo('note-for-payment')}</div>
           </div>
         </div>
       </div>
       <div className='flex-1 bg-[rgba(248,249,250,1)] p-4 pr-2 rounded-sm h-full flex flex-col gap-4'>
-        <p className='text-lg font-bold h-7'>Thông tin đơn hàng</p>
+        <p className='text-lg font-bold h-7'>{tInfo('order-information')}</p>
         <ScrollArea className='h-[calc(100%_-_2.5rem)]'>
           <ul className='pr-2'>
             {orders.map(({ dishSnapshot, quantity }) => (
@@ -116,7 +120,7 @@ export default function TablePayment({ number }: { number: string }) {
           </ul>
         </ScrollArea>
         <div className='flex justify-between items-center h-7 pr-4'>
-          <p className='text-base font-bold'>Tổng cộng</p>
+          <p className='text-base font-bold'>{tInfo('total')}</p>
           <span className='font-bold'>{formatCurrency(amount)}</span>
         </div>
       </div>

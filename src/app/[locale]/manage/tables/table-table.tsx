@@ -106,7 +106,7 @@ export default function TableTable() {
       data={data}
       columns={columns}
       childrenToolbar={
-        <TButton size='sm' className='h-7 gap-1' asLink href='/manage/tables/create'>
+        <TButton className='gap-1' asLink href='/manage/tables/create'>
           <PlusCircle className='h-3.5 w-3.5' />
           <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>{tButton('create-table')}</span>
         </TButton>

@@ -89,7 +89,7 @@ export function ChooseTable({ setTable }: { setTable: (table: TableDto) => void 
           onlyOneSelected
           className='!h-[calc(100%_-_6.75rem)] mb-2'
           columns={columns}
-          filter={{ placeholder: { key: 'input-placeholder-table' }, columnId: 'number' }}
+          filter={{ placeholder: { key: 'input-placeholder-table' }, columnId: 'table-number' }}
         />
         <SheetFooter>
           <TButton

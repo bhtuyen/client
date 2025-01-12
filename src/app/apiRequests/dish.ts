@@ -22,6 +22,7 @@ export const dishApiRequets = {
   getById: (id: string) => http.get<DishDtoComboDetailRes>(`${prefix}/${id}`),
   getToChoose: (body: DishChooseBody) => http.post<DishDtoDetailChooseRes>(`${prefix}/choose`, body),
   getToOrder: () => http.get<DishDtoComboDetailsRes>(`${prefix}/order`),
+  getDishBuffet: (dishBuffetId: string | null) => http.get<DishDtoComboDetailsRes>(`${prefix}/buffet/${dishBuffetId}`),
   create: (body: CreateDishCombo) => http.post<DishDtoComboDetailRes>(`${prefix}`, body),
   update: (body: UpdateDishCombo) => http.put<DishDtoComboDetailRes>(`${prefix}/${body.id}`, body),
   delete: (id: string) => http.delete<DishDtoComboDetailRes>(`${prefix}/${id}`),

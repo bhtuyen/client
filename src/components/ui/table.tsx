@@ -4,8 +4,8 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(({ className, ...props }, ref) => (
-  <ScrollArea className='w-full border rounded-md flex-1'>
-    <table ref={ref} className={cn('w-full caption-bottom text-sm', className)} {...props} />
+  <ScrollArea className='w-full border rounded-md h-full'>
+    <table ref={ref} className={cn('w-full caption-bottom text-sm h-full', className)} {...props} />
     <ScrollBar orientation='vertical' className='z-20' />
   </ScrollArea>
 ));

@@ -70,7 +70,11 @@ export default function AddToCartDialog({ dish }: { dish: DishDto }) {
       .map((option) => option.option)
       .join(', ');
 
-    return capitalize(`${dishOptionsChecked}${guestOption ? `, ${guestOption}` : ''}`);
+    if (dishOptionsChecked) {
+      return capitalize(`${dishOptionsChecked}${guestOption ? `, ${guestOption}` : ''}`);
+    }
+
+    return capitalize(guestOption ? guestOption : '');
   };
 
   const handleAddToCart = () => {

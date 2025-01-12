@@ -9,7 +9,14 @@ import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import { Badge } from '@/components/ui/badge';
 import { DishCategory, OrderStatus } from '@/constants/enum';
-import { OrderStatusIcon, formatCurrency, formatDateTimeToLocaleString, formatDateTimeToTimeString, getPrice, handleErrorApi } from '@/lib/utils';
+import {
+  OrderStatusIcon,
+  formatCurrency,
+  formatDateTimeToLocaleString,
+  formatDateTimeToTimeString,
+  getPriceString,
+  handleErrorApi
+} from '@/lib/utils';
 
 export default async function OrdersTableDetail({
   guest,
@@ -84,7 +91,7 @@ export default async function OrdersTableDetail({
               <span className='font-semibold' title={`Tổng: ${order.quantity}`}>
                 x{order.quantity}
               </span>
-              <span className='italic'>{getPrice(order.dishSnapshot)}</span>
+              <span className='italic'>{getPriceString(order.dishSnapshot)}</span>
               <span
                 className='hidden sm:inline'
                 title={`Tạo: ${formatDateTimeToLocaleString(order.createdAt)} | Cập nhật: ${formatDateTimeToLocaleString(order.updatedAt)}

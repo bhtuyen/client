@@ -77,12 +77,12 @@ export default function CreateEmployeeForm() {
     <Form {...form}>
       <form
         noValidate
-        className='max-w-[900px] p-4'
+        className='max-w-[1000px] p-4 h-full flex flex-col'
         onSubmit={form.handleSubmit(onSubmit, (error) => {
           console.log(error);
         })}
       >
-        <div className='grid grid-cols-2 gap-x-4'>
+        <div className='grid grid-cols-2 gap-4'>
           <FormField
             control={form.control}
             name='avatar'
@@ -124,7 +124,7 @@ export default function CreateEmployeeForm() {
             name='name'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{tForm('name')}</FormLabel>
+                <FormLabel required>{tForm('name')}</FormLabel>
                 <FormControl>
                   <Input type='name' {...field} IconLeft={User} />
                 </FormControl>
@@ -140,7 +140,7 @@ export default function CreateEmployeeForm() {
             name='phone'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{tForm('phone')}</FormLabel>
+                <FormLabel required>{tForm('phone')}</FormLabel>
                 <FormControl>
                   <Input {...field} IconLeft={Phone} pattern='[0-9]*' />
                 </FormControl>
@@ -156,7 +156,7 @@ export default function CreateEmployeeForm() {
             name='email'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{tForm('email')}</FormLabel>
+                <FormLabel required>{tForm('email')}</FormLabel>
                 <FormControl>
                   <Input type='email' {...field} IconLeft={Mail} />
                 </FormControl>
@@ -172,7 +172,7 @@ export default function CreateEmployeeForm() {
             name='password'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{tForm('password')}</FormLabel>
+                <FormLabel required>{tForm('password')}</FormLabel>
                 <FormControl>
                   <Input type='password' {...field} IconLeft={KeyRound} />
                 </FormControl>
@@ -188,7 +188,7 @@ export default function CreateEmployeeForm() {
             name='confirmPassword'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{tForm('confirm-password')}</FormLabel>
+                <FormLabel required>{tForm('confirm-password')}</FormLabel>
                 <FormControl>
                   <Input type='password' {...field} IconLeft={KeyRound} />
                 </FormControl>
@@ -200,7 +200,7 @@ export default function CreateEmployeeForm() {
           />
         </div>
 
-        <div className='flex item-center justify-end gap-4'>
+        <div className='flex item-center justify-end gap-4 mt-auto'>
           <TButton type='button' variant='outline' asLink href={'/manage/employees'}>
             {tButton('cancel')}
           </TButton>

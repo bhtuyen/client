@@ -1,12 +1,12 @@
 'use client';
 import { Minus, Plus, ShoppingCart, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import type { OrderDtoDetail } from '@/schemaValidations/order.schema';
+import type { TMessageKeys } from '@/types/message.type';
 
-import { useGuestOrderMutation } from '@/app/queries/useGuest';
-import { useOrderByTableQuery } from '@/app/queries/useOrder';
+import { useGuestOrderMutation, useRequestPaymentMutation } from '@/app/queries/useGuest';
 import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
@@ -14,7 +14,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, Di
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DishCategory } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
-import { cn, formatCurrency, getPrice, handleErrorApi } from '@/lib/utils';
+import { cn, formatCurrency, getPriceString, handleErrorApi } from '@/lib/utils';
 
 const tabs = [
   { key: 'cart', label: 'Giỏ đồ ăn' },
@@ -23,17 +23,17 @@ const tabs = [
 
 type TabsKeyType = (typeof tabs)[number]['key'];
 
-export default function CartAndOrderDialog({ number }: { number: string }) {
+export default function CartAndOrderDialog({ orders, refetch, tableNumber }: { orders: OrderDtoDetail[]; refetch: () => void; tableNumber: string }) {
   const [activeTab, setActiveTab] = useState<TabsKeyType>('cart');
-  const { cart, changeQuantity, removeDishesFromCart: removeDishFromCart, removeAllCart, socket } = useAppStore();
+  const { cart, changeQuantity, removeDishesFromCart, removeAllCart, showAlertDialog } = useAppStore();
 
   const sumPrice = cart.reduce((sum, dish) => sum + (dish.category === DishCategory.Buffet ? 0 : dish.price * dish.quantity), 0);
 
   const tOrderStatus = useTranslations('order-status');
-  const tMessage = useTranslations('t-message');
+  const tToast = useTranslations('t-toast');
 
   const guestOrderMutation = useGuestOrderMutation();
-  const { data, refetch } = useOrderByTableQuery(number, activeTab === 'ordered');
+  const requestPaymentMutation = useRequestPaymentMutation();
 
   const handleGuestOrder = async () => {
     try {
@@ -46,45 +46,27 @@ export default function CartAndOrderDialog({ number }: { number: string }) {
     }
   };
 
-  const orders = useMemo(() => data?.payload.data || [], [data]);
+  const sumOrder = orders.reduce((sum, order) => {
+    const dishSnapshot = order.dishSnapshot;
+    if (dishSnapshot.category === DishCategory.Buffet) return sum;
+    return sum + dishSnapshot.price * order.quantity;
+  }, 0);
 
-  const sumOrder = orders.reduce(
-    (sum, order) => {
-      const dishSnapshot = order.dishSnapshot;
-      if (dishSnapshot.category === DishCategory.Buffet) return sum;
-      return sum + dishSnapshot.price * order.quantity;
-    },
-
-    0
-  );
-
-  useEffect(() => {
-    function onUpadteOrder(data: OrderDtoDetail) {
-      const {
-        dishSnapshot: { name },
-        quantity,
-        status
-      } = data;
-
-      toast({
-        description: tMessage('update-order', { name, quantity, status: tOrderStatus(status) })
-      });
-      refetch();
-    }
-    function onPayment() {
-      toast({
-        description: `Bạn đã thanh toán thành công`
-      });
-    }
-
-    socket?.on('update-order', onUpadteOrder);
-    socket?.on('payment', onPayment);
-
-    return () => {
-      socket?.off('update-order', onUpadteOrder);
-      socket?.off('payment', onPayment);
-    };
-  }, [refetch, socket, tMessage, tOrderStatus]);
+  const handleRequestPayment = () => {
+    showAlertDialog({
+      title: 'request-payment',
+      description: 'request-payment',
+      onAction: () => {
+        // handle payment
+        requestPaymentMutation.mutateAsync({ tableNumber }).then((res) => {
+          const messageKey = res.payload.message as TMessageKeys<'t-toast'>;
+          toast({
+            description: tToast(messageKey)
+          });
+        });
+      }
+    });
+  };
 
   return (
     <Dialog modal={false}>
@@ -152,7 +134,7 @@ export default function CartAndOrderDialog({ number }: { number: string }) {
                         </p>
                       </div>
                     </div>
-                    <X className='h-6 w-6 absolute top-3 right-3' onClick={() => removeDishFromCart([dish.id])} />
+                    <X className='h-6 w-6 absolute top-3 right-3' onClick={() => removeDishesFromCart([dish.id])} />
                   </div>
                 ))}
 
@@ -177,7 +159,7 @@ export default function CartAndOrderDialog({ number }: { number: string }) {
                     <p className='text-red-950 font-medium text-xl'>{formatCurrency(sumPrice)}</p>
                   </div>
                   <div className='flex items-center gap-4 pb-4'>
-                    <TButton variant={'outline'} className='bg-white w-full h-[50px] text-base'>
+                    <TButton variant={'outline'} className='bg-white w-full h-[50px] text-base' onClick={handleRequestPayment}>
                       Thanh toán
                     </TButton>
                     <TButton className='text-white bg-black w-full h-[50px] text-base' variant={'ghost'} onClick={() => handleGuestOrder()}>
@@ -204,7 +186,7 @@ export default function CartAndOrderDialog({ number }: { number: string }) {
                     <span className='bg-[#f2f2f2] text-lg font-medium h-8 w-8 rounded-md flex items-center justify-center'>{quantity}x</span>
                     <span className='text-lg font-medium flex-auto'>{dishSnapshot.name}</span>
                     <span>{tOrderStatus(status)}</span>
-                    <span className='text-red-950 font-medium'>{getPrice(dishSnapshot)}</span>
+                    <span className='text-red-950 font-medium'>{getPriceString(dishSnapshot)}</span>
                   </div>
                 ))}
 
@@ -218,10 +200,10 @@ export default function CartAndOrderDialog({ number }: { number: string }) {
 
             <div className='shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_-2px_4px_-2px_rgba(0,0,0,0.1)] z-10 p-4'>
               {orders.length > 0 && (
-                <div className='text-white bg-black w-full h-12 flex items-center justify-between px-4 text-lg rounded-lg'>
+                <TButton className='w-full h-12 flex items-center justify-between px-4 text-lg rounded-lg' onClick={handleRequestPayment}>
                   <span>Tổng: {formatCurrency(sumOrder)}</span>
                   <span>Thanh toán ngay</span>
-                </div>
+                </TButton>
               )}
               {orders.length === 0 && (
                 <DialogClose asChild>

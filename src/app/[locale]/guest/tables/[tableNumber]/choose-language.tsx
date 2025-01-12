@@ -28,7 +28,7 @@ export default function ChooseLanguage() {
   const tButton = useTranslations('t-button');
   const tGuest = useTranslations('guest');
 
-  const tableNumber = params.number as string;
+  const tableNumber = params.tableNumber as string;
   const token = searchParam.get('token');
 
   const { isPending, mutateAsync } = useGuestLoginMutation();

@@ -2,9 +2,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader, Table, User } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { UpdateTable } from '@/schemaValidations/table.schema';
+import type { TMessageKeys } from '@/types/message.type';
 
 import { useTableQuery, useUpdateTableMutation } from '@/app/queries/useTable';
 import QRCodeTable from '@/components/qrcode-table';
@@ -28,13 +30,30 @@ export default function EditTableForm({ id }: { id: string }) {
   const tButton = useTranslations('t-button');
   const tForm = useTranslations('t-form');
   const tManageTable = useTranslations('manage.tables');
+  const tToast = useTranslations('t-toast');
 
   const table = data?.payload.data;
 
   const form = useForm<UpdateTable>({
     resolver: zodResolver(updateTable),
-    values: table ? { ...table, changeToken: false } : undefined
+    values: {
+      id: '',
+      capacity: 0,
+      changeToken: false,
+      number: '',
+      status: TableStatus.Available,
+      callStaff: false,
+      requestPayment: false,
+      dishBuffetId: null
+    }
   });
+
+  useEffect(() => {
+    if (table) {
+      const { id, capacity, number, status, dishBuffetId } = table;
+      form.reset({ id, capacity, changeToken: false, number, status, dishBuffetId });
+    }
+  }, [table, form]);
 
   const updateTableMutation = useUpdateTableMutation();
 
@@ -43,7 +62,7 @@ export default function EditTableForm({ id }: { id: string }) {
     try {
       const result = await updateTableMutation.mutateAsync(body);
       toast({
-        description: result.payload.message
+        description: tToast(result.payload.message as TMessageKeys<'t-toast'>)
       });
       router.push('/manage/tables');
     } catch (error: any) {

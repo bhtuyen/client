@@ -4,6 +4,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react';
 
 import type { TMessageKeys } from '../../../types/message.type';
 
+import DarkModeToggle from '@/components/dark-mode-toggle';
 import { SwitchLanguage } from '@/components/switch-language';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
@@ -72,8 +73,9 @@ export default function ManageHeader() {
           })}
         </BreadcrumbList>
       </Breadcrumb>
-      <div className='ml-auto'>
+      <div className='ml-auto flex gap-4 items-center'>
         <SwitchLanguage />
+        <DarkModeToggle />
       </div>
     </header>
   );

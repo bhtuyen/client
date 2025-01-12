@@ -1,4 +1,12 @@
-import type { CreateTable, TableDtoDetailRes, TableDtoDetailsRes, TableRes, TablesRes, UpdateTable } from '@/schemaValidations/table.schema';
+import type {
+  CreateTable,
+  ModeBuffet,
+  TableDtoDetailRes,
+  TableDtoDetailsRes,
+  TableRes,
+  TablesRes,
+  UpdateTable
+} from '@/schemaValidations/table.schema';
 
 import http from '@/lib/http';
 
@@ -9,6 +17,7 @@ export const tableApiRequets = {
   getById: (id: string) => http.get<TableRes>(`${prefix}/${id}`),
   create: (body: CreateTable) => http.post<TableRes>(`${prefix}`, body),
   update: (body: UpdateTable) => http.put<TableRes>(`${prefix}/${body.id}`, body),
+  updateBuffetMode: (body: ModeBuffet) => http.put<TableRes>(`${prefix}/buffet-mode`, body),
   delete: (id: string) => http.delete<TableRes>(`${prefix}/${id}`),
   getTablesDetailNow: () => http.get<TableDtoDetailsRes>(`${prefix}/detail-now`),
   getTableDetailNow: (number: string) => http.get<TableDtoDetailRes>(`${prefix}/detail-now/${number}`),

@@ -28,6 +28,7 @@ export type StoreType = {
   createConnectSocket: (accessToken: string) => void;
   disconnectSocket: () => void;
   cart: DishInCart[];
+  setCart: (dishes: DishInCart[]) => void;
   pushToCart: (dishes: DishInCart[]) => void;
   removeDishesFromCart: (dishIds: string[]) => void;
   changeQuantity: (dishId: string, quantity: number) => void;

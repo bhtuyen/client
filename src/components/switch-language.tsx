@@ -26,7 +26,14 @@ export function SwitchLanguage() {
         <SelectGroup>
           {locales.map((locale) => {
             return (
-              <SelectItem key={locale} value={locale}>
+              <SelectItem
+                key={locale}
+                value={locale}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }}
+              >
                 <SelectLabel>{tSwitchLanguage(locale)}</SelectLabel>
               </SelectItem>
             );

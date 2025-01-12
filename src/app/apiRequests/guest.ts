@@ -2,10 +2,11 @@ import { stringify } from 'querystring';
 
 import type { Logout, RefreshToken, RefreshTokenRes } from '@/schemaValidations/auth.schema';
 import type { MessageRes, Period } from '@/schemaValidations/common.schema';
-import type { GuestCreateOrders, GuestLogin, GuestLoginRes, GuestsRes } from '@/schemaValidations/guest.schema';
+import type { CallStaff, RequestPayment } from '@/schemaValidations/guest.schema';
 import type { OrdersDtoDetailRes } from '@/schemaValidations/order.schema';
 
 import http from '@/lib/http';
+import { type GuestCreateOrders, type GuestLogin, type GuestLoginRes, type GuestsRes } from '@/schemaValidations/guest.schema';
 
 const prefix = 'guest';
 
@@ -37,7 +38,9 @@ const guestApiRequest = {
   },
   orders: (body: GuestCreateOrders) => http.post<OrdersDtoDetailRes>(`/${prefix}/orders`, body),
   getGuests: ({ fromDate, toDate }: Period) =>
-    http.get<GuestsRes>(`${prefix}/?${stringify({ fromDate: fromDate?.toISOString(), toDate: toDate?.toISOString() })}`)
+    http.get<GuestsRes>(`${prefix}/?${stringify({ fromDate: fromDate?.toISOString(), toDate: toDate?.toISOString() })}`),
+  callStaff: (body: CallStaff) => http.post<MessageRes>(`/${prefix}/call-staff`, body),
+  requestPayment: (body: RequestPayment) => http.post<MessageRes>(`/${prefix}/request-payment`, body)
 };
 
 export default guestApiRequest;

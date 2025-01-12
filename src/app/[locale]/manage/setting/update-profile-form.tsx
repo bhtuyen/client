@@ -26,7 +26,7 @@ export default function UpdateProfileForm() {
 
   const form = useForm<UpdateMe>({
     resolver: zodResolver(updateMe),
-    defaultValues: {
+    values: {
       name: '',
       avatar: undefined
     },
@@ -83,6 +83,8 @@ export default function UpdateProfileForm() {
       });
 
       refetch();
+
+      setDisabled(true);
     } catch (error: any) {
       handleErrorApi({ error, setError: form.setError });
     }
@@ -144,7 +146,7 @@ export default function UpdateProfileForm() {
               name='name'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{tForm('name')}</FormLabel>
+                  <FormLabel required>{tForm('name')}</FormLabel>
                   <FormControl>
                     <Input type='name' {...field} IconLeft={User} />
                   </FormControl>

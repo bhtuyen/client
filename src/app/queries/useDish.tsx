@@ -33,6 +33,14 @@ export const useDishesOrderQuery = () => {
   });
 };
 
+export const useDishBuffetQuery = (dishBuffetId: string | null, enabled: boolean) => {
+  return useQuery({
+    queryKey: ['dish-buffet', dishBuffetId],
+    queryFn: () => dishApiRequets.getDishBuffet(dishBuffetId),
+    enabled
+  });
+};
+
 export const useCreateDishMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({

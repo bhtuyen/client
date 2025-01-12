@@ -1,20 +1,24 @@
 'use client';
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import type { GroupDetail } from '@/app/[locale]/guest/tables/[number]/menu/dish.service';
+import type { GroupDetail } from '@/app/[locale]/guest/tables/[tableNumber]/menu/dish.service';
+import type { OrderDtoDetail } from '@/schemaValidations/order.schema';
 import type { TMessageKeys } from '@/types/message.type';
 import type { MutableRefObject } from 'react';
 
-import AddToCartDialog from '@/app/[locale]/guest/tables/[number]/menu/add-to-cart-dialog';
-import useDishService from '@/app/[locale]/guest/tables/[number]/menu/dish.service';
-import { useDishesOrderQuery } from '@/app/queries/useDish';
+import AddToCartDialog from '@/app/[locale]/guest/tables/[tableNumber]/menu/add-to-cart-dialog';
+import useDishService from '@/app/[locale]/guest/tables/[tableNumber]/menu/dish.service';
+import { useDishBuffetQuery, useDishesOrderQuery } from '@/app/queries/useDish';
+import { useTableQuery } from '@/app/queries/useTable';
+import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DishCategory } from '@/constants/enum';
+import { toast } from '@/hooks/use-toast';
 import { cn, formatCurrency } from '@/lib/utils';
 
 type MenuTabsType = {
@@ -25,18 +29,23 @@ type MenuTabsType = {
   data: GroupDetail[];
 };
 
-export default function MenuTabs({ number }: { number: string }) {
+export default function MenuTabs({ tableNumber }: { tableNumber: string }) {
   const [activeTab, setActiveTab] = useState<MenuTabsType['value']>(DishCategory.Paid);
   const [groupActive, setGroupActive] = useState<string | null>(null);
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const [hasBuffet, setHasBuffet] = useState(false);
+  const { socket } = useAppStore();
 
-  // dishes query paid
+  const { data, refetch } = useTableQuery(tableNumber);
   const dishesOrderQuery = useDishesOrderQuery();
 
-  const dishesPaid = dishesOrderQuery.data?.payload.data || [];
+  const dishBuffetId = useMemo(() => data?.payload.data?.dishBuffetId ?? null, [data]);
 
-  const { groupDetails } = useDishService(dishesPaid);
+  const dishBuffetQuery = useDishBuffetQuery(dishBuffetId, !!dishBuffetId);
+
+  const dishesPaid = dishesOrderQuery.data?.payload.data || [];
+  const dishBuffets = dishBuffetQuery.data?.payload.data || [];
+
+  const groupBuffetDetails = useDishService(dishBuffets);
+  const groupPayDetails = useDishService(dishesPaid);
 
   const viewBuffetRef = useRef<HTMLDivElement | null>(null);
   const viewPaidRef = useRef<HTMLDivElement | null>(null);
@@ -44,14 +53,16 @@ export default function MenuTabs({ number }: { number: string }) {
   // list of tabs
   const tabsList = useMemo<Array<MenuTabsType>>(
     () => [
-      { value: DishCategory.Buffet, key: 'buffet-dish', disabled: !hasBuffet, viewRef: viewBuffetRef, data: groupDetails },
-      { value: DishCategory.Paid, key: 'paid-dish', disabled: false, viewRef: viewPaidRef, data: groupDetails }
+      { value: DishCategory.Buffet, key: 'buffet-dish', disabled: !dishBuffetId, viewRef: viewBuffetRef, data: groupBuffetDetails },
+      { value: DishCategory.Paid, key: 'paid-dish', disabled: false, viewRef: viewPaidRef, data: groupPayDetails }
     ],
-    [groupDetails, hasBuffet]
+    [groupPayDetails, dishBuffetId, groupBuffetDetails]
   );
 
   // translate
   const tTab = useTranslations('t-tab');
+  const tMessage = useTranslations('t-message');
+  const tOrderStatus = useTranslations('order-status');
 
   const scrollToGroup = (href: string, viewRef: MutableRefObject<HTMLDivElement | null>) => {
     const view = viewRef.current;
@@ -64,6 +75,39 @@ export default function MenuTabs({ number }: { number: string }) {
       });
     }
   };
+
+  useEffect(() => {
+    function onUpadteOrder(data: OrderDtoDetail) {
+      const {
+        dishSnapshot: { name },
+        quantity,
+        status
+      } = data;
+
+      toast({
+        description: tMessage('update-order', { name, quantity, status: tOrderStatus(status) })
+      });
+    }
+    function onPayment() {
+      toast({
+        description: `Bạn đã thanh toán thành công`
+      });
+    }
+
+    function onBuffetMode(dishBuffetId: string) {
+      refetch();
+      if (!dishBuffetId) setActiveTab(DishCategory.Paid);
+    }
+
+    socket?.on('update-order', onUpadteOrder);
+    socket?.on('payment', onPayment);
+    socket?.on('buffet-mode', onBuffetMode);
+
+    return () => {
+      socket?.off('update-order', onUpadteOrder);
+      socket?.off('payment', onPayment);
+    };
+  }, [socket, tMessage, tOrderStatus, refetch]);
 
   return (
     <Tabs className='h-[calc(100%_-_3.5rem)] text-black' value={activeTab} onValueChange={(value) => setActiveTab(value as MenuTabsType['value'])}>

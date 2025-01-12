@@ -8,9 +8,12 @@ import { guestDto } from '@/schemaValidations/guest.schema';
 
 const table = z
   .object({
-    number: z.string().trim().min(1).max(50),
-    capacity: z.coerce.number().positive().min(1).max(20),
+    number: z.string().trim().min(1, 'table-number-min').max(50, 'table-number-max'),
+    capacity: z.coerce.number().min(1, 'table-capacity-min').max(20, 'table-capacity-max'),
     status: z.nativeEnum(TableStatus),
+    dishBuffetId: z.string().uuid().nullable(),
+    requestPayment: z.boolean(),
+    callStaff: z.boolean(),
     token: z.string()
   })
   .merge(updateAndCreate)

@@ -4,19 +4,21 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import type { DishDtoDetailChoose, DishChooseBody } from '@/schemaValidations/dish.schema';
+import type { DishDtoDetailChoose, DishChooseBody, DishGroupDto } from '@/schemaValidations/dish.schema';
 import type { TMessageKeys } from '@/types/message.type';
 import type { ColumnDef } from '@tanstack/react-table';
 
-import { useDishesChooseQuery } from '@/app/queries/useDish';
+import { useDishesChooseQuery, useDishGroupQuery } from '@/app/queries/useDish';
 import TButton from '@/components/t-button';
 import TDataTable from '@/components/t-data-table';
 import TImage from '@/components/t-image';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
-import { buildKey, getOptions, getPrice } from '@/lib/utils';
+import { DishCategory } from '@/constants/enum';
+import { buildKey, getEnumValues, getOptions, getPriceString } from '@/lib/utils';
 type ChooseDishTableProps = {
   dishChooseBody: DishChooseBody;
   submit?: (dishes: DishDtoDetailChoose[]) => void;
@@ -45,6 +47,14 @@ export default function ChooseDishTable({
   const [open, setOpen] = useState(false);
   const [dishesChoose, setDishesChoose] = useState<DishChoose[]>([]);
   const { data } = useDishesChooseQuery(dishChooseBody, open);
+  const [groupNames, setGroupNames] = useState<DishGroupDto[]>([]);
+
+  const dishGroupQuery = useDishGroupQuery();
+  const dishGroups = useMemo(() => dishGroupQuery.data?.payload.data || [], [dishGroupQuery.data]);
+
+  useEffect(() => {
+    setGroupNames(dishGroups);
+  }, [dishGroups]);
 
   useEffect(() => {
     if (data && open) {
@@ -69,10 +79,12 @@ export default function ChooseDishTable({
   );
 
   const tTableColumn = useTranslations('t-data-table.column');
+  const tTablePlaceholder = useTranslations('t-data-table.placeholder');
   const tDishStatus = useTranslations('dish-status');
   const tButton = useTranslations('t-button');
   const tSheet = useTranslations('t-sheet');
   const tDishCategory = useTranslations('dish-category');
+  const tFilter = useTranslations('t-data-table.filter');
 
   const handleUpdateOptions = (id: string, value: string) => {
     setDishesChoose((prev) => prev.map((dish) => (dish.id === id ? { ...dish, newOptions: value } : dish)));
@@ -130,7 +142,7 @@ export default function ChooseDishTable({
       {
         accessorKey: 'price',
         header: () => <div className='text-right w-[100px]'>{tTableColumn('price')}</div>,
-        cell: ({ row }) => <div className='text-right w-[100px]'>{getPrice(row.original)}</div>
+        cell: ({ row }) => <div className='text-right w-[100px]'>{getPriceString(row.original)}</div>
       },
       {
         accessorKey: 'category',
@@ -138,7 +150,7 @@ export default function ChooseDishTable({
         cell: ({ row }) => <div className='text-center w-[100px]'>{tDishCategory(row.original.category)}</div>
       },
       {
-        accessorKey: 'group',
+        accessorKey: 'groupId',
         id: 'group-name',
         header: () => <div className='text-center w-[100px]'>{tTableColumn('group-name')}</div>,
         cell: ({ row }) => <div className='text-center w-[100px]'>{row.original.group.name}</div>
@@ -169,7 +181,7 @@ export default function ChooseDishTable({
                 value={row.original.newOptions}
                 onChange={(e) => handleUpdateOptions(row.original.id, e.target.value)}
                 onKeyDown={(e) => {}}
-                placeholder='Tùy chọn'
+                placeholder={tTablePlaceholder('more-options')}
               />
             </ul>
           </div>
@@ -182,6 +194,7 @@ export default function ChooseDishTable({
       },
       {
         accessorKey: 'quantity',
+        id: 'quantity',
         header: () => <div className='text-center w-[100px]'>{tTableColumn('quantity')}</div>,
         cell: ({ row }) => (
           <div
@@ -222,12 +235,12 @@ export default function ChooseDishTable({
         )
       }
     ],
-    [tTableColumn, tDishCategory, tDishStatus, updateQuantity]
+    [tTableColumn, tDishCategory, tDishStatus, updateQuantity, tTablePlaceholder]
   );
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <TButton variant='outline' type='button'>
+        <TButton variant='outline' type='button' className='mr-2 max-[1366px]:mr-0'>
           {tButton(triggerKey)}
         </TButton>
       </SheetTrigger>
@@ -243,6 +256,52 @@ export default function ChooseDishTable({
           className='!h-[calc(100%_-_6.75rem)] mb-2'
           columns={columns}
           filter={{ placeholder: { key: 'input-placeholder-dish' }, columnId: 'name' }}
+          filterCustom={(table) => {
+            return (
+              <div className='flex gap-2 items-center'>
+                <Select
+                  onValueChange={(value) => {
+                    const categoryCol = table.getColumn('category');
+                    if (categoryCol) {
+                      categoryCol.setFilterValue(value);
+                    }
+                  }}
+                  value={(table.getColumn('category')?.getFilterValue() as string) ?? ''}
+                >
+                  <SelectTrigger className='min-w-60'>
+                    <SelectValue placeholder={tFilter('select-placeholder-category')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getEnumValues(DishCategory).map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {tDishCategory(category)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  onValueChange={(value) => {
+                    const groupNameCol = table.getColumn('group-name');
+                    if (groupNameCol) {
+                      groupNameCol.setFilterValue(value);
+                    }
+                  }}
+                  value={(table.getColumn('group-name')?.getFilterValue() as string) ?? ''}
+                >
+                  <SelectTrigger className='min-w-60'>
+                    <SelectValue placeholder={tFilter('select-placeholder-group-name')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {groupNames.map(({ id, name }) => (
+                      <SelectItem key={id} value={id}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            );
+          }}
           hideColumn={hideColumn}
           onlyOneSelected={onlyOneSelected}
         />
@@ -257,9 +316,10 @@ export default function ChooseDishTable({
                     ...dish,
                     options: capitalize(
                       dish.optionsCheckbox
-                        .filter(({ enabled }) => enabled)
+                        .filter(({ enabled, value }) => enabled && value && value.trim())
                         .map(({ value }) => value)
                         .concat([dish.newOptions ?? ''])
+                        .filter((value) => value && value.trim())
                         .join(', ')
                     )
                   }))

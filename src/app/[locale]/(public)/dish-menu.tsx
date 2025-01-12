@@ -11,7 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { DishCategory } from '@/constants/enum';
-import { cn, getPrice } from '@/lib/utils';
+import { cn, getPriceString } from '@/lib/utils';
 
 type DishGroupByCategory = {
   [DishCategory.Paid]: DishDtoComboDetail[];
@@ -247,7 +247,7 @@ export default function DishMenu() {
                 <div key={id} className='flex flex-col gap-2 items-center'>
                   <TImage src={image} alt={name} className='w-full object-cover rounded-md' />
                   <div className='text-center'>{name}</div>
-                  <div className='text-muted-foreground'>{getPrice({ price, category })}</div>
+                  <div className='text-muted-foreground'>{getPriceString({ price, category })}</div>
                 </div>
               ));
             }
@@ -266,7 +266,7 @@ export default function DishMenu() {
                   <div key={id} className='flex flex-col gap-2 items-center'>
                     <TImage src={image} alt={name} className='w-full object-cover rounded-md' />
                     <div className='text-center'>{name}</div>
-                    {category !== DishCategory.Buffet && <div className='text-muted-foreground'>{getPrice({ price, category })}</div>}
+                    {category !== DishCategory.Buffet && <div className='text-muted-foreground'>{getPriceString({ price, category })}</div>}
                   </div>
                 ));
               }
@@ -276,7 +276,7 @@ export default function DishMenu() {
                   <TImage src={image} alt={name} className='w-full object-cover rounded-md' width={100} height={100} quality={100} />
                   <div className='flex flex-col gap-3 pr-2'>
                     <h2 className='text-2xl font-bold'>{name}</h2>
-                    <p className='text-lg'>{`${getPrice({ price, category })}/người`}</p>
+                    <p className='text-lg'>{`${getPriceString({ price, category })}/người`}</p>
                     <i className='text-sm text-muted-foreground'>{tInfo('price-no-vat')}</i>
                     <Separator />
                   </div>

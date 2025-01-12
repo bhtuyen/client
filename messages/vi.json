@@ -62,7 +62,10 @@
       "delete-table": "Xóa bàn ăn",
       "delete-account": "Xóa nhân viên",
       "logout": "Đăng xuất",
-      "payment": "Thanh toán"
+      "payment": "Thanh toán",
+      "on-buffet": "Cho phép gọi món Buffet",
+      "off-buffet": "Hủy gọi món Buffet",
+      "request-payment": "Thanh toán"
     },
     "description": {
       "default": "Mô tả",
@@ -72,11 +75,45 @@
       "delete-table": "Bạn có chắc chắn muốn xóa bàn {name} không?",
       "delete-account": "Bạn có chắc chắn muốn xóa nhân viên {name} không?",
       "logout": "Bạn có chắc chắn muốn đăng xuất không?",
-      "payment": "Bạn có chắc chắn muốn thanh toán cho bàn {number} không?"
+      "payment": "Bạn có chắc chắn muốn thanh toán cho bàn {number} không?",
+      "on-buffet": "Bạn có chắc chắn muốn cho phép gọi món buffet cho bàn {number} không?",
+      "off-buffet": "Bạn có chắc chắn muốn hủy gọi món buffet cho bàn {number} không?",
+      "request-payment": "Bạn có chắc chắn muốn gọi thanh toán không?"
     }
   },
   "message-validation": {
-    "invalid-email": "Email không hợp lệ"
+    "invalid-data": "Dữ liệu không hợp lệ",
+
+    "invalid-email": "Email không hợp lệ",
+    "email-required": "Email là bắt buộc",
+
+    "password-required": "Mật khẩu là bắt buộc",
+    "password-required-min": "Mật khẩu là bắt buộc và phải có ít nhất 6 ký tự",
+    "password-max": "Mật khẩu phải có tối đa 100 ký tự",
+    "old-password-invalid": "Mật khẩu cũ không đúng",
+
+    "confirm-password-required": "Xác nhận mật khẩu là bắt buộc",
+    "confirm-password-required-min": "Xác nhận mật khẩu là bắt buộc và phải có ít nhất 6 ký tự",
+    "confirm-password-max": "Xác nhận mật khẩu phải có tối đa 100 ký tự",
+    "confirm-password-not-match": "Xác nhận mật khẩu không khớp với mật khẩu",
+
+    "name-required": "Tên là bắt buộc",
+    "name-max": "Tên phải có tối đa 100 ký tự",
+
+    "table-number-min": "Số bàn phải có ít nhất 1 ký tự",
+    "table-number-max": "Số bàn phải có tối đa 50 ký tự",
+    "table-capacity-min": "Sức chứa bàn nhỏ 1 người",
+    "table-capacity-max": "Sức chứa bàn tối đa 20 người",
+    "table-number-exist": "Số bàn đã tồn tại",
+
+    "phone-required-min": "Số điện thoại chưa đúng",
+    "phone-max": "Số điện thoại không quá 20 số",
+    "phone-only-include-number": "Số điện thoại chỉ bao gồm số",
+
+    "group-required": "Nhóm là bắt buộc",
+
+    "price-required": "Giá là bắt buộc",
+    "price-positive": "Giá phải lớn hơn 0"
   },
   "role": {
     "Owner": "Quản lý",
@@ -219,6 +256,7 @@
       "qr-code": "Mã QR",
       "create-update": "Tạo/Cập nhật",
       "dish-name": "Tên món ăn",
+      "dish": "Món ăn",
       "order-handler": "Người xử lý",
       "options": "Tùy chọn",
       "quantity": "Số lượng"
@@ -227,10 +265,13 @@
       "toggle-column": "Chọn cột"
     },
     "filter": {
-      "input-placeholder-default": "Tìm kiếm...",
-      "input-placeholder-employee": "Tìm kiếm theo email...",
-      "input-placeholder-dish": "Tìm kiếm theo tên món...",
-      "input-placeholder-table": "Tìm kiếm theo tên bàn..."
+      "input-placeholder-default": "Tìm kiếm",
+      "input-placeholder-employee": "Tìm kiếm theo email",
+      "input-placeholder-dish": "Tìm kiếm theo tên món",
+      "input-placeholder-table": "Tìm kiếm theo tên bàn",
+      "select-placeholder-category": "Tìm kiếm theo loại món",
+      "select-placeholder-status": "Tìm kiếm theo trạng thái",
+      "select-placeholder-group-name": "Tìm kiếm theo tên nhóm"
     },
     "no-data": "Không có dữ liệu.",
     "no-result": "Không tìm thấy kết quả phù hợp.",
@@ -239,6 +280,9 @@
       "page-info": "Trang {page}/{total}",
       "row-selected-info": "Đã chọn {selected}/{count} bản ghi",
       "total-row": "Tổng số {count} bản ghi"
+    },
+    "placeholder": {
+      "more-options": "Thêm tùy chọn"
     }
   },
   "t-form": {
@@ -284,7 +328,7 @@
       "options": "Tùy chọn",
       "your-request": "Yêu cầu của bạn"
     },
-    "table-number": "Bàn {number}",
+    "table-number": "Bàn {tableNumber}",
     "choose-language": "Chọn ngôn ngữ để tiếp tục"
   },
   "t-sheet": {
@@ -319,6 +363,47 @@
     "delivered-order-tooltip": "Đơn hàng đã phục vụ: {orders} đơn",
     "rejected-order-tooltip": "Đơn hàng đã từ chối: {orders} đơn",
     "table-ready": "Sẵn sàng",
-    "price-no-vat": "(Giá chưa bao gồm VAT)"
+    "price-no-vat": "(Giá chưa bao gồm VAT)",
+    "note": "Ghi chú",
+    "total-price": "Tổng tiền: {amount}",
+    "number-of-dishes": "Tổng số món: {number}",
+    "has-buffet": "Cho phép gọi món buffet",
+    "payment-for-table": "Thanh toán cho bàn {number}",
+    "instruction-for-payment": "Hướng dẫn thanh toán qua chuyển khoản ngân hàng",
+    "method-1": "Cách 1: Mở app ngân hàng và quét mã QR",
+    "method-2": "Cách 2: Chuyển khoản thủ công theo thông tin",
+    "payment-success": "Thanh toán thành công",
+    "waiting-for-payment": "Chờ thanh toán...",
+    "vietinbank": "Ngân hàng VietinBank",
+    "status": "Trạng thái: ",
+    "account-holder": "Chủ tài khoản: ",
+    "account-number": "Số TK: ",
+    "amount-to-pay": "Số tiền: ",
+    "description-for-payment": "Nội dung chuyển khoản: ",
+    "note-for-payment": "Lưu ý: Vui lòng giữ nguyên nội dung chuyển khoản để hệ thống tự động xác nhận thanh toán",
+    "order-information": "Thông tin đơn hàng",
+    "total": "Tổng cộng"
+  },
+  "t-toast": {
+    "create-table-success": "Tạo bàn ăn thành công",
+    "update-table-success": "Cập nhật bàn ăn thành công",
+    "delete-table-success": "Xóa bàn ăn thành công",
+    "create-table-fail": "Tạo bàn ăn thất bại",
+    "update-table-fail": "Cập nhật bàn ăn thất bại",
+    "delete-table-fail": "Xóa bàn ăn thất bại",
+
+    "on-buffet-mode": "Cho phép bàn {tableNumber} gọi món buffet thành công",
+    "off-buffet-mode": "Hủy gọi món buffet cho bàn {tableNumber} thành công",
+
+    "call-staff-success": "Gọi thành công, nhân viên sẽ đến ngay",
+    "call-staff-fail": "Gọi nhân viên thất bại, vui lòng thử lại sau",
+    "guest-call-staff": "Bàn {tableNumber} vừa gọi nhân viên",
+
+    "request-payment-success": "Thành công, vui lòng chờ nhân viên đến để thanh toán",
+    "request-payment-fail": "Gọi thanh toán thất bại, vui lòng thử lại sau",
+    "guest-request-payment": "Bàn {tableNumber} vừa gọi thanh toán"
+  },
+  "t-date-range": {
+    "placeholder": "Chọn ngày"
   }
 }

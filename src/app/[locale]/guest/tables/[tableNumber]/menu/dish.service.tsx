@@ -9,9 +9,7 @@ export type GroupDetail = {
   href: string;
   dishes: DishDto[];
 };
-type DishService = {
-  groupDetails: GroupDetail[];
-};
+type DishService = GroupDetail[];
 
 export default function useDishService(dishes: DishDtoComboDetail[]): DishService {
   const groupDetails = useMemo(() => {
@@ -38,5 +36,5 @@ export default function useDishService(dishes: DishDtoComboDetail[]): DishServic
     );
   }, [dishes]);
 
-  return { groupDetails };
+  return groupDetails;
 }

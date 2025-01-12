@@ -6,7 +6,7 @@ import slugify from 'slugify';
 import { twMerge } from 'tailwind-merge';
 
 import type { Period } from '@/schemaValidations/common.schema';
-import type { DishDto, DishSnapshotDto } from '@/schemaValidations/dish.schema';
+import type { DishDto, DishDtoDetailChoose, DishSnapshotDto } from '@/schemaValidations/dish.schema';
 import type { TokenPayload } from '@/types/jwt.types';
 import type { TMessKey, TMessageOption, TNamespaceKeys, TranslationFunctionParams } from '@/types/message.type';
 import type { UseFormSetError } from 'react-hook-form';
@@ -126,8 +126,28 @@ export const formatCurrency = (number: number) => {
   }).format(number);
 };
 
-export const getPrice = (dish: DishSnapshotDto | DishDto | { price: number | undefined; category: DishCategory }) => {
+export const getPriceString = (dish: DishSnapshotDto | DishDto | { price: number | undefined; category: DishCategory } | DishDtoDetailChoose) => {
   return dish.category === DishCategory.Buffet ? DishCategory.Buffet : formatCurrency(dish.price ?? 0);
+};
+
+export const getPrice = (dish: DishSnapshotDto | DishDto | { price: number | undefined; category: DishCategory } | DishDtoDetailChoose) => {
+  return dish.category === DishCategory.Buffet ? 0 : (dish.price ?? 0);
+};
+
+export const getTotalPrice = (
+  dishes: (DishSnapshotDto | DishDto | { price: number | undefined; category: DishCategory } | DishDtoDetailChoose)[]
+) => {
+  return formatCurrency(
+    dishes.reduce((acc, dish) => {
+      return acc + ('quantity' in dish ? getPrice(dish) * dish.quantity : getPrice(dish));
+    }, 0)
+  );
+};
+
+export const getTotalQuantity = (dishes: DishDtoDetailChoose[]) => {
+  return dishes.reduce((acc, dish) => {
+    return acc + dish.quantity;
+  }, 0);
 };
 
 export const getTableLink = ({ token, tableNumber, locale }: { token: string; tableNumber: string; locale: string }) => {
@@ -220,7 +240,7 @@ export function isMessageOption<T extends TNamespaceKeys = TNamespaceKeys>(value
 }
 export const periodDefault: Period = {
   fromDate: startOfDay(new Date('2024-01-01')),
-  toDate: endOfDay(new Date())
+  toDate: endOfDay(new Date('2025-12-31'))
 };
 export const getOptions = (options: string | null | undefined) => {
   if (!options) return [];

@@ -49,15 +49,17 @@ interface TToolbarProps<TData> {
     placeholder: TMessKey<'t-data-table.filter'>;
     columnId: string;
   };
+
+  filterCustom?: (table: TableType<TData>) => ReactNode;
 }
 
 interface TFilterProps<TData> {
   table: TableType<TData>;
-
   filter?: {
     placeholder: TMessKey<'t-data-table.filter'>;
     columnId: string;
   };
+  filterCustom?: (table: TableType<TData>) => ReactNode;
 }
 
 interface TOptionProps<TData> {
@@ -73,6 +75,8 @@ interface TTableProps<TData, TValue> {
     placeholder: TMessKey<'t-data-table.filter'>;
     columnId: string;
   };
+
+  filterCustom?: (table: TableType<TData>) => ReactNode;
   selected?: TData[];
   setRowsSelected?: (rowsSelected: TData[]) => void;
   onlyOneSelected?: boolean;
@@ -95,7 +99,8 @@ export default function TDataTable<TData, TValue>({
   hasDbClickToSelect = false,
   setRowsSelected,
   onlyOneSelected = false,
-  hideColumn = []
+  hideColumn = [],
+  filterCustom
 }: TTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -110,8 +115,8 @@ export default function TDataTable<TData, TValue>({
     state: {
       sorting,
       columnVisibility,
-      rowSelection,
-      columnFilters
+      columnFilters,
+      rowSelection
     },
     enableRowSelection: true,
     autoResetPageIndex: false,
@@ -145,7 +150,7 @@ export default function TDataTable<TData, TValue>({
 
   return (
     <div className={`flex flex-col gap-2 w-full h-full ${className} select-none`}>
-      <TToolbar table={table} filter={filter}>
+      <TToolbar table={table} filter={filter} filterCustom={filterCustom}>
         {childrenToolbar}
       </TToolbar>
       <Table>
@@ -207,18 +212,22 @@ export function TFilter<TData>({
   filter = {
     placeholder: 'input-placeholder-default',
     columnId: 'name'
-  }
+  },
+  filterCustom
 }: TFilterProps<TData>) {
   const { columnId: column, placeholder } = filter;
   const tTableFilter = useTranslations('t-data-table.filter');
   return (
-    <Input
-      placeholder={tTableFilter(...getArguments(placeholder))}
-      value={(table.getColumn(column)?.getFilterValue() as string) ?? ''}
-      onChange={(event) => table.getColumn(column)?.setFilterValue(event.target.value)}
-      className='max-w-sm h-8'
-      IconLeft={Search}
-    />
+    <div className='flex items-center gap-2'>
+      <Input
+        placeholder={tTableFilter(...getArguments(placeholder))}
+        value={(table.getColumn(column)?.getFilterValue() as string) ?? ''}
+        onChange={(event) => table.getColumn(column)?.setFilterValue(event.target.value)}
+        className='max-w-sm min-w-60'
+        IconLeft={Search}
+      />
+      {filterCustom && filterCustom(table)}
+    </div>
   );
 }
 export function TOption<TData>({ table }: TOptionProps<TData>) {
@@ -228,7 +237,7 @@ export function TOption<TData>({ table }: TOptionProps<TData>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <TButton variant='outline' size='sm'>
+        <TButton variant='outline'>
           <Settings2 />
           {tButton('customize')}
         </TButton>
@@ -255,11 +264,11 @@ export function TOption<TData>({ table }: TOptionProps<TData>) {
     </DropdownMenu>
   );
 }
-export function TToolbar<TData>({ table, children, filter }: TToolbarProps<TData>) {
+export function TToolbar<TData>({ table, children, filter, filterCustom }: TToolbarProps<TData>) {
   return (
     <div className='flex items-center justify-between'>
       <div className='flex items-center gap-2'>
-        <TFilter table={table} filter={filter} />
+        <TFilter table={table} filter={filter} filterCustom={filterCustom} />
         <TOption table={table} />
       </div>
       {children}

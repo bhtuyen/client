@@ -15,7 +15,7 @@ export const id = z.object({
 });
 export const idParam = id.pick({ id: true });
 export const name = z.object({
-  name: z.string().trim().min(1).max(255)
+  name: z.string().trim().min(1, 'name-required').max(255, 'name-max')
 });
 export const buildReply = <T>(data: z.ZodType<T>) => {
   return message.merge(z.object({ data }));

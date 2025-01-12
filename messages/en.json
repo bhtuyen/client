@@ -62,7 +62,10 @@
       "delete-table": "Delete table",
       "delete-account": "Delete employee",
       "logout": "Logout",
-      "payment": "Payment"
+      "payment": "Payment",
+      "on-buffet": "Enable buffet",
+      "off-buffet": "Disable buffet",
+      "request-payment": "Request payment"
     },
     "description": {
       "default": "Description",
@@ -72,12 +75,45 @@
       "delete-table": "Are you sure you want to delete table {name}?",
       "delete-account": "Are you sure you want to delete account {name}?",
       "logout": "Are you sure you want to logout?",
-      "payment": "Are you sure you want to payment for table {number}?"
+      "payment": "Are you sure you want to payment for table {number}?",
+      "on-buffet": "Are you sure you want to enable buffet for table {number}?",
+      "off-buffet": "Are you sure you want to disable buffet for table {number}?",
+      "request-payment": "Are you sure you want to request payment?"
     }
   },
-
   "message-validation": {
-    "invalid-email": "Invalid email"
+    "invalid-data": "Invalid data",
+
+    "invalid-email": "Invalid email",
+    "email-required": "Email is required",
+
+    "password-required": "Password is required",
+    "password-required-min": "Password is required and must be at least 6 characters",
+    "password-max": "Password must be at most 100 characters",
+    "old-password-invalid": "Old password is invalid",
+
+    "confirm-password-required": "Confirm password is required",
+    "confirm-password-required-min": "Confirm password is required and must be at least 6 characters",
+    "confirm-password-max": "Confirm password must be at most 100 characters",
+    "confirm-password-not-match": "Confirm password not match",
+
+    "name-required": "Name is required",
+    "name-max": "Name must be at most 255 characters",
+
+    "table-number-min": "Table number must be include at least 1 character",
+    "table-number-max": "Table number must be at most 50 characters",
+    "table-capacity-min": "Table capacity must be at least 1",
+    "table-capacity-max": "Table capacity must be at most 20",
+    "table-number-exist": "Table number is exist",
+
+    "phone-required-min": "Phone is required and must be at least 10 characters",
+    "phone-max": "Phone must be at most 15 characters",
+    "phone-only-include-number": "Phone only include number",
+
+    "group-required": "Group is required",
+
+    "price-required": "Price is required",
+    "price-positive": "Price must be positive"
   },
   "role": {
     "Owner": "Owner",
@@ -219,6 +255,7 @@
       "qr-code": "QR code",
       "create-update": "Create/Update",
       "dish-name": "Dish name",
+      "dish": "Dish",
       "order-handler": "Order handler",
       "options": "Options",
       "quantity": "Quantity"
@@ -227,10 +264,13 @@
       "toggle-column": "Toggle column"
     },
     "filter": {
-      "input-placeholder-default": "Search...",
-      "input-placeholder-employee": "Search by email...",
-      "input-placeholder-dish": "Search by name...",
-      "input-placeholder-table": "Search by table number..."
+      "input-placeholder-default": "Search",
+      "input-placeholder-employee": "Search by email",
+      "input-placeholder-dish": "Search by name",
+      "input-placeholder-table": "Search by table number",
+      "select-placeholder-category": "Search by category",
+      "select-placeholder-status": "Search by status",
+      "select-placeholder-group-name": "Search by group name"
     },
     "no-data": "No data available.",
     "no-result": "No matching records found.",
@@ -239,6 +279,9 @@
       "page-info": "Page {page}/{total}",
       "row-selected-info": "{selected}/{count} rows selected",
       "total-row": "Total {count} rows"
+    },
+    "placeholder": {
+      "more-options": "More options"
     }
   },
   "t-form": {
@@ -284,7 +327,7 @@
       "options": "Options",
       "your-request": "Your request"
     },
-    "table-number": "Table {number}",
+    "table-number": "Table {tableNumber}",
     "choose-language": "Choose language to continue"
   },
   "t-sheet": {
@@ -319,6 +362,47 @@
     "delivered-order-tooltip": "Delivered order: {orders} orders",
     "rejected-order-tooltip": "Rejected order: {orders} orders",
     "table-ready": "Ready",
-    "price-no-vat": "(Price no VAT)"
+    "price-no-vat": "(Price no VAT)",
+    "note": "Note",
+    "total-price": "Total price: {amount}",
+    "number-of-dishes": "Number of dishes: {number}",
+    "has-buffet": "Has buffet",
+    "payment-for-table": "Payment for table {number}",
+    "instruction-for-payment": "Instructions for payment via bank transfer",
+    "method-1": "Method 1: Scan the QR code to pay",
+    "method-2": "Method 2: Transfer to the following account number",
+    "payment-success": "Payment success",
+    "waiting-for-payment": "Waiting for payment",
+    "vietinbank": "VietinBank",
+    "status": "Status: ",
+    "account-holder": "Account holder: ",
+    "account-number": "Account number: ",
+    "amount-to-pay": "Amount to pay: ",
+    "description-for-payment": "Transfer content: ",
+    "note-for-payment": "Note: Please keep the transfer content intact so that the system can automatically confirm the payment.",
+    "order-information": "Order information",
+    "total": "Total"
+  },
+  "t-toast": {
+    "create-table-success": "Create table successfully",
+    "update-table-success": "Update table successfully",
+    "delete-table-success": "Delete table successfully",
+    "create-table-fail": "Create table fail",
+    "update-table-fail": "Update table fail",
+    "delete-table-fail": "Delete table fail",
+
+    "on-buffet-mode": "Enable buffet mode for {tableNumber} successfully",
+    "off-buffet-mode": "Disable buffet mode for {tableNumber} successfully",
+
+    "call-staff-success": "Success, staff will come to your table soon",
+    "call-staff-fail": "Fail, please try again",
+    "guest-call-staff": "Guest of table {tableNumber} call staff",
+
+    "request-payment-success": "Success, please wait for staff",
+    "request-payment-fail": "Fail, please try again",
+    "guest-request-payment": "Guest of table {tableNumber} request payment"
+  },
+  "t-date-range": {
+    "placeholder": "Pick a date"
   }
 }

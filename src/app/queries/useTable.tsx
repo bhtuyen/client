@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import type { UpdateTable } from '@/schemaValidations/table.schema';
 
@@ -43,6 +43,12 @@ export const useUpdateTableMutation = () => {
   });
 };
 
+export const useUpdateBuffetModeMutation = () => {
+  return useMutation({
+    mutationFn: tableApiRequets.updateBuffetMode
+  });
+};
+
 export const useDeleteTableMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -56,7 +62,7 @@ export const useDeleteTableMutation = () => {
 };
 
 export const useGetTablesDetailNowQuery = () => {
-  return useSuspenseQuery({
+  return useQuery({
     queryKey: ['tables-detail-now'],
     queryFn: tableApiRequets.getTablesDetailNow
   });

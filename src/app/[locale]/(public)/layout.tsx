@@ -10,11 +10,9 @@ import { Link } from '@/i18n/routing';
 
 export default function PublicLayout({
   children,
-  modal,
   params: { locale }
 }: Readonly<{
   children: ReactNode;
-  modal: ReactNode;
   params: {
     locale: string;
   };
@@ -35,10 +33,7 @@ export default function PublicLayout({
           <DarkModeToggle />
         </div>
       </header>
-      <main className='max-w-[1500px] mx-auto w-full h-[calc(100%_-_4rem)]'>
-        {children}
-        {modal}
-      </main>
+      <main className='max-w-[1500px] mx-auto w-full h-[calc(100%_-_4rem)]'>{children}</main>
     </div>
   );
 }

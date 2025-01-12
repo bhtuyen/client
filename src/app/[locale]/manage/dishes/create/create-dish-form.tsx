@@ -2,10 +2,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Banknote, Loader, Minus, Plus, Salad, Tags, Upload, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import type { CreateDishCombo, DishDtoDetailChoose, DishChooseBody } from '@/schemaValidations/dish.schema';
+import type { CreateDishCombo, DishDtoDetailChoose, DishChooseBody, DishGroupDto } from '@/schemaValidations/dish.schema';
 
 import AddDishGroup from '@/app/[locale]/manage/dishes/add-dish-group';
 import ChooseDishTable from '@/app/[locale]/manage/dishes/choose-dish-table';
@@ -31,15 +31,21 @@ import { createDishCombo } from '@/schemaValidations/dish.schema';
 export default function CreateDishForm() {
   const [file, setFile] = useState<File | null>(null);
   const [openFormAdd, setOpenFormAdd] = useState(false);
+  const [groups, setGroups] = useState<DishGroupDto[]>([]);
+  const [hideColumn, setHideColumn] = useState<string[]>(['options', 'quantity']);
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
   const dishGroupQuery = useDishGroupQuery();
-  const dishGroups = dishGroupQuery.data?.payload.data ?? [];
+  const dishGroups = useMemo(() => dishGroupQuery.data?.payload.data || [], [dishGroupQuery.data]);
+
+  useEffect(() => {
+    setGroups(dishGroups);
+  }, [dishGroups]);
 
   const form = useForm<CreateDishCombo>({
     resolver: zodResolver(createDishCombo),
-    defaultValues: {
+    values: {
       name: '',
       description: '',
       groupId: '',
@@ -128,6 +134,11 @@ export default function CreateDishForm() {
     }
   };
 
+  useEffect(() => {
+    form.setValue('combos', []);
+    form.setValue('dishes', []);
+  }, [category, form]);
+
   const getDishSelected = (dishesSelected: DishDtoDetailChoose[]) => {
     if (category === DishCategory.Buffet || category === DishCategory.Paid) {
       const old = form.getValues('combos');
@@ -185,7 +196,7 @@ export default function CreateDishForm() {
                 name='name'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{tForm('dish-name')}</FormLabel>
+                    <FormLabel required>{tForm('dish-name')}</FormLabel>
                     <FormControl>
                       <Input {...field} IconLeft={Salad} />
                     </FormControl>
@@ -199,10 +210,10 @@ export default function CreateDishForm() {
               <FormField
                 control={form.control}
                 name='price'
-                disabled={form.watch('category') === DishCategory.Buffet}
+                disabled={category === DishCategory.Buffet}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{tForm('dish-price')}</FormLabel>
+                    <FormLabel required={category === DishCategory.Buffet}>{tForm('dish-price')}</FormLabel>
                     <FormControl>
                       <Input {...field} type='number' IconLeft={Banknote} min={0} />
                     </FormControl>
@@ -217,7 +228,7 @@ export default function CreateDishForm() {
                 name='status'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='flex items-center gap-x-1'>
+                    <FormLabel className='flex items-center gap-x-1' required>
                       <Loader width={14} height={14} />
                       {tForm('dish-status')}
                     </FormLabel>
@@ -246,11 +257,21 @@ export default function CreateDishForm() {
                 name='category'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='flex items-center gap-x-1'>
+                    <FormLabel className='flex items-center gap-x-1' required>
                       <Tags size={14} />
                       {tForm('dish-category')}
                     </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={(value) => {
+                        if (value === DishCategory.ComboBuffet || value === DishCategory.Buffet) {
+                          setHideColumn((prev) => [...prev, 'quantity']);
+                        } else {
+                          setHideColumn((prev) => prev.filter((item) => item !== 'quantity'));
+                        }
+                        field.onChange(value);
+                      }}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder={tManageDish('choose-category')} />
@@ -275,7 +296,7 @@ export default function CreateDishForm() {
                 name='groupId'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{tForm('dish-group')}</FormLabel>
+                    <FormLabel required>{tForm('dish-group')}</FormLabel>
                     <div className='flex items-center gap-x-4'>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
@@ -284,7 +305,7 @@ export default function CreateDishForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className='max-h-[200px]'>
-                          {dishGroups.map((status) => (
+                          {groups.map((status) => (
                             <SelectItem key={status.id} value={status.id}>
                               {status.name}
                             </SelectItem>
@@ -329,9 +350,9 @@ export default function CreateDishForm() {
                 )}
               />
             </div>
-            <div className='pl-2 pb-2 h-full flex-[2] border-l'>
-              <div className='flex items-center justify-between'>
-                <ChooseDishTable dishChooseBody={dishChooseBody} submit={getDishSelected} />
+            <div className='pl-2 pb-2 h-full flex-[2] border-l space-y-2'>
+              <div className='flex items-center justify-between pr-2'>
+                <ChooseDishTable dishChooseBody={dishChooseBody} submit={getDishSelected} hideColumn={hideColumn} />
                 <TButton
                   className='col-span-1 m-0'
                   type='button'
@@ -347,87 +368,94 @@ export default function CreateDishForm() {
                   control={form.control}
                   name='combos'
                   render={({ field }) => (
-                    <ScrollArea className='w-full h-[calc(100%_-_3rem)]'>
-                      <div className='space-y-2'>
-                        {field.value.map(({ comboId, combo: { price, image, name, description }, quantity }) => {
-                          return (
-                            <Badge key={comboId} variant='secondary' className='w-full flex items-center'>
-                              <TImage src={image} alt={name} className='size-20 rounded-full mr-4' />
-                              <div>
-                                <h3 className='text-sm'>{name}</h3>
-                                <p className='text-muted-foreground text-xs'>{description}</p>
-                              </div>
-                              <div className='flex items-center ml-auto gap-2'>
-                                <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
-                                  <TButton
-                                    size='icon'
-                                    className='size-4'
-                                    variant='ghost'
-                                    type='button'
-                                    tooltip='delete'
-                                    onClick={() => {
-                                      if (quantity === 1) return;
-                                      field.onChange(
-                                        field.value.map((item) => {
-                                          if (item.comboId === comboId) {
-                                            return { ...item, quantity: quantity - 1 };
-                                          }
-                                          return item;
-                                        })
-                                      );
-                                    }}
-                                  >
-                                    <Minus />
-                                  </TButton>
-                                  <p className='w-4 text-center'>{quantity}</p>
-                                  <TButton
-                                    size='icon'
-                                    className='size-4'
-                                    variant='ghost'
-                                    type='button'
-                                    tooltip='delete'
-                                    onClick={() => {
-                                      if (quantity === 20) return;
-                                      field.onChange(
-                                        field.value.map((item) => {
-                                          if (item.comboId === comboId) {
-                                            return { ...item, quantity: quantity + 1 };
-                                          }
-                                          return item;
-                                        })
-                                      );
-                                    }}
-                                  >
-                                    <Plus />
-                                  </TButton>
-                                </div>
-                                <Separator orientation='vertical' className='h-6' />
-                                <TButton
-                                  size='icon'
-                                  className='size-4'
-                                  variant='ghost'
-                                  type='button'
-                                  onMouseDown={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                  }}
-                                  tooltip='delete'
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    field.onChange(field.value.filter((item) => item.comboId !== comboId));
-                                  }}
-                                >
-                                  <X />
-                                </TButton>
-                              </div>
-                            </Badge>
-                          );
-                        })}
-
-                        {field.value.length === 0 && <span>Chưa chọn</span>}
-                      </div>
-                    </ScrollArea>
+                    <FormItem className='h-[calc(100%_-_3rem)]'>
+                      {field.value.length > 0 && (
+                        <ScrollArea className='w-full h-full'>
+                          <div className='space-y-2'>
+                            {field.value.map(({ comboId, combo: { price, image, name, description }, quantity }) => {
+                              return (
+                                <Badge key={comboId} variant='secondary' className='w-full flex items-center'>
+                                  <TImage src={image} alt={name} className='size-20 rounded-full mr-4' />
+                                  <div>
+                                    <h3 className='text-sm'>{name}</h3>
+                                    <p className='text-muted-foreground text-xs'>{description}</p>
+                                  </div>
+                                  <div className='flex items-center ml-auto gap-2'>
+                                    <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
+                                      <TButton
+                                        size='icon'
+                                        className='size-4'
+                                        variant='ghost'
+                                        type='button'
+                                        tooltip='delete'
+                                        onClick={() => {
+                                          if (quantity === 1) return;
+                                          field.onChange(
+                                            field.value.map((item) => {
+                                              if (item.comboId === comboId) {
+                                                return { ...item, quantity: quantity - 1 };
+                                              }
+                                              return item;
+                                            })
+                                          );
+                                        }}
+                                      >
+                                        <Minus />
+                                      </TButton>
+                                      <p className='w-4 text-center'>{quantity}</p>
+                                      <TButton
+                                        size='icon'
+                                        className='size-4'
+                                        variant='ghost'
+                                        type='button'
+                                        tooltip='delete'
+                                        onClick={() => {
+                                          if (quantity === 20) return;
+                                          field.onChange(
+                                            field.value.map((item) => {
+                                              if (item.comboId === comboId) {
+                                                return { ...item, quantity: quantity + 1 };
+                                              }
+                                              return item;
+                                            })
+                                          );
+                                        }}
+                                      >
+                                        <Plus />
+                                      </TButton>
+                                    </div>
+                                    <Separator orientation='vertical' className='h-6' />
+                                    <TButton
+                                      size='icon'
+                                      className='size-4'
+                                      variant='ghost'
+                                      type='button'
+                                      onMouseDown={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                      }}
+                                      tooltip='delete'
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        field.onChange(field.value.filter((item) => item.comboId !== comboId));
+                                      }}
+                                    >
+                                      <X />
+                                    </TButton>
+                                  </div>
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                        </ScrollArea>
+                      )}
+                      {field.value.length === 0 && (
+                        <div className='h-full flex items-center justify-center'>
+                          <span>Chưa chọn</span>
+                        </div>
+                      )}
+                    </FormItem>
                   )}
                 />
               )}
@@ -437,89 +465,96 @@ export default function CreateDishForm() {
                   control={form.control}
                   name='dishes'
                   render={({ field }) => (
-                    <ScrollArea className='w-full h-[calc(100%_-_3rem)]'>
-                      <div className='space-y-2'>
-                        {field.value.map(({ dishId, dish: { price, image, name, description }, quantity }) => {
-                          return (
-                            <Badge key={dishId} variant='secondary' className='w-full flex items-center'>
-                              <TImage src={image} alt={name} className='size-20 rounded-full mr-4' />
-                              <div>
-                                <h3 className='text-sm'>{name}</h3>
-                                <p className='text-muted-foreground text-xs'>{description}</p>
-                              </div>
-                              <div className='flex items-center ml-auto gap-2'>
-                                {category === DishCategory.ComboPaid && (
-                                  <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
+                    <FormItem className='h-[calc(100%_-_3rem)]'>
+                      {field.value.length > 0 && (
+                        <ScrollArea className='w-full h-full'>
+                          <div className='space-y-2 pr-2'>
+                            {field.value.map(({ dishId, dish: { price, image, name, description }, quantity }) => {
+                              return (
+                                <Badge key={dishId} variant='secondary' className='w-full flex items-center'>
+                                  <TImage src={image} alt={name} className='size-20 rounded-full mr-4' />
+                                  <div>
+                                    <h3 className='text-sm'>{name}</h3>
+                                    <p className='text-muted-foreground text-xs'>{description}</p>
+                                  </div>
+                                  <div className='flex items-center ml-auto gap-2'>
+                                    {category === DishCategory.ComboPaid && (
+                                      <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
+                                        <TButton
+                                          size='icon'
+                                          className='size-4'
+                                          variant='ghost'
+                                          type='button'
+                                          tooltip='delete'
+                                          onClick={() => {
+                                            if (quantity === 1) return;
+                                            field.onChange(
+                                              field.value.map((item) => {
+                                                if (item.dishId === dishId) {
+                                                  return { ...item, quantity: quantity - 1 };
+                                                }
+                                                return item;
+                                              })
+                                            );
+                                          }}
+                                        >
+                                          <Minus />
+                                        </TButton>
+                                        <p className='w-4 text-center'>{quantity}</p>
+                                        <TButton
+                                          size='icon'
+                                          className='size-4'
+                                          variant='ghost'
+                                          type='button'
+                                          tooltip='delete'
+                                          onClick={() => {
+                                            if (quantity === 20) return;
+                                            field.onChange(
+                                              field.value.map((item) => {
+                                                if (item.dishId === dishId) {
+                                                  return { ...item, quantity: quantity + 1 };
+                                                }
+                                                return item;
+                                              })
+                                            );
+                                          }}
+                                        >
+                                          <Plus />
+                                        </TButton>
+                                      </div>
+                                    )}
+                                    <Separator orientation='vertical' className='h-6' />
                                     <TButton
                                       size='icon'
                                       className='size-4'
                                       variant='ghost'
                                       type='button'
+                                      onMouseDown={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                      }}
                                       tooltip='delete'
-                                      onClick={() => {
-                                        if (quantity === 1) return;
-                                        field.onChange(
-                                          field.value.map((item) => {
-                                            if (item.dishId === dishId) {
-                                              return { ...item, quantity: quantity - 1 };
-                                            }
-                                            return item;
-                                          })
-                                        );
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        field.onChange(field.value.filter((item) => item.dishId !== dishId));
                                       }}
                                     >
-                                      <Minus />
-                                    </TButton>
-                                    <p className='w-4 text-center'>{quantity}</p>
-                                    <TButton
-                                      size='icon'
-                                      className='size-4'
-                                      variant='ghost'
-                                      type='button'
-                                      tooltip='delete'
-                                      onClick={() => {
-                                        if (quantity === 20) return;
-                                        field.onChange(
-                                          field.value.map((item) => {
-                                            if (item.dishId === dishId) {
-                                              return { ...item, quantity: quantity + 1 };
-                                            }
-                                            return item;
-                                          })
-                                        );
-                                      }}
-                                    >
-                                      <Plus />
+                                      <X />
                                     </TButton>
                                   </div>
-                                )}
-                                <Separator orientation='vertical' className='h-6' />
-                                <TButton
-                                  size='icon'
-                                  className='size-4'
-                                  variant='ghost'
-                                  type='button'
-                                  onMouseDown={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                  }}
-                                  tooltip='delete'
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    field.onChange(field.value.filter((item) => item.dishId !== dishId));
-                                  }}
-                                >
-                                  <X />
-                                </TButton>
-                              </div>
-                            </Badge>
-                          );
-                        })}
-
-                        {field.value.length === 0 && <span>Chưa chọn</span>}
-                      </div>
-                    </ScrollArea>
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                        </ScrollArea>
+                      )}
+                      {field.value.length === 0 && (
+                        <div className='h-full flex items-center justify-center'>
+                          <span>Chưa chọn</span>
+                        </div>
+                      )}
+                    </FormItem>
                   )}
                 />
               )}

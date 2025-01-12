@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 
-import ChooseLanguage from '@/app/[locale]/guest/tables/[number]/choose-language';
+import ChooseLanguage from '@/app/[locale]/guest/tables/[tableNumber]/choose-language';
 import TImage from '@/components/t-image';
 
 export default function page() {

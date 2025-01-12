@@ -1,9 +1,10 @@
 'use client';
 
 import { addDays, format } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import { vi, enUS } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
-import * as React from 'react';
+import { useLocale, useTranslations } from 'next-intl';
+import { useState, useMemo } from 'react';
 
 import type { Period } from '@/schemaValidations/common.schema';
 import type { Dispatch, HTMLAttributes, SetStateAction } from 'react';
@@ -20,10 +21,15 @@ interface TDateRangeProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function TDateRange({ className, dateRange, setDateRange }: TDateRangeProps) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
+  const localeIntl = useLocale();
+  const [date, setDate] = useState<DateRange | undefined>({
     from: dateRange?.fromDate ?? new Date(),
     to: dateRange?.toDate ?? addDays(new Date(), 20)
   });
+
+  const locale = useMemo(() => {
+    return localeIntl === 'en' ? enUS : vi;
+  }, [localeIntl]);
 
   const onSelect = (date: DateRange | undefined) => {
     setDate(date);
@@ -35,16 +41,13 @@ export function TDateRange({ className, dateRange, setDateRange }: TDateRangePro
     }
   };
 
+  const tDateRange = useTranslations('t-date-range');
+
   return (
     <div className={cn('grid gap-2', className)}>
       <Popover>
         <PopoverTrigger asChild>
-          <TButton
-            id='date'
-            variant={'outline'}
-            className={cn('min-w-[209px] justify-start text-left font-normal', !date && 'text-muted-foreground')}
-            size={'sm'}
-          >
+          <TButton id='date' variant={'outline'} className={cn('min-w-56 justify-start text-left font-normal', !date && 'text-muted-foreground')}>
             <CalendarIcon />
             {date?.from ? (
               date.to ? (
@@ -55,7 +58,7 @@ export function TDateRange({ className, dateRange, setDateRange }: TDateRangePro
                 format(date.from, 'dd/MM/yyyy')
               )
             ) : (
-              <span>Pick a date</span>
+              <span>{tDateRange('placeholder')}</span>
             )}
           </TButton>
         </PopoverTrigger>
@@ -68,7 +71,7 @@ export function TDateRange({ className, dateRange, setDateRange }: TDateRangePro
             onSelect={onSelect}
             numberOfMonths={1}
             weekStartsOn={1}
-            locale={vi}
+            locale={locale}
           />
         </PopoverContent>
       </Popover>

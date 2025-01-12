@@ -16,6 +16,16 @@ export const useGuestOrderMutation = () =>
   useMutation({
     mutationFn: guestApiRequest.orders
   });
+
+export const useCallStaffMutation = () =>
+  useMutation({
+    mutationFn: guestApiRequest.callStaff
+  });
+
+export const useRequestPaymentMutation = () =>
+  useMutation({
+    mutationFn: guestApiRequest.requestPayment
+  });
 export const useGetGuestsQuery = (queryParam: Period) => {
   return useQuery({
     queryKey: ['guests', queryParam],

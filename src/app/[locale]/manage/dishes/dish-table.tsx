@@ -11,8 +11,10 @@ import { useDeleteDishMutation, useDishListQuery } from '@/app/queries/useDish';
 import TButton from '@/components/t-button';
 import TDataTable, { TCellActions } from '@/components/t-data-table';
 import TImage from '@/components/t-image';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DishCategory } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
-import { getOptions, getPrice, handleErrorApi, removeAccents } from '@/lib/utils';
+import { getEnumValues, getOptions, getPriceString, handleErrorApi, removeAccents } from '@/lib/utils';
 
 export default function DishTable() {
   const dishesListQuery = useDishListQuery();
@@ -23,6 +25,7 @@ export default function DishTable() {
   const tDishCategory = useTranslations('dish-category');
   const tTableColumn = useTranslations('t-data-table.column');
   const tButton = useTranslations('t-button');
+  const tFilter = useTranslations('t-data-table.filter');
 
   const columns = useMemo<ColumnDef<DishDtoDetail>[]>(
     () => [
@@ -55,7 +58,7 @@ export default function DishTable() {
       {
         accessorKey: 'price',
         header: () => <div className='text-right w-[100px]'>{tTableColumn('price')}</div>,
-        cell: ({ row }) => <div className='text-right w-[100px]'>{getPrice(row.original)}</div>
+        cell: ({ row }) => <div className='text-right w-[100px]'>{getPriceString(row.original)}</div>
       },
       {
         accessorKey: 'options',
@@ -72,6 +75,7 @@ export default function DishTable() {
       },
       {
         accessorKey: 'category',
+        id: 'category',
         header: () => <div className='text-center w-[100px]'>{tTableColumn('category')}</div>,
         cell: ({ row }) => <div className='text-center w-[100px]'>{tDishCategory(row.original.category)}</div>
       },
@@ -125,13 +129,37 @@ export default function DishTable() {
       data={data}
       columns={columns}
       childrenToolbar={
-        <TButton size='sm' className='h-7 gap-1' asLink href='/manage/dishes/create'>
+        <TButton className='gap-1' asLink href='/manage/dishes/create'>
           <PlusCircle className='h-3.5 w-3.5' />
           <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>{tButton('create-dish')}</span>
         </TButton>
       }
       className='pr-2'
       filter={{ placeholder: { key: 'input-placeholder-dish' }, columnId: 'name' }}
+      filterCustom={(table) => {
+        return (
+          <Select
+            onValueChange={(value) => {
+              const categoryCol = table.getColumn('category');
+              if (categoryCol) {
+                categoryCol.setFilterValue(value);
+              }
+            }}
+            value={(table.getColumn('category')?.getFilterValue() as string) ?? ''}
+          >
+            <SelectTrigger className='min-w-60'>
+              <SelectValue placeholder={tFilter('select-placeholder-category')} />
+            </SelectTrigger>
+            <SelectContent>
+              {getEnumValues(DishCategory).map((category) => (
+                <SelectItem key={category} value={category}>
+                  {tDishCategory(category)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        );
+      }}
     />
   );
 }

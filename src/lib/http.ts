@@ -1,9 +1,9 @@
-import { getLocale } from 'next-intl/server';
+import Cookies from 'js-cookie';
 
 import type { LoginRes, Token } from '@/schemaValidations/auth.schema';
 import type { RequestInit } from 'next/dist/server/web/spec-extension/request';
 
-import envConfig from '@/config';
+import envConfig, { defaultLocale } from '@/config';
 import { redirect } from '@/i18n/routing';
 import {
   getAccessTokenFromLocalStorage,
@@ -12,7 +12,6 @@ import {
   setAccessTokenToLocalStorage,
   setRefreshTokenToLocalStorage
 } from '@/lib/utils';
-
 /**
  * customOptions: Tùy chỉnh options cho fetch
  */
@@ -137,13 +136,13 @@ const request = async <Response>(url: string, options?: customOptions | undefine
         payload: data.payload as EntityErrorPayload
       });
     } else if (res.status === UNAUTHORIZED_STATUS) {
-      const locale = await getLocale();
+      const locale = Cookies.get('NEXT_LOCALE') ?? defaultLocale;
       // Nếu là client thì xử lý logout ngay
       if (isClient) {
         if (!clientLogoutRequest) {
           clientLogoutRequest = fetch('/api/auth/logout', {
             method: 'POST',
-            body: JSON.stringify({ force: true }),
+            body: null,
             headers: {
               ...baseHeaders
             }
@@ -169,7 +168,7 @@ const request = async <Response>(url: string, options?: customOptions | undefine
         // This Func is default throw an error, so we don't need to catch it
         redirect({
           href: {
-            pathname: '/logout',
+            pathname: '/login',
             query: {
               accessToken
             }

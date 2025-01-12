@@ -6,7 +6,7 @@ import { buildReply, id, name, updateAndCreate } from '@/schemaValidations/commo
 const baseDish = z
   .object({
     description: z.string().max(10000).optional(),
-    groupId: z.string().uuid(),
+    groupId: z.string().uuid('group-required'),
     options: z.string().optional(),
     image: z.string().optional(),
     status: z.nativeEnum(DishStatus)
@@ -17,7 +17,11 @@ const baseDish = z
 const baseDishCategory = z.discriminatedUnion('category', [
   z.object({
     category: z.enum([DishCategory.Paid, DishCategory.ComboPaid, DishCategory.ComboBuffet]),
-    price: z.coerce.number().positive()
+    price: z.coerce
+      .number({
+        message: 'price-required'
+      })
+      .positive('price-positive')
   }),
   z.object({
     category: z.literal(DishCategory.Buffet),
@@ -145,3 +149,5 @@ export type DishDtoDetailChooseRes = z.TypeOf<typeof dishDtoDetailChooseRes>;
 export type DishDtoComboDetailsRes = z.TypeOf<typeof dishDtoComboDetailsRes>;
 
 export type DishChooseBody = z.TypeOf<typeof dishChooseBody>;
+
+export type DishGroupDto = z.TypeOf<typeof dishGroupDto>;

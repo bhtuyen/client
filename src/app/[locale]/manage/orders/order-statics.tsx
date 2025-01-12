@@ -1,13 +1,15 @@
+'use client';
 import { BellRing, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useGetTablesDetailNowQuery } from '@/app/queries/useTable';
 import { useAppStore } from '@/components/app-provider';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { OrderStatus } from '@/constants/enum';
+import { toast } from '@/hooks/use-toast';
 import { Link } from '@/i18n/routing';
 import { OrderStatusIcon, cn } from '@/lib/utils';
 
@@ -15,26 +17,45 @@ type OrderStatusCount = Record<OrderStatus, number>;
 export default function OrderStatics() {
   const { socket } = useAppStore();
   const { data, refetch } = useGetTablesDetailNowQuery();
-  const tableDetails = data.payload.data;
+  const tableDetails = useMemo(() => data?.payload.data || [], [data]);
 
   const tInfo = useTranslations('t-info');
+  const tToast = useTranslations('t-toast');
 
   useEffect(() => {
     function onUpadteOrder() {
       refetch();
     }
 
+    function onCallStaff(tableNumber: string) {
+      toast({
+        description: tToast('guest-call-staff', { tableNumber })
+      });
+      refetch();
+    }
+
+    function onRequestPayment(tableNumber: string) {
+      toast({
+        description: tToast('guest-request-payment', { tableNumber })
+      });
+      refetch();
+    }
+
     socket?.on('update-order', onUpadteOrder);
+    socket?.on('call-staff', onCallStaff);
+    socket?.on('request-payment', onRequestPayment);
 
     return () => {
       socket?.off('update-order', onUpadteOrder);
+      socket?.off('call-staff', onCallStaff);
+      socket?.off('request-payment', onRequestPayment);
     };
-  }, [refetch, socket]);
+  }, [refetch, socket, tToast]);
 
   return (
     <ScrollArea className='h-full'>
-      <div className='flex flex-col gap-4 h-full pr-3'>
-        {tableDetails.map(({ number, id, guests, orders }) => {
+      <div className='flex flex-col gap-4 h-full pr-3 max-[1366px]:flex-row max-[1366px]:pr-0 max-[1366px]:pb-2'>
+        {tableDetails.map(({ number, id, guests, orders, requestPayment, callStaff }) => {
           const countObject = orders.reduce<OrderStatusCount>((acc, order) => {
             acc[order.status] = (acc[order.status] || 0) + 1;
             return acc;
@@ -46,13 +67,27 @@ export default function OrderStatics() {
             <Link
               href={`/manage/orders/table/${number}`}
               key={id}
-              className={cn('text-sm flex items-stretch gap-2 border p-2 rounded-md cursor-pointer min-h-36', {
-                'bg-secondary': !isEmpty,
-                'border-transparent': !isEmpty
-              })}
+              className={cn(
+                'text-sm flex items-stretch gap-2 border p-2 rounded-md cursor-pointer min-h-36 max-[1366px]:w-[300px] max-[1366px]:p-0 max-[1366px]:h-[132px] max-[1366px]:min-h-0',
+                {
+                  'bg-secondary': !isEmpty,
+                  'border-transparent': !isEmpty
+                }
+              )}
             >
               <div className='flex flex-col flex-[2] items-center justify-center gap-2 relative'>
-                {!isEmpty && <BellRing className='size-6 absolute top-2 right-2 animate-bounce' />}
+                {!isEmpty && (
+                  <BellRing
+                    className={cn('size-6 absolute top-2 right-2', {
+                      'animate-bounce': requestPayment || callStaff
+                    })}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('bell clicked');
+                    }}
+                  />
+                )}
                 <div className='font-semibold text-center text-lg'>{tInfo('table-number', { number })}</div>
                 <div className='flex items-center gap-2'>
                   <TooltipProvider>
@@ -121,6 +156,7 @@ export default function OrderStatics() {
           );
         })}
       </div>
+      <ScrollBar orientation='horizontal' />
     </ScrollArea>
   );
 }

@@ -1,7 +1,9 @@
 import { Slot } from '@radix-ui/react-slot';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import { Controller, FormProvider, useFormContext } from 'react-hook-form';
 
+import type { TMessageKeys } from '@/types/message.type';
 import type * as LabelPrimitive from '@radix-ui/react-label';
 import type { ControllerProps, FieldPath, FieldValues } from 'react-hook-form';
 
@@ -66,13 +68,19 @@ const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
 });
 FormItem.displayName = 'FormItem';
 
-const FormLabel = React.forwardRef<React.ElementRef<typeof LabelPrimitive.Root>, React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>>(
-  ({ className, ...props }, ref) => {
-    const { formItemId } = useFormField();
+const FormLabel = React.forwardRef<
+  React.ElementRef<typeof LabelPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> & { required?: boolean }
+>(({ className, required = false, ...props }, ref) => {
+  const { formItemId } = useFormField();
 
-    return <Label ref={ref} className={cn(className)} htmlFor={formItemId} {...props} />;
-  }
-);
+  return (
+    <Label ref={ref} className={cn(className)} htmlFor={formItemId} {...props}>
+      {props.children}
+      {required && <span className='text-destructive'>*</span>}
+    </Label>
+  );
+});
 FormLabel.displayName = 'FormLabel';
 
 const FormControl = React.forwardRef<React.ElementRef<typeof Slot>, React.ComponentPropsWithoutRef<typeof Slot>>(({ ...props }, ref) => {
@@ -101,7 +109,9 @@ FormDescription.displayName = 'FormDescription';
 const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement> & { message?: string | null }>(
   ({ className, children, message, ...props }, ref) => {
     const { error, formMessageId } = useFormField();
-    const body = error ? (message ? message : String(error?.message)) : children;
+    const tMessageValidation = useTranslations('message-validation');
+    const key = (error?.message ?? 'invalid-data') as TMessageKeys<'message-validation'>;
+    const body = error ? tMessageValidation(key) : children;
 
     if (!body) {
       return null;

@@ -20,7 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { SheetClose } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
 import { DishCategory, OrderStatus } from '@/constants/enum';
-import { buildKey, getEnumValues, getOptions, getPrice, handleErrorApi } from '@/lib/utils';
+import { buildKey, getEnumValues, getOptions, getPriceString, handleErrorApi } from '@/lib/utils';
 import { orderDtoDetail } from '@/schemaValidations/order.schema';
 
 export default function EditOrderForm({ orderId }: { orderId: string }) {
@@ -95,7 +95,7 @@ export default function EditOrderForm({ orderId }: { orderId: string }) {
               <FormLabel className=''>
                 <p className='text-xl font-bold'>{field.value.name}</p>
                 <p className='text-sm text-muted-foreground'>{field.value.description}</p>
-                <p className='text-sm font-semibold'>{getPrice(field.value)}</p>
+                <p className='text-sm font-semibold'>{getPriceString(field.value)}</p>
               </FormLabel>
               <ChooseDishTable
                 dishChooseBody={dishChooseBody}

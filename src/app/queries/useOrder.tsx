@@ -10,11 +10,10 @@ export const useOrderByPeriodQuery = (queryParam: Period) =>
     queryFn: () => orderApiRequest.getByPeriod(queryParam)
   });
 
-export const useOrderByTableQuery = (tableNumber: string, enabled: boolean) =>
+export const useOrderByTableQuery = (tableNumber: string) =>
   useQuery({
     queryKey: ['orders', tableNumber],
-    queryFn: () => orderApiRequest.getByTable(tableNumber),
-    enabled
+    queryFn: () => orderApiRequest.getByTable(tableNumber)
   });
 
 export const useOrderDetailQuery = (orderId: string) =>

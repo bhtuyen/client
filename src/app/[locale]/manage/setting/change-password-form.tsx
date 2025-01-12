@@ -42,7 +42,7 @@ export default function ChangePasswordForm() {
       toast({
         description: res.payload.message
       });
-      form.reset();
+      onReset();
     } catch (error: any) {
       handleErrorApi({ error, setError: form.setError });
     }
@@ -66,7 +66,7 @@ export default function ChangePasswordForm() {
               name='oldPassword'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{tForm('old-password')}</FormLabel>
+                  <FormLabel required>{tForm('old-password')}</FormLabel>
                   <FormControl>
                     <Input type='password' {...field} IconLeft={KeyRound} />
                   </FormControl>
@@ -81,7 +81,7 @@ export default function ChangePasswordForm() {
               name='password'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{tForm('new-password')}</FormLabel>
+                  <FormLabel required>{tForm('new-password')}</FormLabel>
                   <FormControl>
                     <Input type='password' {...field} IconLeft={KeyRound} />
                   </FormControl>
@@ -96,7 +96,7 @@ export default function ChangePasswordForm() {
               name='confirmPassword'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{tForm('confirm-password')}</FormLabel>
+                  <FormLabel required>{tForm('confirm-password')}</FormLabel>
                   <FormControl>
                     <Input type='password' {...field} IconLeft={KeyRound} />
                   </FormControl>

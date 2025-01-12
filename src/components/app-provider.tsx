@@ -56,17 +56,23 @@ export const useStore = create<StoreType>((set) => ({
     });
   },
   cart: [],
+  setCart: (dishes) => {
+    set({ cart: dishes });
+    localStorage.setItem('cart', JSON.stringify(dishes));
+  },
   pushToCart: (dishes) => {
     set((state) => {
       return {
         cart: [...state.cart, ...dishes]
       };
     });
+    localStorage.setItem('cart', JSON.stringify(useStore.getState().cart));
   },
   removeDishesFromCart: (dishIds) => {
     set((state) => {
       return { cart: state.cart.filter((dish) => !dishIds.includes(dish.id)) };
     });
+    localStorage.setItem('cart', JSON.stringify(useStore.getState().cart.filter((dish) => !dishIds.includes(dish.id))));
   },
   changeQuantity: (dishId, quantity) => {
     set((state) => {
@@ -82,9 +88,21 @@ export const useStore = create<StoreType>((set) => ({
         })
       };
     });
+    localStorage.setItem(
+      'cart',
+      JSON.stringify(
+        useStore.getState().cart.map((dish) => {
+          if (dish.id === dishId) {
+            return { ...dish, quantity };
+          }
+          return dish;
+        })
+      )
+    );
   },
   removeAllCart: () => {
     set({ cart: [] });
+    localStorage.removeItem('cart');
   },
   isShowAlertDialog: false,
   optionAlertDialog: {
@@ -109,7 +127,7 @@ const AppProvider = ({
 }: Readonly<{
   children: ReactNode;
 }>) => {
-  const { setRole, createConnectSocket } = useAppStore();
+  const { setRole, createConnectSocket, setCart } = useAppStore();
 
   const count = useRef(0);
 
@@ -123,6 +141,13 @@ const AppProvider = ({
       count.current++;
     }
   }, [createConnectSocket, setRole]);
+
+  useEffect(() => {
+    const cart = localStorage.getItem('cart');
+    if (cart) {
+      setCart(JSON.parse(cart));
+    }
+  }, [setCart]);
 
   return (
     <QueryClientProvider client={queryClient}>

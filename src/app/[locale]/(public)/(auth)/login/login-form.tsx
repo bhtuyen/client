@@ -6,15 +6,13 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { Login } from '@/schemaValidations/auth.schema';
-import type { TMessageKeys } from '@/types/message.type';
 
 import { useLoginMutation } from '@/app/queries/useAuth';
 import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { Link, useRouter } from '@/i18n/routing';
 import { getOauthGoogleUrl, handleErrorApi } from '@/lib/utils';
@@ -41,8 +39,6 @@ export default function LoginForm() {
   const router = useRouter();
 
   const clearTokens = searchParams?.get('clearTokens');
-
-  const tMessageValidation = useTranslations('message-validation');
 
   useEffect(() => {
     if (clearTokens) {
@@ -88,12 +84,12 @@ export default function LoginForm() {
                 name='email'
                 render={({ field, formState: { errors } }) => (
                   <FormItem>
-                    <div className='grid gap-2'>
-                      <Label htmlFor='email'>{tLoginForm('email')}</Label>
+                    <FormLabel required>{tLoginForm('email')}</FormLabel>
+                    <FormControl>
                       <Input id='email' type='email' placeholder='m@example.com' required {...field} />
-                      <FormMessage
-                        message={errors.email?.message ? tMessageValidation(errors.email?.message as TMessageKeys<'message-validation'>) : null}
-                      />
+                    </FormControl>
+                    <div className='h-5'>
+                      <FormMessage />
                     </div>
                   </FormItem>
                 )}
@@ -103,11 +99,11 @@ export default function LoginForm() {
                 name='password'
                 render={({ field }) => (
                   <FormItem>
-                    <div className='grid gap-2'>
-                      <div className='flex items-center'>
-                        <Label htmlFor='password'>{tLoginForm('password')}</Label>
-                      </div>
-                      <Input id='password' type='password' required {...field} />
+                    <FormLabel required>{tLoginForm('password')}</FormLabel>
+                    <FormControl>
+                      <Input type='password' required {...field} />
+                    </FormControl>
+                    <div className='h-5'>
                       <FormMessage />
                     </div>
                   </FormItem>

@@ -14,7 +14,7 @@ export const login = accountDto
     email: true
   })
   .extend({
-    password: z.string().min(6).max(100)
+    password: z.string().min(6, 'password-required-min').max(100, 'password-max')
   })
   .strict();
 export const loginRes = buildReply(

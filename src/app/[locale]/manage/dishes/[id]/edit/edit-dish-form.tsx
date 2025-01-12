@@ -2,10 +2,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Banknote, Loader, Minus, Plus, Salad, Tags, Upload, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import type { DishChooseBody, DishDtoDetailChoose, UpdateDishCombo } from '@/schemaValidations/dish.schema';
+import type { DishChooseBody, DishDtoDetailChoose, DishGroupDto, UpdateDishCombo } from '@/schemaValidations/dish.schema';
 
 import AddDishGroup from '@/app/[locale]/manage/dishes/add-dish-group';
 import ChooseDishTable from '@/app/[locale]/manage/dishes/choose-dish-table';
@@ -31,13 +31,19 @@ import { updateDishCombo } from '@/schemaValidations/dish.schema';
 export default function EditDishForm({ id }: { id: string }) {
   const [file, setFile] = useState<File | null>(null);
   const [openFormAdd, setOpenFormAdd] = useState(false);
+  const [groups, setGroups] = useState<DishGroupDto[]>([]);
+  const [hideColumn, setHideColumn] = useState<string[]>(['options', 'quantity']);
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
   const dishQuery = useDishQuery(id);
   const dishGroupQuery = useDishGroupQuery();
 
-  const dishGroups = dishGroupQuery.data?.payload.data ?? [];
+  const dishGroups = useMemo(() => dishGroupQuery.data?.payload.data || [], [dishGroupQuery.data]);
+
+  useEffect(() => {
+    setGroups(dishGroups);
+  }, [dishGroups]);
   // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
   const dishComboDetail = dishQuery.data?.payload.data!;
 
@@ -57,11 +63,38 @@ export default function EditDishForm({ id }: { id: string }) {
   const form = useForm<UpdateDishCombo>({
     resolver: zodResolver(updateDishCombo),
     values: {
-      ...dishComboDetail,
-      dishes: dishComboDetail?.dishes.map((dish) => ({ ...dish, rowMode: getRowMode(RowMode.Update) })),
-      combos: dishComboDetail?.combos.map((combo) => ({ ...combo, rowMode: getRowMode(RowMode.Update) }))
+      groupId: '',
+      name: '',
+      price: 0,
+      status: DishStatus.Available,
+      category: DishCategory.Buffet,
+      description: '',
+      options: '',
+      image: '',
+      dishes: [],
+      combos: [],
+      id: ''
     }
   });
+
+  useEffect(() => {
+    if (dishComboDetail) {
+      const { id, category, name, groupId, combos, dishes, status, description, image, options, price } = dishComboDetail;
+      form.reset({
+        dishes: dishes.map((dish) => ({ ...dish, rowMode: getRowMode(RowMode.Update) })),
+        combos: combos.map((combo) => ({ ...combo, rowMode: getRowMode(RowMode.Update) })),
+        groupId,
+        name,
+        status,
+        description,
+        options,
+        image,
+        id
+      });
+      form.setValue('price', price ?? 0);
+      form.setValue('category', category);
+    }
+  }, [dishComboDetail, form]);
 
   const image = form.watch('image');
   const name = form.watch('name');
@@ -202,7 +235,7 @@ export default function EditDishForm({ id }: { id: string }) {
                 name='name'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{tForm('dish-name')}</FormLabel>
+                    <FormLabel required>{tForm('dish-name')}</FormLabel>
                     <FormControl>
                       <Input {...field} IconLeft={Salad} />
                     </FormControl>
@@ -216,10 +249,10 @@ export default function EditDishForm({ id }: { id: string }) {
               <FormField
                 control={form.control}
                 name='price'
-                disabled={form.watch('category') === DishCategory.Buffet}
+                disabled={category === DishCategory.Buffet}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{tForm('dish-price')}</FormLabel>
+                    <FormLabel required={category !== DishCategory.Buffet}>{tForm('dish-price')}</FormLabel>
                     <FormControl>
                       <Input {...field} type='number' IconLeft={Banknote} min={0} />
                     </FormControl>
@@ -267,7 +300,31 @@ export default function EditDishForm({ id }: { id: string }) {
                       <Tags size={14} />
                       {tForm('dish-category')}
                     </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={(value) => {
+                        const dishes = form.getValues('dishes');
+                        const combos = form.getValues('combos');
+                        if (dishes.length > 0) {
+                          form.setValue(
+                            'dishes',
+                            dishes.map((dish) => ({ ...dish, rowMode: getRowMode(RowMode.Delete, dish.rowMode) }))
+                          );
+                        }
+                        if (combos.length > 0) {
+                          form.setValue(
+                            'combos',
+                            combos.map((combo) => ({ ...combo, rowMode: getRowMode(RowMode.Delete, combo.rowMode) }))
+                          );
+                        }
+                        if (value === DishCategory.ComboBuffet || value === DishCategory.Buffet) {
+                          setHideColumn((prev) => [...prev, 'quantity']);
+                        } else {
+                          setHideColumn((prev) => prev.filter((column) => column !== 'quantity'));
+                        }
+                        field.onChange(value);
+                      }}
+                      value={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder={tManageDish('choose-category')} />
@@ -301,7 +358,7 @@ export default function EditDishForm({ id }: { id: string }) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className='max-h-[200px]'>
-                          {dishGroups.map((status) => (
+                          {groups.map((status) => (
                             <SelectItem key={status.id} value={status.id}>
                               {status.name}
                             </SelectItem>
@@ -346,9 +403,9 @@ export default function EditDishForm({ id }: { id: string }) {
                 )}
               />
             </div>
-            <div className='pl-2 pb-2 h-full flex-[2] border-l'>
-              <div className='flex items-center justify-between'>
-                <ChooseDishTable dishChooseBody={dishChooseBody} submit={getDishSelected} />
+            <div className='pl-2 pb-2 h-full flex-[2] border-l space-y-2'>
+              <div className='flex items-center justify-between pr-2'>
+                <ChooseDishTable dishChooseBody={dishChooseBody} submit={getDishSelected} hideColumn={hideColumn} />
                 <TButton
                   className='col-span-1 m-0'
                   type='button'
@@ -364,101 +421,108 @@ export default function EditDishForm({ id }: { id: string }) {
                   control={form.control}
                   name='combos'
                   render={({ field }) => (
-                    <ScrollArea className='w-full h-[calc(100%_-_3rem)]'>
-                      <div className='space-y-2'>
-                        {field.value
-                          .filter((t) => t.rowMode !== RowMode.Delete && t.rowMode !== RowMode.None)
-                          .map(({ comboId, combo: { price, image, name, description }, quantity }) => {
-                            return (
-                              <Badge key={comboId} variant='secondary' className='w-full flex items-center'>
-                                <TImage src={image} alt={name} className='size-20 rounded-full mr-4' />
-                                <div>
-                                  <h3 className='text-sm'>{name}</h3>
-                                  <p className='text-muted-foreground text-xs'>{description}</p>
-                                </div>
-                                <div className='flex items-center ml-auto gap-2'>
-                                  <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
-                                    <TButton
-                                      size='icon'
-                                      className='size-4'
-                                      variant='ghost'
-                                      type='button'
-                                      tooltip='decrease'
-                                      onClick={() => {
-                                        if (quantity === 1) return;
-                                        field.onChange(
-                                          field.value.map((item) =>
-                                            item.comboId === comboId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
-                                              ? {
-                                                  ...item,
-                                                  quantity: quantity - 1,
-                                                  rowMode: getRowMode(RowMode.Update, item.rowMode)
-                                                }
-                                              : item
-                                          )
-                                        );
-                                      }}
-                                    >
-                                      <Minus />
-                                    </TButton>
-                                    <p className='w-4 text-center'>{quantity}</p>
-                                    <TButton
-                                      size='icon'
-                                      className='size-4'
-                                      variant='ghost'
-                                      type='button'
-                                      tooltip='increase'
-                                      onClick={() => {
-                                        if (quantity === 20) return;
-                                        field.onChange(
-                                          field.value.map((item) =>
-                                            item.comboId === comboId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
-                                              ? {
-                                                  ...item,
-                                                  quantity: quantity + 1,
-                                                  rowMode: getRowMode(RowMode.Update, item.rowMode)
-                                                }
-                                              : item
-                                          )
-                                        );
-                                      }}
-                                    >
-                                      <Plus />
-                                    </TButton>
-                                  </div>
-                                  <Separator orientation='vertical' className='h-6' />
-                                  <TButton
-                                    size='icon'
-                                    className='size-4'
-                                    variant='ghost'
-                                    type='button'
-                                    onMouseDown={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                    }}
-                                    tooltip='delete'
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      field.onChange(
-                                        field.value.map((item) =>
-                                          item.comboId === comboId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
-                                            ? { ...item, rowMode: getRowMode(RowMode.Delete, item.rowMode) }
-                                            : item
-                                        )
-                                      );
-                                    }}
-                                  >
-                                    <X />
-                                  </TButton>
-                                </div>
-                              </Badge>
-                            );
-                          })}
-
-                        {field.value.length === 0 && <span>Chưa chọn</span>}
-                      </div>
-                    </ScrollArea>
+                    <FormItem className='h-[calc(100%_-_3rem)]'>
+                      {field.value.length > 0 && (
+                        <ScrollArea className='w-full h-full'>
+                          <div className='space-y-2 pr-2'>
+                            {field.value
+                              .filter((t) => t.rowMode !== RowMode.Delete && t.rowMode !== RowMode.None)
+                              .map(({ comboId, combo: { price, image, name, description }, quantity }) => {
+                                return (
+                                  <Badge key={comboId} variant='secondary' className='w-full flex items-center'>
+                                    <TImage src={image} alt={name} className='size-20 rounded-full mr-4' />
+                                    <div>
+                                      <h3 className='text-sm'>{name}</h3>
+                                      <p className='text-muted-foreground text-xs'>{description}</p>
+                                    </div>
+                                    <div className='flex items-center ml-auto gap-2'>
+                                      <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
+                                        <TButton
+                                          size='icon'
+                                          className='size-4'
+                                          variant='ghost'
+                                          type='button'
+                                          tooltip='decrease'
+                                          onClick={() => {
+                                            if (quantity === 1) return;
+                                            field.onChange(
+                                              field.value.map((item) =>
+                                                item.comboId === comboId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                  ? {
+                                                      ...item,
+                                                      quantity: quantity - 1,
+                                                      rowMode: getRowMode(RowMode.Update, item.rowMode)
+                                                    }
+                                                  : item
+                                              )
+                                            );
+                                          }}
+                                        >
+                                          <Minus />
+                                        </TButton>
+                                        <p className='w-4 text-center'>{quantity}</p>
+                                        <TButton
+                                          size='icon'
+                                          className='size-4'
+                                          variant='ghost'
+                                          type='button'
+                                          tooltip='increase'
+                                          onClick={() => {
+                                            if (quantity === 20) return;
+                                            field.onChange(
+                                              field.value.map((item) =>
+                                                item.comboId === comboId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                  ? {
+                                                      ...item,
+                                                      quantity: quantity + 1,
+                                                      rowMode: getRowMode(RowMode.Update, item.rowMode)
+                                                    }
+                                                  : item
+                                              )
+                                            );
+                                          }}
+                                        >
+                                          <Plus />
+                                        </TButton>
+                                      </div>
+                                      <Separator orientation='vertical' className='h-6' />
+                                      <TButton
+                                        size='icon'
+                                        className='size-4'
+                                        variant='ghost'
+                                        type='button'
+                                        onMouseDown={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                        }}
+                                        tooltip='delete'
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          field.onChange(
+                                            field.value.map((item) =>
+                                              item.comboId === comboId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                ? { ...item, rowMode: getRowMode(RowMode.Delete, item.rowMode) }
+                                                : item
+                                            )
+                                          );
+                                        }}
+                                      >
+                                        <X />
+                                      </TButton>
+                                    </div>
+                                  </Badge>
+                                );
+                              })}
+                          </div>
+                        </ScrollArea>
+                      )}
+                      {field.value.length === 0 && (
+                        <div className='h-full flex items-center justify-center'>
+                          <span>Chưa chọn</span>
+                        </div>
+                      )}
+                    </FormItem>
                   )}
                 />
               )}
@@ -468,101 +532,110 @@ export default function EditDishForm({ id }: { id: string }) {
                   control={form.control}
                   name='dishes'
                   render={({ field }) => (
-                    <ScrollArea className='w-full h-[calc(100%_-_3rem)]'>
-                      <div className='space-y-2'>
-                        {field.value
-                          .filter((t) => t.rowMode !== RowMode.Delete && t.rowMode !== RowMode.None)
-                          .map(({ dishId, dish: { price, image, name, description }, quantity }) => {
-                            return (
-                              <Badge key={dishId} variant='secondary' className='w-full flex items-center'>
-                                <TImage src={image} alt={name} className='size-20 rounded-full mr-4' />
-                                <div>
-                                  <h3 className='text-sm'>{name}</h3>
-                                  <p className='text-muted-foreground text-xs'>{description}</p>
-                                </div>
-                                <div className='flex items-center ml-auto gap-2'>
-                                  <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
-                                    <TButton
-                                      size='icon'
-                                      className='size-4'
-                                      variant='ghost'
-                                      type='button'
-                                      tooltip='decrease'
-                                      onClick={() => {
-                                        if (quantity === 1) return;
-                                        field.onChange(
-                                          field.value.map((item) =>
-                                            item.dishId === dishId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
-                                              ? {
-                                                  ...item,
-                                                  quantity: quantity - 1,
-                                                  rowMode: getRowMode(RowMode.Update, item.rowMode)
-                                                }
-                                              : item
-                                          )
-                                        );
-                                      }}
-                                    >
-                                      <Minus />
-                                    </TButton>
-                                    <p className='w-4 text-center'>{quantity}</p>
-                                    <TButton
-                                      size='icon'
-                                      className='size-4'
-                                      variant='ghost'
-                                      type='button'
-                                      tooltip='increase'
-                                      onClick={() => {
-                                        if (quantity === 20) return;
-                                        field.onChange(
-                                          field.value.map((item) =>
-                                            item.dishId === dishId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
-                                              ? {
-                                                  ...item,
-                                                  quantity: quantity + 1,
-                                                  rowMode: getRowMode(RowMode.Update, item.rowMode)
-                                                }
-                                              : item
-                                          )
-                                        );
-                                      }}
-                                    >
-                                      <Plus />
-                                    </TButton>
-                                  </div>
-                                  <Separator orientation='vertical' className='h-6' />
-                                  <TButton
-                                    size='icon'
-                                    className='size-4'
-                                    variant='ghost'
-                                    type='button'
-                                    onMouseDown={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                    }}
-                                    tooltip='delete'
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      field.onChange(
-                                        field.value.map((item) =>
-                                          item.dishId === dishId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
-                                            ? { ...item, rowMode: getRowMode(RowMode.Delete, item.rowMode) }
-                                            : item
-                                        )
-                                      );
-                                    }}
-                                  >
-                                    <X />
-                                  </TButton>
-                                </div>
-                              </Badge>
-                            );
-                          })}
+                    <FormItem className='h-[calc(100%_-_3rem)]'>
+                      {field.value.length > 0 && (
+                        <ScrollArea className='w-full h-full'>
+                          <div className='space-y-2 pr-2'>
+                            {field.value
+                              .filter((t) => t.rowMode !== RowMode.Delete && t.rowMode !== RowMode.None)
+                              .map(({ dishId, dish: { price, image, name, description }, quantity }) => {
+                                return (
+                                  <Badge key={dishId} variant='secondary' className='w-full flex items-center'>
+                                    <TImage src={image} alt={name} className='size-20 rounded-full mr-4' />
+                                    <div>
+                                      <h3 className='text-sm'>{name}</h3>
+                                      <p className='text-muted-foreground text-xs'>{description}</p>
+                                    </div>
+                                    <div className='flex items-center ml-auto gap-2'>
+                                      <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
+                                        <TButton
+                                          size='icon'
+                                          className='size-4'
+                                          variant='ghost'
+                                          type='button'
+                                          tooltip='decrease'
+                                          onClick={() => {
+                                            if (quantity === 1) return;
+                                            field.onChange(
+                                              field.value.map((item) =>
+                                                item.dishId === dishId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                  ? {
+                                                      ...item,
+                                                      quantity: quantity - 1,
+                                                      rowMode: getRowMode(RowMode.Update, item.rowMode)
+                                                    }
+                                                  : item
+                                              )
+                                            );
+                                          }}
+                                        >
+                                          <Minus />
+                                        </TButton>
+                                        <p className='w-4 text-center'>{quantity}</p>
+                                        <TButton
+                                          size='icon'
+                                          className='size-4'
+                                          variant='ghost'
+                                          type='button'
+                                          tooltip='increase'
+                                          onClick={() => {
+                                            if (quantity === 20) return;
+                                            field.onChange(
+                                              field.value.map((item) =>
+                                                item.dishId === dishId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                  ? {
+                                                      ...item,
+                                                      quantity: quantity + 1,
+                                                      rowMode: getRowMode(RowMode.Update, item.rowMode)
+                                                    }
+                                                  : item
+                                              )
+                                            );
+                                          }}
+                                        >
+                                          <Plus />
+                                        </TButton>
+                                      </div>
+                                      <Separator orientation='vertical' className='h-6' />
+                                      <TButton
+                                        size='icon'
+                                        className='size-4'
+                                        variant='ghost'
+                                        type='button'
+                                        onMouseDown={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                        }}
+                                        tooltip='delete'
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          field.onChange(
+                                            field.value.map((item) =>
+                                              item.dishId === dishId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                ? { ...item, rowMode: getRowMode(RowMode.Delete, item.rowMode) }
+                                                : item
+                                            )
+                                          );
+                                        }}
+                                      >
+                                        <X />
+                                      </TButton>
+                                    </div>
+                                  </Badge>
+                                );
+                              })}
 
-                        {field.value.length === 0 && <span>Chưa chọn</span>}
-                      </div>
-                    </ScrollArea>
+                            {field.value.length === 0 && <span>Chưa chọn</span>}
+                          </div>
+                        </ScrollArea>
+                      )}
+                      {field.value.length === 0 && (
+                        <div className='h-full flex items-center justify-center'>
+                          <span>Chưa chọn</span>
+                        </div>
+                      )}
+                    </FormItem>
                   )}
                 />
               )}

@@ -2,7 +2,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { KeyRound, Mail, Phone, Upload, User } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import type { UpdateEmployee } from '@/schemaValidations/account.schema';
@@ -33,10 +33,24 @@ export default function EditEmployeeForm({ id }: { id: string }) {
   const form = useForm<UpdateEmployee>({
     resolver: zodResolver(updateEmployee),
     values: {
-      ...account,
-      avatar: account?.avatar || undefined
-    } as UpdateEmployee
+      name: '',
+      phone: '',
+      role: Role.Employee,
+      email: '',
+      id: '',
+      changePassword: false,
+      password: '',
+      confirmPassword: '',
+      avatar: undefined
+    }
   });
+
+  useEffect(() => {
+    if (account) {
+      const { name, phone, role, email, id, avatar } = account;
+      form.reset({ name, phone, role, email, id, avatar: avatar ?? undefined });
+    }
+  }, [account, form]);
 
   const tRole = useTranslations('role');
   const tButton = useTranslations('t-button');
@@ -81,12 +95,12 @@ export default function EditEmployeeForm({ id }: { id: string }) {
     <Form {...form}>
       <form
         noValidate
-        className='max-w-[1000px] p-4'
+        className='max-w-[1000px] p-4 h-full flex flex-col'
         onSubmit={form.handleSubmit(onSubmit, (error) => {
           console.log(error);
         })}
       >
-        <div className='grid grid-cols-3 gap-x-4'>
+        <div className='grid grid-cols-3 gap-4'>
           <FormField
             control={form.control}
             name='avatar'
@@ -128,7 +142,7 @@ export default function EditEmployeeForm({ id }: { id: string }) {
             name='name'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{tForm('name')}</FormLabel>
+                <FormLabel required>{tForm('name')}</FormLabel>
                 <FormControl>
                   <Input type='name' {...field} IconLeft={User} />
                 </FormControl>
@@ -144,7 +158,7 @@ export default function EditEmployeeForm({ id }: { id: string }) {
             name='email'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{tForm('email')}</FormLabel>
+                <FormLabel required>{tForm('email')}</FormLabel>
                 <FormControl>
                   <Input type='email' {...field} IconLeft={Mail} />
                 </FormControl>
@@ -160,7 +174,7 @@ export default function EditEmployeeForm({ id }: { id: string }) {
             name='role'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{tForm('role')}</FormLabel>
+                <FormLabel required>{tForm('role')}</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
@@ -189,7 +203,7 @@ export default function EditEmployeeForm({ id }: { id: string }) {
             name='phone'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{tForm('phone')}</FormLabel>
+                <FormLabel required>{tForm('phone')}</FormLabel>
                 <FormControl>
                   <Input {...field} IconLeft={Phone} pattern='[0-9]*' />
                 </FormControl>
@@ -204,15 +218,12 @@ export default function EditEmployeeForm({ id }: { id: string }) {
             control={form.control}
             name='changePassword'
             render={({ field }) => (
-              <FormItem className='row-start-2 col-span-3'>
+              <FormItem className='row-start-2 col-span-3 mb-5'>
                 <FormLabel>{tForm('change-password')}</FormLabel>
                 <FormDescription>{tForm('change-password-description')}</FormDescription>
                 <FormControl>
                   <Switch checked={field.value} onCheckedChange={field.onChange} />
                 </FormControl>
-                <div className='h-5'>
-                  <FormMessage />
-                </div>
               </FormItem>
             )}
           />
@@ -222,7 +233,7 @@ export default function EditEmployeeForm({ id }: { id: string }) {
               name='password'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{tForm('new-password')}</FormLabel>
+                  <FormLabel required>{tForm('new-password')}</FormLabel>
                   <FormControl>
                     <Input type='password' {...field} IconLeft={KeyRound} />
                   </FormControl>
@@ -239,7 +250,7 @@ export default function EditEmployeeForm({ id }: { id: string }) {
               name='confirmPassword'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{tForm('confirm-password')}</FormLabel>
+                  <FormLabel required>{tForm('confirm-password')}</FormLabel>
                   <FormControl>
                     <Input type='password' {...field} IconLeft={KeyRound} />
                   </FormControl>
@@ -251,7 +262,7 @@ export default function EditEmployeeForm({ id }: { id: string }) {
             />
           )}
         </div>
-        <div className='flex item-center justify-end gap-4'>
+        <div className='flex item-center justify-end gap-4 mt-auto'>
           <TButton type='button' variant='outline' asLink href={'/manage/employees'}>
             {tButton('cancel')}
           </TButton>
