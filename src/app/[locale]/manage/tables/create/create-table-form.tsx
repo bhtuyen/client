@@ -11,7 +11,7 @@ import TButton from '@/components/t-button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { TableStatus } from '@/constants/enum';
+import { PaymentStatus, TableStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from '@/i18n/routing';
 import { getEnumValues, handleErrorApi } from '@/lib/utils';
@@ -24,7 +24,10 @@ export default function CreateTableForm() {
     defaultValues: {
       number: '',
       capacity: 1,
-      status: TableStatus.Available
+      status: TableStatus.Available,
+      paymentStatus: PaymentStatus.Unpaid,
+      callStaff: false,
+      requestPayment: false
     }
   });
 

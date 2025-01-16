@@ -30,7 +30,7 @@ export default function TablePayment({ number, isPaid }: { number: string; isPai
   }, [orders]);
 
   const description = useMemo(() => {
-    return `${number}BHT${tableDetail?.token}`;
+    return `SEVQR${number}BHT${tableDetail?.token}`;
   }, [number, tableDetail]);
 
   return (
