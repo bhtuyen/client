@@ -12,6 +12,7 @@ import ChooseDishTable from '@/app/[locale]/manage/dishes/choose-dish-table';
 import revalidateApiRequest from '@/app/apiRequests/revalidate';
 import { useDishGroupQuery, useDishQuery, useUpdateDishMutation } from '@/app/queries/useDish';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
+import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -25,10 +26,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { DishCategory, DishStatus, RowMode } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from '@/i18n/routing';
-import { getEnumValues, handleErrorApi } from '@/lib/utils';
+import { getEnumValues, getPriceString, handleErrorApi } from '@/lib/utils';
 import { updateDishCombo } from '@/schemaValidations/dish.schema';
 
 export default function EditDishForm({ id }: { id: string }) {
+  const { setLoading } = useAppStore();
   const [file, setFile] = useState<File | null>(null);
   const [openFormAdd, setOpenFormAdd] = useState(false);
   const [groups, setGroups] = useState<DishGroupDto[]>([]);
@@ -44,8 +46,7 @@ export default function EditDishForm({ id }: { id: string }) {
   useEffect(() => {
     setGroups(dishGroups);
   }, [dishGroups]);
-  // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-  const dishComboDetail = dishQuery.data?.payload.data!;
+  const dishComboDetail = useMemo(() => dishQuery.data?.payload.data, [dishQuery.data]);
 
   const getRowMode = (mode: RowMode, rowMode: RowMode = RowMode.None): RowMode => {
     switch (mode) {
@@ -91,6 +92,7 @@ export default function EditDishForm({ id }: { id: string }) {
         image,
         id
       });
+
       form.setValue('price', price ?? 0);
       form.setValue('category', category);
     }
@@ -114,32 +116,32 @@ export default function EditDishForm({ id }: { id: string }) {
   const uploadMediaMutation = useUploadMediaMutation();
 
   const category = form.watch('category');
-  const dishesSelected = form.watch('dishes');
-  const combosSelected = form.watch('combos');
+  const dishes = form.watch('dishes');
+  const combos = form.watch('combos');
   const dishChooseBody = useMemo<DishChooseBody>(() => {
     switch (category) {
       case DishCategory.Buffet:
         return {
           categories: [DishCategory.ComboBuffet],
-          ignores: combosSelected.map(({ comboId }) => comboId)
+          ignores: combos.map(({ comboId }) => comboId)
         };
       case DishCategory.Paid:
         return {
           categories: [DishCategory.ComboPaid],
-          ignores: combosSelected.map(({ comboId }) => comboId)
+          ignores: combos.map(({ comboId }) => comboId)
         };
       case DishCategory.ComboBuffet:
         return {
           categories: [DishCategory.Buffet],
-          ignores: dishesSelected.map(({ dishId }) => dishId)
+          ignores: dishes.map(({ dishId }) => dishId)
         };
       case DishCategory.ComboPaid:
         return {
           categories: [DishCategory.Paid],
-          ignores: dishesSelected.map(({ dishId }) => dishId)
+          ignores: dishes.map(({ dishId }) => dishId)
         };
     }
-  }, [category, dishesSelected, combosSelected]);
+  }, [category, dishes, combos]);
 
   const tDishStatus = useTranslations('dish-status');
   const tButton = useTranslations('t-button');
@@ -150,6 +152,7 @@ export default function EditDishForm({ id }: { id: string }) {
   const onSubmit = async (body: UpdateDishCombo) => {
     if (updateDishMutation.isPending) return;
     try {
+      setLoading(true);
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
@@ -169,6 +172,8 @@ export default function EditDishForm({ id }: { id: string }) {
       router.push('/manage/dishes');
     } catch (error) {
       handleErrorApi({ error, setError: form.setError });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -422,12 +427,12 @@ export default function EditDishForm({ id }: { id: string }) {
                   name='combos'
                   render={({ field }) => (
                     <FormItem className='h-[calc(100%_-_3rem)]'>
-                      {field.value.length > 0 && (
+                      {combos.length > 0 && (
                         <ScrollArea className='w-full h-full'>
                           <div className='space-y-2 pr-2'>
-                            {field.value
+                            {combos
                               .filter((t) => t.rowMode !== RowMode.Delete && t.rowMode !== RowMode.None)
-                              .map(({ comboId, combo: { price, image, name, description }, quantity }) => {
+                              .map(({ comboId, combo: { price, image, name, description, category }, quantity }) => {
                                 return (
                                   <Badge key={comboId} variant='secondary' className='w-full flex items-center'>
                                     <TImage src={image} alt={name} className='size-20 rounded-full mr-4' />
@@ -436,55 +441,60 @@ export default function EditDishForm({ id }: { id: string }) {
                                       <p className='text-muted-foreground text-xs'>{description}</p>
                                     </div>
                                     <div className='flex items-center ml-auto gap-2'>
-                                      <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
-                                        <TButton
-                                          size='icon'
-                                          className='size-4'
-                                          variant='ghost'
-                                          type='button'
-                                          tooltip='decrease'
-                                          onClick={() => {
-                                            if (quantity === 1) return;
-                                            field.onChange(
-                                              field.value.map((item) =>
-                                                item.comboId === comboId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
-                                                  ? {
-                                                      ...item,
-                                                      quantity: quantity - 1,
-                                                      rowMode: getRowMode(RowMode.Update, item.rowMode)
-                                                    }
-                                                  : item
-                                              )
-                                            );
-                                          }}
-                                        >
-                                          <Minus />
-                                        </TButton>
-                                        <p className='w-4 text-center'>{quantity}</p>
-                                        <TButton
-                                          size='icon'
-                                          className='size-4'
-                                          variant='ghost'
-                                          type='button'
-                                          tooltip='increase'
-                                          onClick={() => {
-                                            if (quantity === 20) return;
-                                            field.onChange(
-                                              field.value.map((item) =>
-                                                item.comboId === comboId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
-                                                  ? {
-                                                      ...item,
-                                                      quantity: quantity + 1,
-                                                      rowMode: getRowMode(RowMode.Update, item.rowMode)
-                                                    }
-                                                  : item
-                                              )
-                                            );
-                                          }}
-                                        >
-                                          <Plus />
-                                        </TButton>
-                                      </div>
+                                      {category === DishCategory.ComboPaid && (
+                                        <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
+                                          <TButton
+                                            size='icon'
+                                            className='size-4'
+                                            variant='ghost'
+                                            type='button'
+                                            tooltip='decrease'
+                                            onClick={() => {
+                                              if (quantity === 1) return;
+                                              field.onChange(
+                                                field.value.map((item) =>
+                                                  item.comboId === comboId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                    ? {
+                                                        ...item,
+                                                        quantity: quantity - 1,
+                                                        rowMode: getRowMode(RowMode.Update, item.rowMode)
+                                                      }
+                                                    : item
+                                                )
+                                              );
+                                            }}
+                                          >
+                                            <Minus />
+                                          </TButton>
+                                          <p className='w-4 text-center'>{quantity}</p>
+                                          <TButton
+                                            size='icon'
+                                            className='size-4'
+                                            variant='ghost'
+                                            type='button'
+                                            tooltip='increase'
+                                            onClick={() => {
+                                              if (quantity === 20) return;
+                                              field.onChange(
+                                                field.value.map((item) =>
+                                                  item.comboId === comboId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                    ? {
+                                                        ...item,
+                                                        quantity: quantity + 1,
+                                                        rowMode: getRowMode(RowMode.Update, item.rowMode)
+                                                      }
+                                                    : item
+                                                )
+                                              );
+                                            }}
+                                          >
+                                            <Plus />
+                                          </TButton>
+                                        </div>
+                                      )}
+                                      {category === DishCategory.ComboBuffet && (
+                                        <span className='text-red-600'>{getPriceString({ price, category })}</span>
+                                      )}
                                       <Separator orientation='vertical' className='h-6' />
                                       <TButton
                                         size='icon'
@@ -533,12 +543,12 @@ export default function EditDishForm({ id }: { id: string }) {
                   name='dishes'
                   render={({ field }) => (
                     <FormItem className='h-[calc(100%_-_3rem)]'>
-                      {field.value.length > 0 && (
+                      {dishes.length > 0 && (
                         <ScrollArea className='w-full h-full'>
                           <div className='space-y-2 pr-2'>
-                            {field.value
+                            {dishes
                               .filter((t) => t.rowMode !== RowMode.Delete && t.rowMode !== RowMode.None)
-                              .map(({ dishId, dish: { price, image, name, description }, quantity }) => {
+                              .map(({ dishId, dish: { price, image, name, description, category }, quantity }) => {
                                 return (
                                   <Badge key={dishId} variant='secondary' className='w-full flex items-center'>
                                     <TImage src={image} alt={name} className='size-20 rounded-full mr-4' />
@@ -547,55 +557,60 @@ export default function EditDishForm({ id }: { id: string }) {
                                       <p className='text-muted-foreground text-xs'>{description}</p>
                                     </div>
                                     <div className='flex items-center ml-auto gap-2'>
-                                      <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
-                                        <TButton
-                                          size='icon'
-                                          className='size-4'
-                                          variant='ghost'
-                                          type='button'
-                                          tooltip='decrease'
-                                          onClick={() => {
-                                            if (quantity === 1) return;
-                                            field.onChange(
-                                              field.value.map((item) =>
-                                                item.dishId === dishId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
-                                                  ? {
-                                                      ...item,
-                                                      quantity: quantity - 1,
-                                                      rowMode: getRowMode(RowMode.Update, item.rowMode)
-                                                    }
-                                                  : item
-                                              )
-                                            );
-                                          }}
-                                        >
-                                          <Minus />
-                                        </TButton>
-                                        <p className='w-4 text-center'>{quantity}</p>
-                                        <TButton
-                                          size='icon'
-                                          className='size-4'
-                                          variant='ghost'
-                                          type='button'
-                                          tooltip='increase'
-                                          onClick={() => {
-                                            if (quantity === 20) return;
-                                            field.onChange(
-                                              field.value.map((item) =>
-                                                item.dishId === dishId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
-                                                  ? {
-                                                      ...item,
-                                                      quantity: quantity + 1,
-                                                      rowMode: getRowMode(RowMode.Update, item.rowMode)
-                                                    }
-                                                  : item
-                                              )
-                                            );
-                                          }}
-                                        >
-                                          <Plus />
-                                        </TButton>
-                                      </div>
+                                      {category === DishCategory.Paid && (
+                                        <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
+                                          <TButton
+                                            size='icon'
+                                            className='size-4'
+                                            variant='ghost'
+                                            type='button'
+                                            tooltip='decrease'
+                                            onClick={() => {
+                                              if (quantity === 1) return;
+                                              field.onChange(
+                                                field.value.map((item) =>
+                                                  item.dishId === dishId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                    ? {
+                                                        ...item,
+                                                        quantity: quantity - 1,
+                                                        rowMode: getRowMode(RowMode.Update, item.rowMode)
+                                                      }
+                                                    : item
+                                                )
+                                              );
+                                            }}
+                                          >
+                                            <Minus />
+                                          </TButton>
+                                          <p className='w-4 text-center'>{quantity}</p>
+                                          <TButton
+                                            size='icon'
+                                            className='size-4'
+                                            variant='ghost'
+                                            type='button'
+                                            tooltip='increase'
+                                            onClick={() => {
+                                              if (quantity === 20) return;
+                                              field.onChange(
+                                                field.value.map((item) =>
+                                                  item.dishId === dishId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                    ? {
+                                                        ...item,
+                                                        quantity: quantity + 1,
+                                                        rowMode: getRowMode(RowMode.Update, item.rowMode)
+                                                      }
+                                                    : item
+                                                )
+                                              );
+                                            }}
+                                          >
+                                            <Plus />
+                                          </TButton>
+                                        </div>
+                                      )}
+                                      {category === DishCategory.Buffet && (
+                                        <span className='text-red-600'>{getPriceString({ price, category })}</span>
+                                      )}
                                       <Separator orientation='vertical' className='h-6' />
                                       <TButton
                                         size='icon'
@@ -645,9 +660,7 @@ export default function EditDishForm({ id }: { id: string }) {
             <TButton type='button' variant='outline' asLink href='/manage/dishes'>
               {tButton('cancel')}
             </TButton>
-            <TButton type='submit' disabled={!form.formState.isDirty}>
-              {tButton('save-change')}
-            </TButton>
+            <TButton type='submit'>{tButton('save-change')}</TButton>
           </div>
         </form>
       </Form>

@@ -45,7 +45,8 @@ const TButton = React.forwardRef<HTMLButtonElement, TButtonProps>(({ tooltip, as
             className={cn(
               'active:scale-95',
               {
-                hidden: props.hidden
+                hidden: props.hidden,
+                'cursor-not-allowed': props.disabled
               },
               className
             )}

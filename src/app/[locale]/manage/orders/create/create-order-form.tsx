@@ -17,7 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { DishCategory, TableStatus } from '@/constants/enum';
+import { DishCategory, PaymentStatus, TableStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from '@/i18n/routing';
 import { getPriceString, getTotalPrice, getTotalQuantity, handleErrorApi } from '@/lib/utils';
@@ -38,7 +38,8 @@ export default function CreateOrdersForm() {
         callStaff: false,
         requestPayment: false,
         id: '',
-        dishBuffetId: null
+        dishBuffetId: null,
+        paymentStatus: PaymentStatus.Unpaid
       },
       dishes: []
     }

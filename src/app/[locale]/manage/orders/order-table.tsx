@@ -28,6 +28,7 @@ export default function OrderTable() {
   const tButton = useTranslations('t-button');
   const tTableColumn = useTranslations('t-data-table.column');
   const tFilter = useTranslations('t-data-table.filter');
+  const tToast = useTranslations('t-toast');
   const updateOrderMutation = useUpdateOrderMutation();
 
   const columns = useMemo<ColumnDef<OrderDtoDetail>[]>(
@@ -78,37 +79,43 @@ export default function OrderTable() {
         accessorKey: 'status',
         id: 'status',
         header: () => <div className='capitalize text-center'>{tTableColumn('status')}</div>,
-        cell: ({ row: { original } }) => (
-          <Select
-            onValueChange={async (status: OrderStatus) => {
-              try {
-                await updateOrderMutation.mutateAsync({
-                  id: original.id,
-                  dishId: original.dishSnapshot.dishId,
-                  status,
-                  quantity: original.quantity,
-                  options: original.options
-                });
-              } catch (error) {
-                handleErrorApi({ error });
-              }
-            }}
-            value={original.status}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder='Theme' />
-            </SelectTrigger>
-            <SelectContent>
-              {getEnumValues(OrderStatus)
-                .filter((status) => status != OrderStatus.Paid)
-                .map((status) => (
-                  <SelectItem key={status} value={status}>
-                    {tOrderStatus(status)}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
-        )
+        cell: ({ row: { original } }) =>
+          original.status !== OrderStatus.Paid ? (
+            <Select
+              onValueChange={async (status: OrderStatus) => {
+                try {
+                  await updateOrderMutation.mutateAsync({
+                    id: original.id,
+                    dishId: original.dishSnapshot.dishId,
+                    status,
+                    quantity: original.quantity,
+                    options: original.options
+                  });
+                } catch (error) {
+                  handleErrorApi({ error });
+                }
+              }}
+              value={original.status}
+              disabled={original.status === OrderStatus.Rejected}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder='Theme' />
+              </SelectTrigger>
+              <SelectContent>
+                {getEnumValues(OrderStatus)
+                  .filter((status) => status != OrderStatus.Paid)
+                  .map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {tOrderStatus(status)}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <div className='flex items-center justify-center'>
+              <TImage src='/paid.png' alt='paid' width={60} height={60} />
+            </div>
+          )
       },
       {
         id: 'order-handler',
@@ -175,26 +182,24 @@ export default function OrderTable() {
       const {
         dishSnapshot: { name },
         quantity,
-        status
+        status,
+        tableNumber
       } = data;
 
       toast({
-        description: `Món ${name} (SL: ${quantity}) đã được cập nhật sang trạng thái ${tOrderStatus(status)}`
+        description: tToast('on-update-order', { name, quantity, tableNumber, status: tOrderStatus(status) })
       });
     }
 
-    function onNewOrder(data: OrderDtoDetail[]) {
-      const { guest } = data[0];
-
+    function onNewOrder(orderCount: number, tableNumber: string) {
       toast({
-        description: `Khách hàng tại bàn ${guest?.tableNumber} vừa đặt ${data.length} đơn`
+        description: tToast('on-new-order', { tableNumber, orderCount })
       });
       refetch();
     }
-    function onPayment(data: OrderDtoDetail[]) {
-      const { guest } = data[0];
+    function onPayment(tableNumber: string) {
       toast({
-        description: `Khách hàng tại bàn ${guest?.tableNumber} đã thanh toán thành công ${data.length} đơn`
+        description: tToast('on-payment', { tableNumber })
       });
       refetch();
     }
@@ -208,7 +213,7 @@ export default function OrderTable() {
       socket?.off('new-order', onNewOrder);
       socket?.off('payment', onPayment);
     };
-  }, [refetch, socket, tOrderStatus, dateRange]);
+  }, [refetch, socket, tOrderStatus, dateRange, tToast]);
 
   return (
     <TDataTable

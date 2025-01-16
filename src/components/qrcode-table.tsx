@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import QRCode from 'qrcode';
 import { useEffect, useRef } from 'react';
 
+import TImage from '@/components/t-image';
 import { cn, getTableLink } from '@/lib/utils';
 
 interface QRCodeTableProps {
@@ -13,9 +14,11 @@ interface QRCodeTableProps {
 
   isFillText?: boolean;
   className?: string;
+
+  isPaid?: boolean;
 }
 
-export default function QRCodeTable({ token, tableNumber, size = 200, isFillText = true, className }: QRCodeTableProps) {
+export default function QRCodeTable({ token, tableNumber, size = 200, isFillText = true, className, isPaid = false }: QRCodeTableProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const locale = useLocale();
   const url = getTableLink({
@@ -60,5 +63,12 @@ export default function QRCodeTable({ token, tableNumber, size = 200, isFillText
       );
     }
   }, [url, size, tableNumber, tManageTable, isFillText]);
-  return <canvas ref={canvasRef} className={cn('mx-auto', className)} />;
+  return (
+    <div className='relative'>
+      <canvas ref={canvasRef} className={cn('mx-auto', className)} />
+      {isPaid && (
+        <TImage src='/paid.png' alt='paid' width={100} height={100} className='absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]' />
+      )}
+    </div>
+  );
 }

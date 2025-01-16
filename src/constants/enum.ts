@@ -55,3 +55,9 @@ export enum PaymentMethod {
   Cash = 'Cash',
   Card = 'Card'
 }
+
+export enum PaymentStatus {
+  Unpaid = 'Unpaid',
+  Paid = 'Paid',
+  Cancelled = 'Cancelled'
+}

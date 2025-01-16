@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
 import { DishCategory } from '@/constants/enum';
-import { buildKey, getEnumValues, getOptions, getPriceString } from '@/lib/utils';
+import { buildKey, getEnumValues, getOptions, getPriceString, simpleMatchText } from '@/lib/utils';
 type ChooseDishTableProps = {
   dishChooseBody: DishChooseBody;
   submit?: (dishes: DishDtoDetailChoose[]) => void;
@@ -28,6 +28,7 @@ type ChooseDishTableProps = {
   hideColumn?: string[];
   onlyOneSelected?: boolean;
   side?: 'top' | 'bottom' | 'left' | 'right';
+  disabledBtnTriiger?: boolean;
 };
 
 type DishChoose = DishDtoDetailChoose & {
@@ -38,6 +39,7 @@ export default function ChooseDishTable({
   dishChooseBody,
   onlyOneSelected = false,
   submit,
+  disabledBtnTriiger = false,
   submitKey = 'confirm',
   triggerKey = 'choose-dish',
   hideColumn = [],
@@ -132,7 +134,10 @@ export default function ChooseDishTable({
       {
         accessorKey: 'name',
         header: () => <div className='w-[150px]'>{tTableColumn('name')}</div>,
-        cell: ({ row }) => <div className='capitalize w-[150px]'>{row.original.name}</div>
+        cell: ({ row }) => <div className='capitalize w-[150px]'>{row.original.name}</div>,
+        filterFn: (row, _, filterValue) => {
+          return simpleMatchText(String(row.original.name), String(filterValue));
+        }
       },
       {
         accessorKey: 'description',
@@ -240,7 +245,7 @@ export default function ChooseDishTable({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <TButton variant='outline' type='button' className='mr-2 max-[1366px]:mr-0'>
+        <TButton variant='outline' type='button' className='mr-2 max-[1366px]:mr-0' disabled={disabledBtnTriiger}>
           {tButton(triggerKey)}
         </TButton>
       </SheetTrigger>

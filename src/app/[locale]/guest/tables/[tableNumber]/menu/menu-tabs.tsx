@@ -63,6 +63,7 @@ export default function MenuTabs({ tableNumber }: { tableNumber: string }) {
   const tTab = useTranslations('t-tab');
   const tMessage = useTranslations('t-message');
   const tOrderStatus = useTranslations('order-status');
+  const tToast = useTranslations('t-toast');
 
   const scrollToGroup = (href: string, viewRef: MutableRefObject<HTMLDivElement | null>) => {
     const view = viewRef.current;
@@ -96,6 +97,9 @@ export default function MenuTabs({ tableNumber }: { tableNumber: string }) {
 
     function onBuffetMode(dishBuffetId: string) {
       refetch();
+      toast({
+        description: dishBuffetId ? tToast('buffet-mode-success') : tToast('buffet-mode-fail')
+      });
       if (!dishBuffetId) setActiveTab(DishCategory.Paid);
     }
 
@@ -107,7 +111,7 @@ export default function MenuTabs({ tableNumber }: { tableNumber: string }) {
       socket?.off('update-order', onUpadteOrder);
       socket?.off('payment', onPayment);
     };
-  }, [socket, tMessage, tOrderStatus, refetch]);
+  }, [socket, tMessage, tOrderStatus, refetch, tToast]);
 
   return (
     <Tabs className='h-[calc(100%_-_3.5rem)] text-black' value={activeTab} onValueChange={(value) => setActiveTab(value as MenuTabsType['value'])}>

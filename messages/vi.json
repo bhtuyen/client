@@ -113,7 +113,10 @@
     "group-required": "Nhóm là bắt buộc",
 
     "price-required": "Giá là bắt buộc",
-    "price-positive": "Giá phải lớn hơn 0"
+    "price-positive": "Giá phải lớn hơn 0",
+
+    "email-not-exist": "Email không tồn tại",
+    "incorrect-email-or-password": "Email hoặc mật khẩu không chính xác"
   },
   "role": {
     "Owner": "Quản lý",
@@ -382,7 +385,8 @@
     "description-for-payment": "Nội dung chuyển khoản: ",
     "note-for-payment": "Lưu ý: Vui lòng giữ nguyên nội dung chuyển khoản để hệ thống tự động xác nhận thanh toán",
     "order-information": "Thông tin đơn hàng",
-    "total": "Tổng cộng"
+    "total": "Tổng cộng",
+    "reset-table": "Đặt lại bàn"
   },
   "t-toast": {
     "create-table-success": "Tạo bàn ăn thành công",
@@ -401,9 +405,23 @@
 
     "request-payment-success": "Thành công, vui lòng chờ nhân viên đến để thanh toán",
     "request-payment-fail": "Gọi thanh toán thất bại, vui lòng thử lại sau",
-    "guest-request-payment": "Bàn {tableNumber} vừa gọi thanh toán"
+    "guest-request-payment": "Bàn {tableNumber} vừa gọi thanh toán",
+
+    "reset-table-success": "Đặt lại bàn thành công",
+    "buffet-mode-success": "Bạn có thể gọi món buffet",
+    "buffet-mode-fail": "Không thể gọi món buffet",
+
+    "on-update-order": "Món ${name} (SL: ${quantity}) tại bàn {tableNumber} đã được cập nhật sang trạng thái {status}",
+    "on-new-order": "Khách hàng tại bàn ${tableNumber} vừa đặt ${orderCount} đơn",
+    "on-payment": "Khách hàng tại bàn ${tableNumber} đã thanh toán thành công"
   },
   "t-date-range": {
     "placeholder": "Chọn ngày"
+  },
+  "t-theme": {
+    "title": "Chủ đề",
+    "dark": "Tối",
+    "light": "Sáng",
+    "system": "Hệ thống"
   }
 }

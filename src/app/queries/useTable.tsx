@@ -81,3 +81,9 @@ export const useGetTableDetailForPaymentQuery = (token: string) => {
     queryFn: () => tableApiRequets.getTableDetailForPayment(token)
   });
 };
+
+export const useResetTableMutation = () => {
+  return useMutation({
+    mutationFn: tableApiRequets.resetTable
+  });
+};

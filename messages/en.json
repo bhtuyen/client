@@ -113,7 +113,10 @@
     "group-required": "Group is required",
 
     "price-required": "Price is required",
-    "price-positive": "Price must be positive"
+    "price-positive": "Price must be positive",
+
+    "email-not-exist": "Email not exist",
+    "incorrect-email-or-password": "Incorrect email or password"
   },
   "role": {
     "Owner": "Owner",
@@ -158,6 +161,7 @@
 
   "manage": {
     "title": "Manage",
+
     "employees": {
       "title": "Employees",
       "create": {
@@ -381,7 +385,8 @@
     "description-for-payment": "Transfer content: ",
     "note-for-payment": "Note: Please keep the transfer content intact so that the system can automatically confirm the payment.",
     "order-information": "Order information",
-    "total": "Total"
+    "total": "Total",
+    "reset-table": "Reset table"
   },
   "t-toast": {
     "create-table-success": "Create table successfully",
@@ -400,9 +405,23 @@
 
     "request-payment-success": "Success, please wait for staff",
     "request-payment-fail": "Fail, please try again",
-    "guest-request-payment": "Guest of table {tableNumber} request payment"
+    "guest-request-payment": "Guest of table {tableNumber} request payment",
+
+    "reset-table-success": "Reset table successfully",
+    "buffet-mode-success": "Enable buffet mode successfully",
+    "buffet-mode-fail": "Enable buffet mode fail",
+
+    "on-update-order": "Dish ${name} (quantity: ${quantity}) has been updated to {status}",
+    "on-new-order": "Guest at table ${tableNumber} has just placed ${count} orders",
+    "on-payment": "Guest at table ${tableNumber} has successfully paid"
   },
   "t-date-range": {
     "placeholder": "Pick a date"
+  },
+  "t-theme": {
+    "title": "Toggle theme",
+    "dark": "Dark",
+    "light": "Light",
+    "system": "System"
   }
 }

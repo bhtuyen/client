@@ -37,4 +37,6 @@ export type StoreType = {
   optionAlertDialog: ShowAlertDialogOption;
   showAlertDialog: (option: ShowAlertDialogOption) => void;
   closeAlertDialog: () => void;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
 };

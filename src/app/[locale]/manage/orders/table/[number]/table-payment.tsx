@@ -2,20 +2,17 @@
 
 import { Loader } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { useGetTableDetailForPaymentQuery } from '@/app/queries/useTable';
-import { useAppStore } from '@/components/app-provider';
 import TImage from '@/components/t-image';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import envConfig from '@/config';
 import { DishCategory } from '@/constants/enum';
 import { formatCurrency } from '@/lib/utils';
 
-export default function TablePayment({ number }: { number: string }) {
+export default function TablePayment({ number, isPaid }: { number: string; isPaid: boolean }) {
   const { data } = useGetTableDetailForPaymentQuery(number);
-  const [isPayment, setIsPayment] = useState(false);
-  const { socket } = useAppStore();
 
   const tableDetail = data?.payload.data;
 
@@ -35,17 +32,6 @@ export default function TablePayment({ number }: { number: string }) {
   const description = useMemo(() => {
     return `${number}BHT${tableDetail?.token}`;
   }, [number, tableDetail]);
-
-  useEffect(() => {
-    const onPayment = () => {
-      setIsPayment(true);
-    };
-    socket?.on('payment', onPayment);
-
-    return () => {
-      socket?.off('payment', onPayment);
-    };
-  }, [socket]);
 
   return (
     <div className='w-max-[1500px] w-[1500px] md:w-[1300px] flex mx-auto gap-4 h-[calc(100%_-_2.25rem)]'>
@@ -69,9 +55,9 @@ export default function TablePayment({ number }: { number: string }) {
               />
               <div className='flex items-center gap-2'>
                 <span>
-                  {tInfo('status')} {isPayment ? tInfo('payment-success') : tInfo('waiting-for-payment')}{' '}
+                  {tInfo('status')} {isPaid ? tInfo('payment-success') : tInfo('waiting-for-payment')}{' '}
                 </span>
-                {!isPayment && <Loader className='animate-spin' />}
+                {!isPaid && <Loader className='animate-spin' />}
               </div>
             </div>
           </div>
@@ -119,7 +105,7 @@ export default function TablePayment({ number }: { number: string }) {
             ))}
           </ul>
         </ScrollArea>
-        <div className='flex justify-between items-center h-7 pr-4'>
+        <div className='flex justify-between items-center h-7 pr-4 border-t pt-2'>
           <p className='text-base font-bold'>{tInfo('total')}</p>
           <span className='font-bold'>{formatCurrency(amount)}</span>
         </div>

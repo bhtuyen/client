@@ -21,5 +21,6 @@ export const tableApiRequets = {
   delete: (id: string) => http.delete<TableRes>(`${prefix}/${id}`),
   getTablesDetailNow: () => http.get<TableDtoDetailsRes>(`${prefix}/detail-now`),
   getTableDetailNow: (number: string) => http.get<TableDtoDetailRes>(`${prefix}/detail-now/${number}`),
-  getTableDetailForPayment: (token: string) => http.get<TableDtoDetailRes>(`${prefix}/detail-payment/${token}`)
+  getTableDetailForPayment: (token: string) => http.get<TableDtoDetailRes>(`${prefix}/detail-payment/${token}`),
+  resetTable: (tableNumber: string) => http.post<TableRes>(`${prefix}/reset`, { tableNumber })
 };

@@ -31,9 +31,3 @@ export const useUpdateOrderMutation = () =>
   useMutation({
     mutationFn: orderApiRequest.update
   });
-
-export const usePayOrderMutation = () => {
-  return useMutation({
-    mutationFn: orderApiRequest.payForTable
-  });
-};

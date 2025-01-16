@@ -11,6 +11,7 @@ import type { ReactNode } from 'react';
 
 import ListenLogoutSocket from '@/components/listen-logout-socket';
 import RefreshToken from '@/components/refresh-token';
+import TLoading from '@/components/t-loading';
 import envConfig from '@/config';
 import { decodeJWT, getAccessTokenFromLocalStorage, removeAuthTokens } from '@/lib/utils';
 
@@ -117,6 +118,10 @@ export const useStore = create<StoreType>((set) => ({
   },
   showAlertDialog: (option) => {
     set({ isShowAlertDialog: true, optionAlertDialog: option });
+  },
+  loading: false,
+  setLoading: (loading) => {
+    set({ loading });
   }
 }));
 
@@ -127,7 +132,7 @@ const AppProvider = ({
 }: Readonly<{
   children: ReactNode;
 }>) => {
-  const { setRole, createConnectSocket, setCart } = useAppStore();
+  const { setRole, createConnectSocket, setCart, loading } = useAppStore();
 
   const count = useRef(0);
 
@@ -152,6 +157,7 @@ const AppProvider = ({
   return (
     <QueryClientProvider client={queryClient}>
       <RefreshToken />
+      {loading && <TLoading />}
       <ListenLogoutSocket />
       {children}
     </QueryClientProvider>

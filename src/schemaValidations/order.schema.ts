@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import { OrderStatus, TableStatus } from '@/constants/enum';
+import { OrderStatus, PaymentStatus, TableStatus } from '@/constants/enum';
 import { accountDto } from '@/schemaValidations/account.schema';
 import { buildReply, id, updateAndCreate } from '@/schemaValidations/common.schema';
 import { dishDtoDetailChoose, dishSnapshotDto } from '@/schemaValidations/dish.schema';
@@ -10,6 +10,7 @@ const table = z
   .object({
     number: z.string().trim().min(1, 'table-number-min').max(50, 'table-number-max'),
     capacity: z.coerce.number().min(1, 'table-capacity-min').max(20, 'table-capacity-max'),
+    paymentStatus: z.nativeEnum(PaymentStatus),
     status: z.nativeEnum(TableStatus),
     dishBuffetId: z.string().uuid().nullable(),
     requestPayment: z.boolean(),

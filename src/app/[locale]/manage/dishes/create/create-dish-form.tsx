@@ -12,6 +12,7 @@ import ChooseDishTable from '@/app/[locale]/manage/dishes/choose-dish-table';
 import revalidateApiRequest from '@/app/apiRequests/revalidate';
 import { useCreateDishMutation, useDishGroupQuery } from '@/app/queries/useDish';
 import { useUploadMediaMutation } from '@/app/queries/useMedia';
+import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
 import TImage from '@/components/t-image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -25,10 +26,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { DishCategory, DishStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from '@/i18n/routing';
-import { getEnumValues, handleErrorApi } from '@/lib/utils';
+import { getEnumValues, getPriceString, handleErrorApi } from '@/lib/utils';
 import { createDishCombo } from '@/schemaValidations/dish.schema';
 
 export default function CreateDishForm() {
+  const { setLoading } = useAppStore();
   const [file, setFile] = useState<File | null>(null);
   const [openFormAdd, setOpenFormAdd] = useState(false);
   const [groups, setGroups] = useState<DishGroupDto[]>([]);
@@ -112,6 +114,7 @@ export default function CreateDishForm() {
   const onSubmit = async (body: CreateDishCombo) => {
     if (createDishMutation.isPending) return;
     try {
+      setLoading(true);
       if (file) {
         const formData = new FormData();
         formData.append('file', file);
@@ -131,6 +134,8 @@ export default function CreateDishForm() {
       router.push('/manage/dishes');
     } catch (error) {
       handleErrorApi({ error, setError: form.setError });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -372,7 +377,7 @@ export default function CreateDishForm() {
                       {field.value.length > 0 && (
                         <ScrollArea className='w-full h-full'>
                           <div className='space-y-2'>
-                            {field.value.map(({ comboId, combo: { price, image, name, description }, quantity }) => {
+                            {field.value.map(({ comboId, combo: { price, image, name, description, category }, quantity }) => {
                               return (
                                 <Badge key={comboId} variant='secondary' className='w-full flex items-center'>
                                   <TImage src={image} alt={name} className='size-20 rounded-full mr-4' />
@@ -381,49 +386,54 @@ export default function CreateDishForm() {
                                     <p className='text-muted-foreground text-xs'>{description}</p>
                                   </div>
                                   <div className='flex items-center ml-auto gap-2'>
-                                    <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
-                                      <TButton
-                                        size='icon'
-                                        className='size-4'
-                                        variant='ghost'
-                                        type='button'
-                                        tooltip='delete'
-                                        onClick={() => {
-                                          if (quantity === 1) return;
-                                          field.onChange(
-                                            field.value.map((item) => {
-                                              if (item.comboId === comboId) {
-                                                return { ...item, quantity: quantity - 1 };
-                                              }
-                                              return item;
-                                            })
-                                          );
-                                        }}
-                                      >
-                                        <Minus />
-                                      </TButton>
-                                      <p className='w-4 text-center'>{quantity}</p>
-                                      <TButton
-                                        size='icon'
-                                        className='size-4'
-                                        variant='ghost'
-                                        type='button'
-                                        tooltip='delete'
-                                        onClick={() => {
-                                          if (quantity === 20) return;
-                                          field.onChange(
-                                            field.value.map((item) => {
-                                              if (item.comboId === comboId) {
-                                                return { ...item, quantity: quantity + 1 };
-                                              }
-                                              return item;
-                                            })
-                                          );
-                                        }}
-                                      >
-                                        <Plus />
-                                      </TButton>
-                                    </div>
+                                    {category === DishCategory.ComboPaid && (
+                                      <div className='flex items-center gap-1 px-2 py-1 rounded-2xl border border-foreground'>
+                                        <TButton
+                                          size='icon'
+                                          className='size-4'
+                                          variant='ghost'
+                                          type='button'
+                                          tooltip='delete'
+                                          onClick={() => {
+                                            if (quantity === 1) return;
+                                            field.onChange(
+                                              field.value.map((item) => {
+                                                if (item.comboId === comboId) {
+                                                  return { ...item, quantity: quantity - 1 };
+                                                }
+                                                return item;
+                                              })
+                                            );
+                                          }}
+                                        >
+                                          <Minus />
+                                        </TButton>
+                                        <p className='w-4 text-center'>{quantity}</p>
+                                        <TButton
+                                          size='icon'
+                                          className='size-4'
+                                          variant='ghost'
+                                          type='button'
+                                          tooltip='delete'
+                                          onClick={() => {
+                                            if (quantity === 20) return;
+                                            field.onChange(
+                                              field.value.map((item) => {
+                                                if (item.comboId === comboId) {
+                                                  return { ...item, quantity: quantity + 1 };
+                                                }
+                                                return item;
+                                              })
+                                            );
+                                          }}
+                                        >
+                                          <Plus />
+                                        </TButton>
+                                      </div>
+                                    )}
+                                    {category === DishCategory.ComboBuffet && (
+                                      <span className='text-red-600'>{getPriceString({ price, category })}</span>
+                                    )}
                                     <Separator orientation='vertical' className='h-6' />
                                     <TButton
                                       size='icon'
@@ -522,6 +532,9 @@ export default function CreateDishForm() {
                                           <Plus />
                                         </TButton>
                                       </div>
+                                    )}
+                                    {category === DishCategory.ComboBuffet && (
+                                      <span className='text-red-600'>{getPriceString({ price, category })}</span>
                                     )}
                                     <Separator orientation='vertical' className='h-6' />
                                     <TButton

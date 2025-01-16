@@ -237,7 +237,7 @@ export function TOption<TData>({ table }: TOptionProps<TData>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <TButton variant='outline'>
+        <TButton variant='outline' disabled={table.getRowCount() == 0}>
           <Settings2 />
           {tButton('customize')}
         </TButton>
@@ -337,6 +337,7 @@ export function TDataTablePagination<TData>({ table, hasDbClickToSelect = false,
             onValueChange={(value) => {
               table.setPageSize(Number(value));
             }}
+            disabled={table.getRowCount() == 0}
           >
             <SelectTrigger className='h-8 w-[70px]'>
               <SelectValue placeholder={table.getState().pagination.pageSize} />

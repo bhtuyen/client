@@ -15,7 +15,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { TableStatus } from '@/constants/enum';
+import { PaymentStatus, TableStatus } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
 import { Link, useRouter } from '@/i18n/routing';
 import { getEnumValues, getTableLink, handleErrorApi } from '@/lib/utils';
@@ -44,7 +44,8 @@ export default function EditTableForm({ id }: { id: string }) {
       status: TableStatus.Available,
       callStaff: false,
       requestPayment: false,
-      dishBuffetId: null
+      dishBuffetId: null,
+      paymentStatus: PaymentStatus.Unpaid
     }
   });
 

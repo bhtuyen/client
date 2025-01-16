@@ -1,7 +1,7 @@
 import { stringify } from 'querystring';
 
 import type { Period } from '@/schemaValidations/common.schema';
-import type { CreateOrdersTable, GuestPayOrders, OrderDtoDetailRes, OrdersDtoDetailRes, UpdateOrder } from '@/schemaValidations/order.schema';
+import type { CreateOrdersTable, OrderDtoDetailRes, OrdersDtoDetailRes, UpdateOrder } from '@/schemaValidations/order.schema';
 
 import http from '@/lib/http';
 
@@ -13,8 +13,7 @@ const orderApiRequest = {
   getByTable: (tableNumber: string) => http.get<OrdersDtoDetailRes>(`/${prefix}/table/${tableNumber}`),
   getDetail: (orderId: string) => http.get<OrderDtoDetailRes>(`/${prefix}/${orderId}`),
   creates: (body: CreateOrdersTable) => http.post<OrdersDtoDetailRes>(`/${prefix}`, body),
-  update: (body: UpdateOrder) => http.put<OrderDtoDetailRes>(`/${prefix}/${body.id}`, body),
-  payForTable: (body: GuestPayOrders) => http.post<OrdersDtoDetailRes>(`/${prefix}/pay`, body)
+  update: (body: UpdateOrder) => http.put<OrderDtoDetailRes>(`/${prefix}/${body.id}`, body)
 };
 
 export default orderApiRequest;
