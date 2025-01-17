@@ -14,7 +14,7 @@ import TImage from '@/components/t-image';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DishCategory } from '@/constants/enum';
 import { toast } from '@/hooks/use-toast';
-import { getEnumValues, getOptions, getPriceString, handleErrorApi, removeAccents } from '@/lib/utils';
+import { getEnumValues, getOptions, getPriceString, handleErrorApi, removeAccents, simpleMatchText } from '@/lib/utils';
 
 export default function DishTable() {
   const dishesListQuery = useDishListQuery();
@@ -31,15 +31,15 @@ export default function DishTable() {
     () => [
       {
         accessorKey: 'image',
-        header: () => <div className='text-center w-[100px]'>{tTableColumn('image')}</div>,
+        header: () => <div className='text-center w-52'>{tTableColumn('image')}</div>,
         cell: ({ row }) => (
-          <div className='w-[100px]'>
+          <div className='w-52'>
             <TImage
               src={row.getValue('image') ?? '/restaurant.jpg'}
               alt={row.original.name}
-              width={100}
-              height={100}
-              className='aspect-square w-[100px] h-[100px] rounded-md shadow-md mx-auto'
+              width={150}
+              height={150}
+              className='aspect-square size-52 rounded-md shadow-md mx-auto'
               quality={100}
             />
           </div>
@@ -48,7 +48,10 @@ export default function DishTable() {
       {
         accessorKey: 'name',
         header: () => <div className='w-[150px]'>{tTableColumn('name')}</div>,
-        cell: ({ row }) => <div className='capitalize w-[150px]'>{row.original.name}</div>
+        cell: ({ row }) => <div className='capitalize w-[150px]'>{row.original.name}</div>,
+        filterFn: (row, _, filterValue) => {
+          return simpleMatchText(String(row.original.name), String(filterValue));
+        }
       },
       {
         accessorKey: 'description',

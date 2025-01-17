@@ -378,6 +378,7 @@
     "payment-success": "Thanh toán thành công",
     "waiting-for-payment": "Chờ thanh toán...",
     "vietinbank": "Ngân hàng VietinBank",
+    "acb": "ACB",
     "status": "Trạng thái: ",
     "account-holder": "Chủ tài khoản: ",
     "account-number": "Số TK: ",
@@ -411,9 +412,9 @@
     "buffet-mode-success": "Bạn có thể gọi món buffet",
     "buffet-mode-fail": "Không thể gọi món buffet",
 
-    "on-update-order": "Món ${name} (SL: ${quantity}) tại bàn {tableNumber} đã được cập nhật sang trạng thái {status}",
-    "on-new-order": "Khách hàng tại bàn ${tableNumber} vừa đặt ${orderCount} đơn",
-    "on-payment": "Khách hàng tại bàn ${tableNumber} đã thanh toán thành công"
+    "on-update-order": "Món {name} (SL: {quantity}) tại bàn {tableNumber} đã được cập nhật sang trạng thái {status}",
+    "on-new-order": "Khách hàng tại bàn {tableNumber} vừa đặt {orderCount} đơn",
+    "on-payment": "Khách hàng tại bàn {tableNumber} đã thanh toán thành công"
   },
   "t-date-range": {
     "placeholder": "Chọn ngày"

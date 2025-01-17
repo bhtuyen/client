@@ -32,17 +32,29 @@ type MenuTabsType = {
 export default function MenuTabs({ tableNumber }: { tableNumber: string }) {
   const [activeTab, setActiveTab] = useState<MenuTabsType['value']>(DishCategory.Paid);
   const [groupActive, setGroupActive] = useState<string | null>(null);
-  const { socket } = useAppStore();
+  const { socket, setLoading } = useAppStore();
 
-  const { data, refetch } = useTableQuery(tableNumber);
-  const dishesOrderQuery = useDishesOrderQuery();
+  const { data, refetch, isLoading } = useTableQuery(tableNumber);
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading, setLoading]);
+
+  const { data: dishPaidData, isLoading: dishPaidLoading } = useDishesOrderQuery();
 
   const dishBuffetId = useMemo(() => data?.payload.data?.dishBuffetId ?? null, [data]);
 
-  const dishBuffetQuery = useDishBuffetQuery(dishBuffetId, !!dishBuffetId);
+  const { data: dishBuffetData, isLoading: dishBuffetLoading } = useDishBuffetQuery(dishBuffetId, !!dishBuffetId);
 
-  const dishesPaid = dishesOrderQuery.data?.payload.data || [];
-  const dishBuffets = dishBuffetQuery.data?.payload.data || [];
+  useEffect(() => {
+    setLoading(dishBuffetLoading);
+  }, [dishBuffetLoading, setLoading]);
+
+  useEffect(() => {
+    setLoading(dishPaidLoading);
+  }, [dishPaidLoading, setLoading]);
+
+  const dishesPaid = useMemo(() => dishPaidData?.payload.data ?? [], [dishPaidData]);
+  const dishBuffets = useMemo(() => dishBuffetData?.payload.data ?? [], [dishBuffetData]);
 
   const groupBuffetDetails = useDishService(dishBuffets);
   const groupPayDetails = useDishService(dishesPaid);

@@ -378,6 +378,7 @@
     "payment-success": "Payment success",
     "waiting-for-payment": "Waiting for payment",
     "vietinbank": "VietinBank",
+    "acb": "ACB",
     "status": "Status: ",
     "account-holder": "Account holder: ",
     "account-number": "Account number: ",

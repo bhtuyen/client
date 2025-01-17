@@ -22,8 +22,7 @@ export default function TImage({
       fill={fill}
       {...rest}
       loading='lazy'
-      placeholder='blur'
-      blurDataURL='/restaurant.jpg'
+      placeholder='empty'
     />
   );
 }

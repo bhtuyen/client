@@ -80,6 +80,10 @@ export default function ChooseDishTable({
     [setDishesChoose]
   );
 
+  const hasSelectedComboBuffet = useMemo(() => {
+    return rowsSelected.some((dish) => dish.category === DishCategory.ComboBuffet);
+  }, [rowsSelected]);
+
   const tTableColumn = useTranslations('t-data-table.column');
   const tTablePlaceholder = useTranslations('t-data-table.placeholder');
   const tDishStatus = useTranslations('dish-status');
@@ -112,20 +116,26 @@ export default function ChooseDishTable({
             onCheckedChange={(value) => table.toggleAllRowsSelected(!!value)}
           />
         ),
-        cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} />,
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            disabled={hasSelectedComboBuffet && row.original.category == DishCategory.ComboBuffet}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+          />
+        ),
         enableHiding: false
       },
       {
         accessorKey: 'image',
-        header: () => <div className='text-center w-[150px]'>{tTableColumn('image')}</div>,
+        header: () => <div className='text-center w-52'>{tTableColumn('image')}</div>,
         cell: ({ row }) => (
-          <div className='w-[150px]'>
+          <div className='w-52'>
             <TImage
               src={row.getValue('image') ?? '/restaurant.jpg'}
               alt={row.original.name}
               width={150}
               height={150}
-              className='aspect-square size-21 rounded-md shadow-md mx-auto'
+              className='aspect-square size-52 rounded-md shadow-md mx-auto'
               quality={100}
             />
           </div>
@@ -152,7 +162,10 @@ export default function ChooseDishTable({
       {
         accessorKey: 'category',
         header: () => <div className='text-center w-[100px]'>{tTableColumn('category')}</div>,
-        cell: ({ row }) => <div className='text-center w-[100px]'>{tDishCategory(row.original.category)}</div>
+        cell: ({ row }) => <div className='text-center w-[100px]'>{tDishCategory(row.original.category)}</div>,
+        filterFn: (row, _, filterValue) => {
+          return row.original.category == filterValue;
+        }
       },
       {
         accessorKey: 'groupId',
@@ -240,7 +253,7 @@ export default function ChooseDishTable({
         )
       }
     ],
-    [tTableColumn, tDishCategory, tDishStatus, updateQuantity, tTablePlaceholder]
+    [tTableColumn, tDishCategory, tDishStatus, updateQuantity, tTablePlaceholder, hasSelectedComboBuffet]
   );
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -249,7 +262,7 @@ export default function ChooseDishTable({
           {tButton(triggerKey)}
         </TButton>
       </SheetTrigger>
-      <SheetContent className='w-[1200px] sm:max-w-[1200px] p-4' side={side}>
+      <SheetContent className='w-[1300px] sm:max-w-[1300px] p-4' side={side}>
         <SheetHeader className='h-14 mb-2'>
           <SheetTitle>{tSheet('choose-dish-title')}</SheetTitle>
           <SheetDescription>{tSheet('choose-dish-description')}</SheetDescription>
@@ -277,11 +290,21 @@ export default function ChooseDishTable({
                     <SelectValue placeholder={tFilter('select-placeholder-category')} />
                   </SelectTrigger>
                   <SelectContent>
-                    {getEnumValues(DishCategory).map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {tDishCategory(category)}
-                      </SelectItem>
-                    ))}
+                    {getEnumValues(DishCategory)
+                      .filter((category) => {
+                        if (!dishChooseBody.comboBuffetId && category === DishCategory.Buffet) {
+                          return false;
+                        }
+                        if (dishChooseBody.comboBuffetId && category === DishCategory.ComboBuffet) {
+                          return false;
+                        }
+                        return true;
+                      })
+                      .map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {tDishCategory(category)}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
                 <Select

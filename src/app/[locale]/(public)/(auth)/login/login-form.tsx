@@ -19,7 +19,7 @@ import { getOauthGoogleUrl, handleErrorApi } from '@/lib/utils';
 import { login } from '@/schemaValidations/auth.schema';
 
 export default function LoginForm() {
-  const { setRole, socket, createConnectSocket, disconnectSocket } = useAppStore();
+  const { setRole, socket, createConnectSocket, disconnectSocket, setLoading } = useAppStore();
   const loginMutation = useLoginMutation();
   const googleOauthUrl = getOauthGoogleUrl();
 
@@ -48,6 +48,7 @@ export default function LoginForm() {
   }, [clearTokens, setRole, disconnectSocket]);
 
   const onSubmit = async (data: Login) => {
+    setLoading(true);
     if (loginMutation.isPending) return;
 
     try {
@@ -62,6 +63,8 @@ export default function LoginForm() {
       router.push('/manage/dashboard');
     } catch (error: any) {
       handleErrorApi({ error, setError: form.setError });
+    } finally {
+      setLoading(false);
     }
   };
 

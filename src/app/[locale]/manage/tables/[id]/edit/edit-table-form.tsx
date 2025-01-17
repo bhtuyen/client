@@ -9,6 +9,7 @@ import type { UpdateTable } from '@/schemaValidations/table.schema';
 import type { TMessageKeys } from '@/types/message.type';
 
 import { useTableQuery, useUpdateTableMutation } from '@/app/queries/useTable';
+import { useAppStore } from '@/components/app-provider';
 import QRCodeTable from '@/components/qrcode-table';
 import TButton from '@/components/t-button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -22,9 +23,14 @@ import { getEnumValues, getTableLink, handleErrorApi } from '@/lib/utils';
 import { updateTable } from '@/schemaValidations/table.schema';
 
 export default function EditTableForm({ id }: { id: string }) {
+  const { setLoading } = useAppStore();
   const locale = useLocale();
   const router = useRouter();
-  const { data } = useTableQuery(id);
+  const { data, isLoading } = useTableQuery(id);
+
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading, setLoading]);
 
   const tTableStatus = useTranslations('table-status');
   const tButton = useTranslations('t-button');
@@ -59,6 +65,7 @@ export default function EditTableForm({ id }: { id: string }) {
   const updateTableMutation = useUpdateTableMutation();
 
   const onSubmit = async (body: UpdateTable) => {
+    setLoading(true);
     if (updateTableMutation.isPending) return;
     try {
       const result = await updateTableMutation.mutateAsync(body);
@@ -68,6 +75,8 @@ export default function EditTableForm({ id }: { id: string }) {
       router.push('/manage/tables');
     } catch (error: any) {
       handleErrorApi({ error, setError: form.setError });
+    } finally {
+      setLoading(false);
     }
   };
 

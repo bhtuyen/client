@@ -97,7 +97,7 @@
   body {
     @apply bg-background text-foreground;
     font-variant-numeric: tabular-nums;
-    user-select: none;
+    /* user-select: none; */
   }
 }
 

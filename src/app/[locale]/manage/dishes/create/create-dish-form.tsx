@@ -38,8 +38,11 @@ export default function CreateDishForm() {
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
-  const dishGroupQuery = useDishGroupQuery();
-  const dishGroups = useMemo(() => dishGroupQuery.data?.payload.data || [], [dishGroupQuery.data]);
+  const { data, isLoading } = useDishGroupQuery();
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading, setLoading]);
+  const dishGroups = useMemo(() => data?.payload.data || [], [data]);
 
   useEffect(() => {
     setGroups(dishGroups);

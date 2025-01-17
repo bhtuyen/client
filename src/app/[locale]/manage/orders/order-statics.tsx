@@ -68,7 +68,7 @@ export default function OrderStatics() {
               href={`/manage/orders/table/${number}`}
               key={id}
               className={cn(
-                'text-sm flex items-stretch gap-2 border p-2 rounded-md cursor-pointer min-h-36 max-[1366px]:w-[300px] max-[1366px]:p-0 max-[1366px]:h-[132px] max-[1366px]:min-h-0',
+                'text-sm flex items-stretch shadow-md gap-2 border p-2 rounded-md cursor-pointer min-h-36 max-[1366px]:w-[300px] max-[1366px]:p-0 max-[1366px]:h-[132px] max-[1366px]:min-h-0',
                 {
                   'bg-secondary': !isEmpty,
                   'border-transparent': !isEmpty

@@ -41,6 +41,8 @@ import {
 } from '@/lib/utils';
 
 export default function OrderTableDetail({ number }: { number: string }) {
+  const { socket, showAlertDialog, setLoading } = useAppStore();
+
   const tOrderStatus = useTranslations('order-status');
   const tButton = useTranslations('t-button');
   const tTableColumn = useTranslations('t-data-table.column');
@@ -54,8 +56,13 @@ export default function OrderTableDetail({ number }: { number: string }) {
 
   const updateOrderMutation = useUpdateOrderMutation();
   const createOrderMutation = useCreateOrderMutation();
-  const { data, refetch } = useGetTableDetailNowQuery(number);
-  const tableDetail = data?.payload.data;
+  const { data, refetch, isLoading } = useGetTableDetailNowQuery(number);
+
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading, setLoading]);
+
+  const tableDetail = useMemo(() => data?.payload.data, [data]);
 
   const updateBuffetModeMutation = useUpdateBuffetModeMutation();
   const resetTableMutation = useResetTableMutation();
@@ -71,7 +78,7 @@ export default function OrderTableDetail({ number }: { number: string }) {
     return false;
   }, [tableDetail]);
 
-  const dishBuffetId = useMemo(() => {
+  const dishComboBuffetId = useMemo(() => {
     const dishBuffetCombo = orders.find((order) => order.dishSnapshot.category === DishCategory.ComboBuffet);
     if (dishBuffetCombo) {
       return dishBuffetCombo.dishSnapshot.dishId;
@@ -229,8 +236,6 @@ export default function OrderTableDetail({ number }: { number: string }) {
     [isPaid, tOrderStatus, tTableColumn, updateOrderMutation]
   );
 
-  const { socket, showAlertDialog } = useAppStore();
-
   useEffect(() => {
     function onUpdateOrder(order: OrderDtoDetail) {
       const {
@@ -299,12 +304,18 @@ export default function OrderTableDetail({ number }: { number: string }) {
   }, [number, refetch, socket, tOrderStatus, tToast]);
 
   const resetTable = () => {
-    resetTableMutation.mutateAsync(number).then((res) => {
-      const messageKey = res.payload.message as TMessageKeys<'t-toast'>;
-      toast({
-        description: tToast(messageKey)
+    resetTableMutation
+      .mutateAsync(number)
+      .then((res) => {
+        setLoading(true);
+        const messageKey = res.payload.message as TMessageKeys<'t-toast'>;
+        toast({
+          description: tToast(messageKey)
+        });
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    });
     router.push('/manage/orders');
   };
 
@@ -316,6 +327,7 @@ export default function OrderTableDetail({ number }: { number: string }) {
   }, []);
 
   const createOrders = async (dishes: DishDtoDetailChoose[]) => {
+    setLoading(true);
     if (createOrderMutation.isPending) return;
     try {
       const result = await createOrderMutation.mutateAsync({
@@ -323,11 +335,13 @@ export default function OrderTableDetail({ number }: { number: string }) {
         dishes: dishes.map<DishToOrder>(({ id: dishId, options, quantity }) => ({ dishId, options, quantity }))
       });
       toast({
-        description: result.payload.message
+        description: tToast(result.payload.message as TMessageKeys<'t-toast'>, { tableNumber: number })
       });
       refetch();
     } catch (error) {
       handleErrorApi({ error });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -335,15 +349,21 @@ export default function OrderTableDetail({ number }: { number: string }) {
     const key = checked ? 'on-buffet' : 'off-buffet';
     showAlertDialog({
       onAction: async () => {
-        const result = await updateBuffetModeMutation.mutateAsync({
-          tableNumber: number,
-          dishBuffetId: checked ? (dishBuffetId ?? null) : null
-        });
-        setHasBuffet(!!result.payload.data.dishBuffetId);
-        console.log(hasBuffet);
-        toast({
-          description: tToast(result.payload.message as TMessageKeys<'t-toast'>, { tableNumber: number })
-        });
+        try {
+          setLoading(true);
+          const result = await updateBuffetModeMutation.mutateAsync({
+            tableNumber: number,
+            dishBuffetId: checked ? (dishComboBuffetId ?? null) : null
+          });
+          setHasBuffet(!!result.payload.data.dishBuffetId);
+          toast({
+            description: tToast(result.payload.message as TMessageKeys<'t-toast'>, { tableNumber: number })
+          });
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setLoading(false);
+        }
       },
       title: key,
       description: {
@@ -392,7 +412,7 @@ export default function OrderTableDetail({ number }: { number: string }) {
               </div>
 
               <div className='flex flex-col gap-2 min-w-[250px]'>
-                {dishBuffetId && (
+                {dishComboBuffetId && (
                   <div className='flex items-center gap-4'>
                     <Label htmlFor='buffet-mode' className='text-sm font-semibold'>
                       {tInfo('has-buffet')}

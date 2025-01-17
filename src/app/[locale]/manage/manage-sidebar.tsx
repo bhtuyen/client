@@ -3,8 +3,8 @@ import { ChevronsUpDown, HomeIcon, LogOut, Package2, Salad, Settings, ShoppingCa
 import { useTranslations } from 'next-intl';
 
 import type { GuestOrderRole } from '@/constants/const';
+import type { TMessageKeys } from '@/types/message.type';
 import type { LucideProps } from 'lucide-react';
-import type { MessageKeys } from 'next-intl';
 import type { ComponentProps, ForwardRefExoticComponent, RefAttributes } from 'react';
 
 import { useAccountMeQuery } from '@/app/queries/useAccount';
@@ -124,13 +124,19 @@ export function ManageSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible='icon' {...props} className='shadow'>
       <SidebarHeader>
-        <Link
-          href='/'
-          className='group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base'
-        >
-          <Package2 className='h-4 w-4 transition-all group-hover:scale-110' />
-          <span className='sr-only'>Acme Inc</span>
-        </Link>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild className='h-auto group-data-[collapsible=icon]:!px-0'>
+              <Link href='/' className='flex items-center gap-2'>
+                <div className='group flex size-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base'>
+                  <Package2 className='size-6 transition-all group-hover:scale-110' />
+                  <span className='sr-only'>Acme Inc</span>
+                </div>
+                <span className='text-xl font-bold'>RESTAURANT</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -140,10 +146,10 @@ export function ManageSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
               .map((item, index) => {
                 return (
                   <SidebarMenuItem key={index}>
-                    <SidebarMenuButton asChild tooltip={item.key} isActive={pathname === item.href}>
+                    <SidebarMenuButton asChild tooltip={item.key} isActive={pathname === item.href} className='h-10'>
                       <Link href={item.href}>
-                        <item.Icon />
-                        <span>{tManageSidebar(item.key as MessageKeys<typeof tManageSidebar, keyof typeof tManageSidebar>)}</span>
+                        <item.Icon className='!size-6 mr-2' />
+                        <span className='text-base'>{tManageSidebar(item.key as TMessageKeys<'manage-sidebar'>)}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -161,8 +167,8 @@ export function ManageSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
                   <SidebarMenuItem key={index}>
                     <SidebarMenuButton asChild tooltip={item.key} isActive={pathname === item.href}>
                       <Link href={item.href}>
-                        <item.Icon />
-                        <span>{tManageSidebar(item.key as MessageKeys<typeof tManageSidebar, keyof typeof tManageSidebar>)}</span>
+                        <item.Icon className='!size-6 mr-2' />
+                        <span className='text-base'>{tManageSidebar(item.key as TMessageKeys<'manage-sidebar'>)}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -176,8 +182,11 @@ export function ManageSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuButton size='lg' className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'>
-                  <Avatar className='h-8 w-8 rounded-full'>
+                <SidebarMenuButton
+                  size='lg'
+                  className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground rounded-full'
+                >
+                  <Avatar className='size-10 rounded-full'>
                     <AvatarImage src={account?.avatar ?? undefined} alt={account?.name} />
                     <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
                   </Avatar>

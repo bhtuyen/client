@@ -82,8 +82,8 @@ export default function EditDishForm({ id }: { id: string }) {
     if (dishComboDetail) {
       const { id, category, name, groupId, combos, dishes, status, description, image, options, price } = dishComboDetail;
       form.reset({
-        dishes: dishes.map((dish) => ({ ...dish, rowMode: getRowMode(RowMode.Update) })),
-        combos: combos.map((combo) => ({ ...combo, rowMode: getRowMode(RowMode.Update) })),
+        dishes: dishes.map((dish) => ({ ...dish, rowMode: getRowMode(RowMode.None) })),
+        combos: combos.map((combo) => ({ ...combo, rowMode: getRowMode(RowMode.None) })),
         groupId,
         name,
         status,
@@ -160,6 +160,8 @@ export default function EditDishForm({ id }: { id: string }) {
         const imageUrl = uploadImageRes.payload.data;
         body = { ...body, image: imageUrl };
       }
+      body.dishes = body.dishes.filter((dish) => dish.rowMode !== RowMode.None);
+      body.combos = body.combos.filter((combo) => combo.rowMode !== RowMode.None);
 
       const result = await updateDishMutation.mutateAsync(body);
       await revalidateApiRequest.revalidateTag('dishes');
@@ -431,7 +433,7 @@ export default function EditDishForm({ id }: { id: string }) {
                         <ScrollArea className='w-full h-full'>
                           <div className='space-y-2 pr-2'>
                             {combos
-                              .filter((t) => t.rowMode !== RowMode.Delete && t.rowMode !== RowMode.None)
+                              .filter((t) => t.rowMode !== RowMode.Delete)
                               .map(({ comboId, combo: { price, image, name, description, category }, quantity }) => {
                                 return (
                                   <Badge key={comboId} variant='secondary' className='w-full flex items-center'>
@@ -453,7 +455,7 @@ export default function EditDishForm({ id }: { id: string }) {
                                               if (quantity === 1) return;
                                               field.onChange(
                                                 field.value.map((item) =>
-                                                  item.comboId === comboId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                  item.comboId === comboId && item.rowMode !== RowMode.Delete
                                                     ? {
                                                         ...item,
                                                         quantity: quantity - 1,
@@ -477,7 +479,7 @@ export default function EditDishForm({ id }: { id: string }) {
                                               if (quantity === 20) return;
                                               field.onChange(
                                                 field.value.map((item) =>
-                                                  item.comboId === comboId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                  item.comboId === comboId && item.rowMode !== RowMode.Delete
                                                     ? {
                                                         ...item,
                                                         quantity: quantity + 1,
@@ -511,7 +513,7 @@ export default function EditDishForm({ id }: { id: string }) {
                                           e.stopPropagation();
                                           field.onChange(
                                             field.value.map((item) =>
-                                              item.comboId === comboId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                              item.comboId === comboId && item.rowMode !== RowMode.Delete
                                                 ? { ...item, rowMode: getRowMode(RowMode.Delete, item.rowMode) }
                                                 : item
                                             )
@@ -547,7 +549,7 @@ export default function EditDishForm({ id }: { id: string }) {
                         <ScrollArea className='w-full h-full'>
                           <div className='space-y-2 pr-2'>
                             {dishes
-                              .filter((t) => t.rowMode !== RowMode.Delete && t.rowMode !== RowMode.None)
+                              .filter((t) => t.rowMode !== RowMode.Delete)
                               .map(({ dishId, dish: { price, image, name, description, category }, quantity }) => {
                                 return (
                                   <Badge key={dishId} variant='secondary' className='w-full flex items-center'>
@@ -569,7 +571,7 @@ export default function EditDishForm({ id }: { id: string }) {
                                               if (quantity === 1) return;
                                               field.onChange(
                                                 field.value.map((item) =>
-                                                  item.dishId === dishId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                  item.dishId === dishId && item.rowMode !== RowMode.Delete
                                                     ? {
                                                         ...item,
                                                         quantity: quantity - 1,
@@ -593,7 +595,7 @@ export default function EditDishForm({ id }: { id: string }) {
                                               if (quantity === 20) return;
                                               field.onChange(
                                                 field.value.map((item) =>
-                                                  item.dishId === dishId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                                  item.dishId === dishId && item.rowMode !== RowMode.Delete
                                                     ? {
                                                         ...item,
                                                         quantity: quantity + 1,
@@ -627,7 +629,7 @@ export default function EditDishForm({ id }: { id: string }) {
                                           e.stopPropagation();
                                           field.onChange(
                                             field.value.map((item) =>
-                                              item.dishId === dishId && item.rowMode !== RowMode.Delete && item.rowMode !== RowMode.None
+                                              item.dishId === dishId && item.rowMode !== RowMode.Delete
                                                 ? { ...item, rowMode: getRowMode(RowMode.Delete, item.rowMode) }
                                                 : item
                                             )

@@ -68,17 +68,17 @@ export const useGetTablesDetailNowQuery = () => {
   });
 };
 
-export const useGetTableDetailNowQuery = (number: string) => {
+export const useGetTableDetailNowQuery = (tableNumber: string) => {
   return useQuery({
-    queryKey: ['table-detail-now', number],
-    queryFn: () => tableApiRequets.getTableDetailNow(number)
+    queryKey: ['table-detail-now', tableNumber],
+    queryFn: () => tableApiRequets.getTableDetailNow(tableNumber)
   });
 };
 
-export const useGetTableDetailForPaymentQuery = (token: string) => {
+export const useGetTableDetailForPaymentQuery = (tableNumber: string) => {
   return useQuery({
-    queryKey: ['table-detail-for-payment', token],
-    queryFn: () => tableApiRequets.getTableDetailForPayment(token)
+    queryKey: ['table-detail-for-payment', tableNumber],
+    queryFn: () => tableApiRequets.getTableDetailForPayment(tableNumber)
   });
 };
 

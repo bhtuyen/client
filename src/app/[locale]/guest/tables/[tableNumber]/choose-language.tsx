@@ -22,7 +22,7 @@ export default function ChooseLanguage() {
   const searchParam = useSearchParams();
   const params = useParams();
 
-  const { setRole, createConnectSocket } = useAppStore();
+  const { setRole, createConnectSocket, setLoading } = useAppStore();
 
   const tSwitchLanguage = useTranslations('switch-language');
   const tButton = useTranslations('t-button');
@@ -33,6 +33,7 @@ export default function ChooseLanguage() {
 
   const { isPending, mutateAsync } = useGuestLoginMutation();
   const onSubmit = async () => {
+    setLoading(true);
     if (isPending || !token || !tableNumber) return;
     try {
       const result = await mutateAsync({
@@ -46,10 +47,13 @@ export default function ChooseLanguage() {
       router.push(`/guest/tables/${tableNumber}/menu`);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const switchLanguage = (locale: Locale) => {
+    setLoading(true);
     router.replace(
       {
         pathname,
@@ -59,6 +63,7 @@ export default function ChooseLanguage() {
       },
       { locale }
     );
+    setLoading(false);
   };
 
   return (

@@ -48,42 +48,27 @@ export default function CreateOrdersForm() {
   const table = form.watch('table');
   const dishes = form.watch('dishes');
 
+  const comboBuffetId = useMemo(() => {
+    return dishes.find((dish) => dish.category === DishCategory.ComboBuffet)?.id;
+  }, [dishes]);
+
   const tButton = useTranslations('t-button');
   const tInfo = useTranslations('t-info');
 
-  const dishChooseBody = useMemo<DishChooseBody>(
-    () => ({
-      categories: [DishCategory.Buffet, DishCategory.ComboPaid, DishCategory.Paid, DishCategory.ComboBuffet],
-      ignores: []
-    }),
-    []
-  );
-
-  // const handleQuantityChange = ({ dishId, quantity, options }: CreateOrder) => {
-  //   setCreateOrders((prevOrders) => {
-  //     if (quantity === 0) {
-  //       return prevOrders.filter((order) => order.dishId !== dishId);
-  //     }
-  //     const index = prevOrders.findIndex((order) => order.dishId === dishId);
-  //     if (index === -1) {
-  //       return [...prevOrders, { dishId, options, quantity }];
-  //     }
-  //     const newOrders = [...prevOrders];
-  //     newOrders[index] = { ...newOrders[index], quantity };
-  //     return prevOrders;
-  //   });
-  // };
-
-  // const totalPrice = useMemo(() => {
-  //   return dishes.reduce((result, dish) => {
-  //     const order = createOrders.find((order) => order.dishId === dish.id);
-  //     if (!order) return result;
-  //     if (dish.category === DishCategory.Paid) {
-  //       return result + dish.price * order.quantity;
-  //     }
-  //     return result;
-  //   }, 0);
-  // }, [dishes, createOrders]);
+  const dishChooseBody = useMemo<DishChooseBody>(() => {
+    if (!comboBuffetId) {
+      return {
+        categories: [DishCategory.ComboPaid, DishCategory.Paid, DishCategory.ComboBuffet],
+        ignores: []
+      };
+    } else {
+      return {
+        categories: [DishCategory.ComboPaid, DishCategory.Paid, DishCategory.Buffet],
+        ignores: [comboBuffetId],
+        comboBuffetId
+      };
+    }
+  }, [comboBuffetId]);
 
   const onSubmit = async ({ table: { number }, dishes }: CreateOrdersTableForm) => {
     if (createOrderMutation.isPending) return;

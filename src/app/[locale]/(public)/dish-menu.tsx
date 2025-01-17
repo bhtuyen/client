@@ -236,7 +236,7 @@ export default function DishMenu() {
         })}
       </Accordion>
       <ScrollArea className='flex-[3] h-full'>
-        <div className='h-full grid grid-cols-3 gap-4 p-4 pl-0'>
+        <div className='h-full grid grid-cols-3 gap-4 p-4 pl-0 max-[1366px]:grid-cols-2'>
           {dishCategoryGroupDetails.map((dishCategoryGroupDetail) => {
             const { category } = dishCategoryGroupDetail;
             if (category === DishCategory.Paid && categoryActive === DishCategory.Paid) {

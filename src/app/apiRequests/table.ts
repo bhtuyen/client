@@ -20,7 +20,7 @@ export const tableApiRequets = {
   updateBuffetMode: (body: ModeBuffet) => http.put<TableRes>(`${prefix}/buffet-mode`, body),
   delete: (id: string) => http.delete<TableRes>(`${prefix}/${id}`),
   getTablesDetailNow: () => http.get<TableDtoDetailsRes>(`${prefix}/detail-now`),
-  getTableDetailNow: (number: string) => http.get<TableDtoDetailRes>(`${prefix}/detail-now/${number}`),
-  getTableDetailForPayment: (token: string) => http.get<TableDtoDetailRes>(`${prefix}/detail-payment/${token}`),
+  getTableDetailNow: (tableNumber: string) => http.get<TableDtoDetailRes>(`${prefix}/detail-now/${tableNumber}`),
+  getTableDetailForPayment: (tableNumber: string) => http.get<TableDtoDetailRes>(`${prefix}/detail-payment/${tableNumber}`),
   resetTable: (tableNumber: string) => http.post<TableRes>(`${prefix}/reset`, { tableNumber })
 };

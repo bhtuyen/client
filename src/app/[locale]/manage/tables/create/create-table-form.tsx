@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import type { CreateTable } from '@/schemaValidations/table.schema';
 
 import { useCreateTableMutation } from '@/app/queries/useTable';
+import { useAppStore } from '@/components/app-provider';
 import TButton from '@/components/t-button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,7 @@ import { getEnumValues, handleErrorApi } from '@/lib/utils';
 import { createTable } from '@/schemaValidations/table.schema';
 
 export default function CreateTableForm() {
+  const { setLoading } = useAppStore();
   const router = useRouter();
   const form = useForm<CreateTable>({
     resolver: zodResolver(createTable),
@@ -27,7 +29,8 @@ export default function CreateTableForm() {
       status: TableStatus.Available,
       paymentStatus: PaymentStatus.Unpaid,
       callStaff: false,
-      requestPayment: false
+      requestPayment: false,
+      dishBuffetId: null
     }
   });
 
@@ -39,6 +42,7 @@ export default function CreateTableForm() {
   const createTableMutation = useCreateTableMutation();
 
   const onSubmit = async (body: CreateTable) => {
+    setLoading(true);
     if (createTableMutation.isPending) return;
     try {
       const result = await createTableMutation.mutateAsync(body);
@@ -48,6 +52,8 @@ export default function CreateTableForm() {
       router.push('/manage/tables');
     } catch (error) {
       handleErrorApi({ error, setError: form.setError });
+    } finally {
+      setLoading(false);
     }
   };
 

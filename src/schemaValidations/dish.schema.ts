@@ -125,7 +125,8 @@ export const dishInCart = baseDishDto
 
 export const dishChooseBody = z.object({
   categories: z.array(z.nativeEnum(DishCategory)),
-  ignores: z.array(z.string().uuid())
+  ignores: z.array(z.string().uuid()),
+  comboBuffetId: z.string().uuid().optional().nullable()
 });
 
 /**

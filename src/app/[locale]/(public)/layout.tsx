@@ -33,7 +33,7 @@ export default function PublicLayout({
           <DarkModeToggle />
         </div>
       </header>
-      <main className='max-w-[1500px] mx-auto w-full h-[calc(100%_-_4rem)]'>{children}</main>
+      <main className='max-w-[1500px] mx-auto w-full h-[calc(100%_-_4rem)] max-[1366px]:px-10'>{children}</main>
     </div>
   );
 }
