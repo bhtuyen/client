@@ -158,12 +158,27 @@
     "collapse": "Thu gọn",
     "expand": "Mở rộng"
   },
+  "brand": {
+    "title": "Restaurant",
+    "description": "Quản lý nhà hàng"
+  },
+  "menu-public": {
+    "title": "Danh sách thực đơn",
+    "description": "Chào mừng bạn đến với nhà hàng của chúng tôi"
+  },
+
+  "login": {
+    "title": "Đăng nhập",
+    "description": "Nhập email và mật khẩu của bạn để đăng nhập vào hệ thống"
+  },
 
   "manage": {
     "title": "Quản lý",
+    "description": "Quản lý nhân viên, món ăn, đơn hàng và bàn ăn",
 
     "employees": {
       "title": "Danh sách nhân viên",
+      "description": "Quản lý thông tin nhân viên",
       "create": {
         "title": "Tạo nhân viên",
         "description": "Nhập thông tin nhân viên để tạo tài khoản mới"
@@ -176,9 +191,9 @@
 
     "dashboard": {
       "title": "Bảng điều khiển",
+      "description": "Xem tổng quan về doanh thu, số lượng khách hàng, đơn hàng và bàn đang phục vụ",
       "from": "Từ",
       "to": "Đến",
-
       "revenue": "Doanh thu",
       "total-revenue": "Tổng doanh thu",
       "guest": "Khách hàng",
@@ -192,6 +207,7 @@
 
     "dishes": {
       "title": "Danh sách món ăn",
+      "description": "Quản lý thông tin món ăn",
       "create": {
         "title": "Tạo món ăn",
         "description": "Nhập thông tin món ăn để tạo món ăn mới"
@@ -207,6 +223,7 @@
 
     "orders": {
       "title": "Danh sách đơn hàng",
+      "description": "Quản lý thông tin đơn hàng",
       "create": {
         "title": "Tạo đơn hàng",
         "description": "Nhập thông tin đơn hàng để tạo đơn hàng mới"
@@ -216,12 +233,14 @@
         "description": "Chỉnh sửa thông tin đơn hàng"
       },
       "table": {
-        "title": "Bàn {number}"
+        "title": "Đơn hàng bàn {number}",
+        "description": "Quản lý thông tin đơn hàng của bàn {number}"
       }
     },
 
     "tables": {
       "title": "Danh sách bàn ăn",
+      "description": "Quản lý thông tin bàn ăn",
       "create": {
         "title": "Tạo bàn ăn",
         "description": "Nhập thông tin bàn ăn để tạo bàn ăn mới"
@@ -236,10 +255,12 @@
     },
     "setting": {
       "title": "Cài đặt",
+      "description": "Chỉnh sửa thông tin cá nhân và đổi mật khẩu",
       "personal-information": "Thông tin cá nhân",
       "change-password": "Đổi mật khẩu"
     }
   },
+
   "t-data-table": {
     "column": {
       "name": "Tên",
@@ -332,7 +353,14 @@
       "your-request": "Yêu cầu của bạn"
     },
     "table-number": "Bàn {tableNumber}",
-    "choose-language": "Chọn ngôn ngữ để tiếp tục"
+    "choose-language": {
+      "title": "Chọn ngôn ngữ",
+      "description": "Chọn ngôn ngữ bạn muốn sử dụng để xem menu và đặt món"
+    },
+    "order": {
+      "title": "Gọi món",
+      "description": "Chọn món ăn bạn muốn gọi"
+    }
   },
   "t-sheet": {
     "choose-dish-title": "Chọn món ăn",

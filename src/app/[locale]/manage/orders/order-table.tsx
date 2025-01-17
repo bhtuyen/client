@@ -29,6 +29,7 @@ export default function OrderTable() {
   const tTableColumn = useTranslations('t-data-table.column');
   const tFilter = useTranslations('t-data-table.filter');
   const tToast = useTranslations('t-toast');
+  const tManageEditOrders = useTranslations('manage.orders.edit');
   const updateOrderMutation = useUpdateOrderMutation();
 
   const columns = useMemo<ColumnDef<OrderDtoDetail>[]>(
@@ -147,8 +148,8 @@ export default function OrderTable() {
                   </SheetTrigger>
                   <SheetContent side='left' className='w-[500px]'>
                     <SheetHeader>
-                      <SheetTitle>Edit order</SheetTitle>
-                      <SheetDescription></SheetDescription>
+                      <SheetTitle>{tManageEditOrders('title')}</SheetTitle>
+                      <SheetDescription />
                     </SheetHeader>
                     <EditOrderForm orderId={row.original.id} />
                   </SheetContent>
@@ -159,7 +160,7 @@ export default function OrderTable() {
         )
       }
     ],
-    [tOrderStatus, tTableColumn, updateOrderMutation]
+    [tManageEditOrders, tOrderStatus, tTableColumn, updateOrderMutation]
   );
 
   const { socket } = useAppStore();

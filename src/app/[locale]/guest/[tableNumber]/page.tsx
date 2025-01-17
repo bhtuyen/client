@@ -14,7 +14,7 @@ export async function generateMetadata({ params: { locale, tableNumber } }: { pa
     namespace: 'guest.choose-language'
   });
 
-  const url = envConfig.NEXT_PUBLIC_URL + `/${locale}/guest/tables/${tableNumber}`;
+  const url = envConfig.NEXT_PUBLIC_URL + `/${locale}/guest/${tableNumber}`;
 
   return {
     title: t('title'),

@@ -40,7 +40,7 @@ export default function DashboardMain() {
             {tButton('reset')}
           </TButton>
         </div>
-        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+        <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-4'>
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>{tDashboard('total-revenue')}</CardTitle>
@@ -127,7 +127,7 @@ export default function DashboardMain() {
             </CardContent>
           </Card>
         </div>
-        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-8'>
+        <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-8'>
           <div className='lg:col-span-4'>
             <RevenueLineChart chartData={revenuesByDate} />
           </div>

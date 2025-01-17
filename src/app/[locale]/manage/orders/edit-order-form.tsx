@@ -92,7 +92,7 @@ export default function EditOrderForm({ orderId }: { orderId: string }) {
           render={({ field }) => (
             <FormItem>
               <TImage src={field.value.image} alt={field.value.name} width={100} height={100} className='w-full object-center rounded-md' />
-              <FormLabel className=''>
+              <FormLabel>
                 <p className='text-xl font-bold'>{field.value.name}</p>
                 <p className='text-sm text-muted-foreground'>{field.value.description}</p>
                 <p className='text-sm font-semibold'>{getPriceString(field.value)}</p>

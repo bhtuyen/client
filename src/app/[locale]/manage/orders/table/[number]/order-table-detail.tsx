@@ -49,6 +49,7 @@ export default function OrderTableDetail({ number }: { number: string }) {
   const tInfo = useTranslations('t-info');
   const tToast = useTranslations('t-toast');
   const tFilter = useTranslations('t-data-table.filter');
+  const tManageEditOrders = useTranslations('manage.orders.edit');
 
   const router = useRouter();
 
@@ -221,8 +222,8 @@ export default function OrderTableDetail({ number }: { number: string }) {
                   </SheetTrigger>
                   <SheetContent side='right' className='w-[500px]'>
                     <SheetHeader>
-                      <SheetTitle>Edit order</SheetTitle>
-                      <SheetDescription></SheetDescription>
+                      <SheetTitle>{tManageEditOrders('title')}</SheetTitle>
+                      <SheetDescription />
                     </SheetHeader>
                     <EditOrderForm orderId={row.original.id} />
                   </SheetContent>
@@ -233,7 +234,7 @@ export default function OrderTableDetail({ number }: { number: string }) {
         )
       }
     ],
-    [isPaid, tOrderStatus, tTableColumn, updateOrderMutation]
+    [isPaid, tOrderStatus, tTableColumn, updateOrderMutation, tManageEditOrders]
   );
 
   useEffect(() => {

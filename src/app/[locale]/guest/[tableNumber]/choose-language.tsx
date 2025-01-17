@@ -1,7 +1,7 @@
 'use client';
 
 import { Check } from 'lucide-react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 
 import type { Locale } from '@/config';
@@ -15,12 +15,11 @@ import { Role } from '@/constants/enum';
 import { usePathname, useRouter } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 
-export default function ChooseLanguage() {
+export default function ChooseLanguage({ tableNumber }: { tableNumber: string }) {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const searchParam = useSearchParams();
-  const params = useParams();
 
   const { setRole, createConnectSocket, setLoading } = useAppStore();
 
@@ -28,7 +27,6 @@ export default function ChooseLanguage() {
   const tButton = useTranslations('t-button');
   const tGuest = useTranslations('guest');
 
-  const tableNumber = params.tableNumber as string;
   const token = searchParam.get('token');
 
   const { isPending, mutateAsync } = useGuestLoginMutation();
@@ -44,7 +42,7 @@ export default function ChooseLanguage() {
       createConnectSocket(result.payload.data.accessToken);
       setRole(Role.Guest);
 
-      router.push(`/guest/tables/${tableNumber}/menu`);
+      router.push(`/guest/${tableNumber}/menu`);
     } catch (error) {
       console.log(error);
     } finally {
@@ -68,7 +66,7 @@ export default function ChooseLanguage() {
 
   return (
     <div className='absolute bottom-0 bg-white text-black min-h-[25%] right-0 left-0 rounded-[2rem] grid grid-rows-3 items-center text-[18px]'>
-      <div className='border-b-[0.05px] border-[#dddddd] h-full flex items-center justify-center'>{tGuest('choose-language')}</div>
+      <div className='border-b-[0.05px] border-[#dddddd] h-full flex items-center justify-center'>{tGuest('choose-language.title')}</div>
       <div className='flex justify-center gap-5 px-5'>
         {locales.map((t) => (
           <TButton

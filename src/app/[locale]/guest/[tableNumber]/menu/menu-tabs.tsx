@@ -3,13 +3,13 @@ import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import type { GroupDetail } from '@/app/[locale]/guest/tables/[tableNumber]/menu/dish.service';
+import type { GroupDetail } from '@/app/[locale]/guest/[tableNumber]/menu/dish.service';
 import type { OrderDtoDetail } from '@/schemaValidations/order.schema';
 import type { TMessageKeys } from '@/types/message.type';
 import type { MutableRefObject } from 'react';
 
-import AddToCartDialog from '@/app/[locale]/guest/tables/[tableNumber]/menu/add-to-cart-dialog';
-import useDishService from '@/app/[locale]/guest/tables/[tableNumber]/menu/dish.service';
+import AddToCartDialog from '@/app/[locale]/guest/[tableNumber]/menu/add-to-cart-dialog';
+import useDishService from '@/app/[locale]/guest/[tableNumber]/menu/dish.service';
 import { useDishBuffetQuery, useDishesOrderQuery } from '@/app/queries/useDish';
 import { useTableQuery } from '@/app/queries/useTable';
 import { useAppStore } from '@/components/app-provider';

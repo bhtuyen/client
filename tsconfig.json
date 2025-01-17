@@ -23,6 +23,6 @@
       "~/*": ["./messages/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/[locale]/guest/tables/[tableNumber]/menu/dish.service.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/[locale]/guest/[tableNumber]/menu/dish.service.tsx"],
   "exclude": ["node_modules"]
 }

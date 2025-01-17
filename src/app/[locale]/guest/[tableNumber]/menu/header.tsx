@@ -1,14 +1,13 @@
 'use client';
-import { BellRing, UserRound } from 'lucide-react';
+import { BellRing, Package2, UserRound } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 import type { TMessageKeys } from '@/types/message.type';
 
-import CartAndOrderDialog from '@/app/[locale]/guest/tables/[tableNumber]/menu/cart-and-order-dialog';
+import CartAndOrderDialog from '@/app/[locale]/guest/[tableNumber]/menu/cart-and-order-dialog';
 import { useCallStaffMutation } from '@/app/queries/useGuest';
 import { useOrderByTableQuery } from '@/app/queries/useOrder';
 import TButton from '@/components/t-button';
-import TImage from '@/components/t-image';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/hooks/use-toast';
@@ -41,7 +40,7 @@ export default function Header({ tableNumber }: { tableNumber: string }) {
   return (
     <nav className='h-14 flex justify-between px-4'>
       <div className='flex items-center '>
-        <TImage src='/vietnam.png' alt='logo' width={30} height={30} />
+        <Package2 size={30} color='#0fc2e6' />
         <Separator orientation='vertical' className='mx-2 h-[60%] w-[0.5px] bg-[#cecece]' />
         <Badge className='bg-[#f2f2f2] h-[60%] rounded-3xl mr-2 text-black'>{tGuest('table-number', { tableNumber })}</Badge>
         <TButton

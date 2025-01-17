@@ -158,12 +158,27 @@
     "collapse": "Collapse",
     "expand": " Expand"
   },
+  "brand": {
+    "title": "Restaurant",
+    "description": "Restaurant Management System"
+  },
+  "menu-public": {
+    "title": "Menu",
+    "description": "List of dishes"
+  },
+
+  "login": {
+    "title": "Login",
+    "description": "Please enter your email and password to login"
+  },
 
   "manage": {
     "title": "Manage",
+    "description": "Manage the restaurant",
 
     "employees": {
       "title": "Employees",
+      "description": "List of employees",
       "create": {
         "title": "Create account",
         "description": "Enter the information of the new account"
@@ -176,9 +191,9 @@
 
     "dashboard": {
       "title": "Dashboard",
+      "description": "Overview of the restaurant",
       "from": "From",
       "to": "To",
-
       "revenue": "Revenue",
       "total-revenue": "Total revenue",
       "guest": "Guest",
@@ -192,6 +207,7 @@
 
     "dishes": {
       "title": "Dishes",
+      "description": "List of dishes",
       "create": {
         "title": "Create dish",
         "description": "Enter the information of the new dish"
@@ -207,6 +223,7 @@
 
     "orders": {
       "title": "Orders",
+      "description": "List of orders",
       "create": {
         "title": "Create order",
         "description": "Enter the information of the new order"
@@ -216,12 +233,14 @@
         "description": "Edit the information of the order"
       },
       "table": {
-        "title": "Table {number}"
+        "title": "Table {number}",
+        "description": "List of orders of table {number}"
       }
     },
 
     "tables": {
       "title": "Tables",
+      "description": "List of tables",
       "create": {
         "title": "Create table",
         "description": "Enter the information of the new table"
@@ -236,10 +255,12 @@
     },
     "setting": {
       "title": "Setting",
+      "description": "Update your personal information and change password",
       "personal-information": "Personal information",
       "change-password": "Change password"
     }
   },
+
   "t-data-table": {
     "column": {
       "name": "Name",
@@ -332,7 +353,14 @@
       "your-request": "Your request"
     },
     "table-number": "Table {tableNumber}",
-    "choose-language": "Choose language to continue"
+    "choose-language": {
+      "title": "Choose language to continue",
+      "description": "Please choose the language you want to use"
+    },
+    "order": {
+      "title": "Order",
+      "description": "List of dishes"
+    }
   },
   "t-sheet": {
     "choose-dish-title": "Choose dish",

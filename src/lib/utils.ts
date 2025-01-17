@@ -151,7 +151,7 @@ export const getTotalQuantity = (dishes: DishDtoDetailChoose[]) => {
 };
 
 export const getTableLink = ({ token, tableNumber, locale }: { token: string; tableNumber: string; locale: string }) => {
-  return envConfig.NEXT_PUBLIC_URL + `/${locale}/guest/tables/` + tableNumber + '?token=' + token;
+  return envConfig.NEXT_PUBLIC_URL + `/${locale}/guest/` + tableNumber + '?token=' + token;
 };
 
 export function removeAccents(str: string) {

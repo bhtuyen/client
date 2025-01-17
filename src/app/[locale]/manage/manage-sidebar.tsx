@@ -129,8 +129,8 @@ export function ManageSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton asChild className='h-auto group-data-[collapsible=icon]:!px-0'>
               <Link href='/' className='flex items-center gap-2'>
                 <div className='group flex size-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base'>
-                  <Package2 className='size-6 transition-all group-hover:scale-110' />
-                  <span className='sr-only'>Acme Inc</span>
+                  <Package2 className='size-6 transition-all group-hover:scale-110' color='#0fc2e6' />
+                  <span className='sr-only'>RESTAURANT</span>
                 </div>
                 <span className='text-xl font-bold'>RESTAURANT</span>
               </Link>
